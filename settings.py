@@ -1,0 +1,4 @@
+
+DOMAIN = {}
+
+DEBUG = True
