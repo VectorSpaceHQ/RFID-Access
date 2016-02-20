@@ -45,6 +45,11 @@ DOMAIN = {
             'required': True,
             'unique': True
          }
+      },
+
+      'additional_lookup': {
+         'url': 'regex("[\w]+")',
+         'field': 'id'
       }
    }
 }
