@@ -22,37 +22,38 @@ settings = {
          }
       },
 
-      'members': {
+      'resources': {
          'schema': {
-            'first_name': {
-               'type': 'string',
-               'required': True
-            },
-
-            'last_name': {
-               'type': 'string',
-               'required': True
-            },
-
-            'card_id': {
+            'name': {
                'type': 'string',
                'required': True
             }
-         },
+         }
       },
 
       'cards': {
          'schema': {
-            'id': {
+            'serialno': {
                'type': 'string',
                'required': True,
                'unique': True
+            },
+
+            'authorized_resources':  {
+               'type': 'list',
+               'required': True
+            },
+
+            'member': {
+               'type': 'string',
+               'required': False
             }
+
          },
 
          'additional_lookup': {
             'url': 'regex("[\w]+")',
-            'field': 'id'
+            'field': 'serialno'
          }
       }
    },
@@ -70,14 +71,14 @@ def post_get_callback(resource, request, payload):
 
    if (payload.status_code == 404) and match:
 
-      card_id = match.group(1)
+      serialno = match.group(1)
 
       cards = app.data.driver.db['cards']
 
-      card = cards.find_one({ 'id': card_id })
+      card = cards.find_one({ 'serialno': serialno })
 
       if not card:
-         app.data.driver.db['cards'].insert({ 'id': card_id })
+         app.data.driver.db['cards'].insert({ 'serialno': serialno, 'authorized_resources': [] })
 
 
 if __name__ == '__main__':
