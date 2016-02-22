@@ -62,6 +62,10 @@ settings = {
 
    'ITEM_METHODS' : ['GET', 'PATCH', 'PUT', 'DELETE'],
 
+   'X_DOMAINS' : '*',
+
+   'X_HEADERS' : 'If-Match',
+
    'DEBUG' : True
 }
 
