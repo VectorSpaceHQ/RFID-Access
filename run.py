@@ -92,4 +92,4 @@ if __name__ == '__main__':
 
    app.on_post_GET += post_get_callback
 
-   app.run()
+   app.run(host="0.0.0.0", port=8080)
