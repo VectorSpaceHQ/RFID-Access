@@ -64,7 +64,9 @@ settings = {
 
    'X_DOMAINS' : '*',
 
-   'X_HEADERS' : 'If-Match',
+   'X_HEADERS' : ['If-Match', 'Content-Type'],
+
+   'CACHE_CONTROL' : 'no-cache',
 
    'DEBUG' : True
 }
