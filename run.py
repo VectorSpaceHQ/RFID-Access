@@ -27,6 +27,9 @@ settings = {
                'allowed': ["user", "admin"],
                'required': True
             }
+         },
+         'datasource': {
+             'projection': { 'password': 0 }
          }
       },
 
@@ -36,6 +39,11 @@ settings = {
                'type': 'string',
                'required': True
             }
+         },
+
+         'additional_lookup': {
+            'url': 'regex("[\w]+")',
+            'field': 'name'
          }
       },
 
