@@ -1,0 +1,16 @@
+{
+  "name": "vs-rfid",
+  "version": "1.0.0",
+  "description": "Vector Space RFID Access",
+  "main": "",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Jordan Goulder",
+  "license": "MIT",
+  "dependencies": {
+    "angular": "^1.5.0",
+    "angular-resource": "^1.5.0",
+    "angular-route": "^1.5.0"
+  }
+}
