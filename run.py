@@ -78,13 +78,11 @@ settings = {
 
    'ITEM_METHODS' : ['GET', 'PATCH', 'PUT', 'DELETE'],
 
-   'X_DOMAINS' : '*',
-
-   'X_HEADERS' : ['If-Match', 'Content-Type'],
-
    'CACHE_CONTROL' : 'no-cache',
 
    'URL_PREFIX' : 'api',
+
+   'MONGO_DBNAME': 'rfid',
 
    'DEBUG' : True
 }
