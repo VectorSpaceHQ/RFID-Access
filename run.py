@@ -1,4 +1,5 @@
 import re
+import bcrypt
 from eve import Eve
 
 settings = {
@@ -90,10 +91,14 @@ def post_get_callback(resource, request, payload):
       if not card:
          app.data.driver.db['cards'].insert({ 'serialno': serialno, 'authorized_resources': [] })
 
+def before_insert_users(items):
+   for i in range(len(items)):
+      items[i]['password'] = bcrypt.hashpw(items[i]['password'], bcrypt.gensalt());
 
 if __name__ == '__main__':
    app = Eve(settings=settings)
 
    app.on_post_GET += post_get_callback
+   app.on_insert_users += before_insert_users
 
    app.run(host="0.0.0.0", port=8080)
