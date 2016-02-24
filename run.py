@@ -7,17 +7,21 @@ settings = {
          'schema': {
             'username': {
                'type': 'string',
+               'minlength': 1,
+               'unique': True,
                'required': True
             },
 
             'password': {
                'type': 'string',
+               'minlength': 1,
                'required': True
             },
 
             'roles': {
                'type': 'list',
-               'allowed': ["user", "admin"]
+               'allowed': ["user", "admin"],
+               'required': True
             }
          }
       },
