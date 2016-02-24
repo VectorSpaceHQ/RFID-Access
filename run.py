@@ -95,10 +95,15 @@ def before_insert_users(items):
    for i in range(len(items)):
       items[i]['password'] = bcrypt.hashpw(items[i]['password'], bcrypt.gensalt());
 
+def before_update_users(updates, originals):
+   if 'password' in updates:
+      updates['password'] = bcrypt.hashpw(updates['password'], bcrypt.gensalt());
+
 if __name__ == '__main__':
    app = Eve(settings=settings)
 
    app.on_post_GET += post_get_callback
    app.on_insert_users += before_insert_users
+   app.on_update_users += before_update_users
 
    app.run(host="0.0.0.0", port=8080)
