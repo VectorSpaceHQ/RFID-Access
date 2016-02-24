@@ -1,0 +1,26 @@
+<h2>Add User</h2>
+<hr>
+<ul>
+    <li><a href="#/">Home</a></li>
+    <li><a href="#/users">Users</a></li>
+</ul>
+<hr>
+<p>
+    <label>Username</label><br>
+    <input ng-model="vm.username">
+</p>
+<p>
+    <label>Password</label><br>
+    <input type="password" ng-model="vm.password">
+</p>
+<p>
+    <label>Confirm Password</label><br>
+    <input type="password" ng-model="vm.confirmPassword">
+</p>
+<p>
+    <input type="checkbox" ng-model="vm.isAdmin">
+    <label>Administrator</label>
+</p>
+<p>
+    <a href="" ng-click="vm.addUser()">Add</a> <a href="#/users">Cancel</a>
+</p>

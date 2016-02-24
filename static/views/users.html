@@ -1,0 +1,24 @@
+<h2>Users</h2>
+<hr>
+<ul>
+    <li><a href="#/">Home</a></li>
+</ul>
+<hr>
+<p><a href="#/adduser/">Add new user</a></p>
+
+<table border="1" ng-show="vm.users.length">
+    <tr>
+        <th>Username</th>
+        <th>Admin</th>
+        <th>Change Password</th>
+        <th>Edit</th>
+        <th>Remove</th>
+    </tr>
+    <tr ng-repeat="user in vm.users">
+        <td>{{ user.username }}</td>
+        <td>{{ user.roles.indexOf('admin') != -1 ? 'Yes' : 'No' }}</td>
+        <td><a ng-href="#/changeuserpassword/{{ user._id }}">Change Password</a></td>
+        <td><a ng-href="#/edituser/{{ user._id }}">Edit</a></td>
+        <td><a href="" ng-click='vm.removeUser(user._id, user._etag)'>Remove</a></td>
+    </tr>
+</table>

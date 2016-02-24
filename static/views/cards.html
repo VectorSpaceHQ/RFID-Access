@@ -1,0 +1,27 @@
+<h2>Cards</h2>
+<hr>
+<ul>
+    <li><a href="#/">Home</a></li>
+</ul>
+<hr>
+
+<table border="1" ng-show="vm.cards.length">
+    <tr>
+        <th>Serial No.</th>
+        <th>Member</th>
+        <th>Resources</th>
+        <th>Edit</th>
+        <th>Remove</th>
+    </tr>
+    <tr ng-repeat="card in vm.cards">
+        <td>{{ card.serialno }}</td>
+        <td>{{ card.member }}</td>
+        <td>
+            <div ng-repeat="resource in card.resources">
+                {{ vm.resourceNames[resource] }}
+            </div>
+        </td>
+        <td><a ng-href="#/editcard/{{ card._id }}">Edit</a></td>
+        <td><a href="" ng-click='vm.removeCard(card._id, card._etag)'>Remove</a></td>
+    </tr>
+</table>

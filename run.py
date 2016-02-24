@@ -1,6 +1,9 @@
 import re
 import bcrypt
+import os
 from eve import Eve
+from flask import redirect
+from werkzeug.wsgi import SharedDataMiddleware
 
 settings = {
    'DOMAIN' : {
@@ -73,6 +76,8 @@ settings = {
 
    'CACHE_CONTROL' : 'no-cache',
 
+   'URL_PREFIX' : 'api',
+
    'DEBUG' : True
 }
 
@@ -99,8 +104,17 @@ def before_update_users(updates, originals):
    if 'password' in updates:
       updates['password'] = bcrypt.hashpw(updates['password'], bcrypt.gensalt());
 
+app = Eve(settings=settings)
+
+@app.route('/')
+def root():
+    return redirect("/index.html");
+
 if __name__ == '__main__':
-   app = Eve(settings=settings)
+
+   app.wsgi_app = SharedDataMiddleware(app.wsgi_app, {
+       '/': os.path.join(os.path.dirname(__file__), 'static')
+   })
 
    app.on_post_GET += post_get_callback
    app.on_insert_users += before_insert_users

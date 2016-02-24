@@ -1,0 +1,26 @@
+<h2>Edit Card</h2>
+<hr>
+<ul>
+    <li><a href="#/">Home</a></li>
+    <li><a href="#/cards">Cards</a></li>
+</ul>
+<hr>
+
+<p>
+    <label>Serial Number</label><br>
+    <input ng-model="vm.serialno"><br>
+</p>
+<p>
+    <label>Member</label><br>
+    <input ng-model="vm.member"><br>
+</p>
+<p>
+    <p>Authorized Resources</p>
+    <div ng-repeat="resource in vm.resources">
+        <input type="checkbox" ng-model="resource.isAuthorized">
+        <label>{{ resource.name }}</label>
+    </div>
+</p>
+<p>
+    <a href="" ng-click="vm.saveCard()">Save</a> <a href="#/cards">Cancel</a>
+</p>
