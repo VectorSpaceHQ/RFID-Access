@@ -6,14 +6,14 @@ import sys
 apiUrl = 'http://localhost:8080/api'
 STATUS_OK = 200
 
-def isAllowed(resourceName, serialNo):
+def isAllowed(resourceName, uuid):
    allowed = False
 
    r = requests.get('%s/resources/%s' % (apiUrl, resourceName));
 
    if r.status_code == STATUS_OK:
       resource = r.json()
-      r = requests.get('%s/cards/%s' % (apiUrl, serialNo));
+      r = requests.get('%s/cards/%s' % (apiUrl, uuid));
 
       if r.status_code == STATUS_OK:
          card = r.json()
@@ -26,7 +26,7 @@ def isAllowed(resourceName, serialNo):
    return allowed
 
 def usage(name):
-   print "Usage: %s resource serialNo" % name
+   print "Usage: %s resource uuid" % name
 
 if __name__ == '__main__':
    if len(sys.argv) != 3:
@@ -34,9 +34,9 @@ if __name__ == '__main__':
       exit(1)
 
    resource = sys.argv[1]
-   serialNo = sys.argv[2]
+   uuid     = sys.argv[2]
 
-   if isAllowed(resource, serialNo):
+   if isAllowed(resource, uuid):
       print 'Allowed'
       exit(0)
    else:

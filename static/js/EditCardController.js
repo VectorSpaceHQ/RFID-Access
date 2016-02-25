@@ -23,7 +23,6 @@
             }
 
             var card = {
-                serialno:   vm.serialno,
                 member:     vm.member,
                 resources:  resources.join(',')
             };
@@ -51,7 +50,7 @@
                 function() {
                     vm.id = getCard._id;
                     vm.etag = getCard._etag;
-                    vm.serialno = getCard.serialno;
+                    vm.uuid = getCard.uuid;
                     vm.member = getCard.member;
 
                     loadResources(getCard.resources.split(','));

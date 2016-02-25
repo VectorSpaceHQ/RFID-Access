@@ -48,7 +48,7 @@ settings = {
 
       'cards': {
          'schema': {
-            'serialno': {
+            'uuid': {
                'type': 'string',
                'required': True,
                'unique': True
@@ -68,7 +68,7 @@ settings = {
 
          'additional_lookup': {
             'url': 'regex("[\w]+")',
-            'field': 'serialno'
+            'field': 'uuid'
          }
       }
    },
@@ -92,14 +92,14 @@ def post_get_callback(resource, request, payload):
 
    if (payload.status_code == 404) and match:
 
-      serialno = match.group(1)
+      uuid = match.group(1)
 
       cards = app.data.driver.db['cards']
 
-      card = cards.find_one({ 'serialno': serialno })
+      card = cards.find_one({ 'uuid': uuid })
 
       if not card:
-         app.data.driver.db['cards'].insert({ 'serialno': serialno, 'resources': '' })
+         app.data.driver.db['cards'].insert({ 'uuid': uuid, 'resources': '' })
 
 def before_insert_users(items):
    for i in range(len(items)):

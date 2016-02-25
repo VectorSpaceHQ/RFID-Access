@@ -7,14 +7,14 @@
 
 <table border="1" ng-show="vm.cards.length">
     <tr>
-        <th>Serial No.</th>
+        <th>UUID</th>
         <th>Member</th>
         <th>Resources</th>
         <th>Edit</th>
         <th>Remove</th>
     </tr>
     <tr ng-repeat="card in vm.cards">
-        <td>{{ card.serialno }}</td>
+        <td>{{ card.uuid }}</td>
         <td>{{ card.member }}</td>
         <td>
             <div ng-repeat="resource in card.resources">
