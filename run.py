@@ -22,9 +22,8 @@ settings = {
                'required': True
             },
 
-            'roles': {
-               'type': 'list',
-               'allowed': ["user", "admin"],
+            'admin': {
+               'type': 'boolean',
                'required': True
             }
          },

@@ -16,7 +16,7 @@
     </tr>
     <tr ng-repeat="user in vm.users">
         <td>{{ user.username }}</td>
-        <td>{{ user.roles.indexOf('admin') != -1 ? 'Yes' : 'No' }}</td>
+        <td>{{ user.admin ? 'Yes' : 'No' }}</td>
         <td><a ng-href="#/changeuserpassword/{{ user._id }}">Change Password</a></td>
         <td><a ng-href="#/edituser/{{ user._id }}">Edit</a></td>
         <td><a href="" ng-click='vm.removeUser(user._id, user._etag)'>Remove</a></td>

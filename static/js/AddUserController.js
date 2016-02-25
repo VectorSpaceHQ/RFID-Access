@@ -15,16 +15,11 @@
         vm.isAdmin = false;
 
         vm.addUser = function addUser() {
-            var roles = ['user'];
-
-            if (vm.isAdmin) {
-                roles.push('admin');
-            }
 
             var add = UserService.addUser({
                 username:   vm.username,
                 password:   vm.password,
-                roles:      roles
+                admin:      vm.isAdmin
             });
 
             add.$promise.then(

@@ -14,14 +14,9 @@
 
         vm.saveUser = function () {
 
-            var roles = ['user'];
-            if (vm.isAdmin) {
-                roles.push('admin');
-            }
-
             var user = {
-                username: vm.username,
-                roles: roles
+                username:   vm.username,
+                admin:      vm.isAdmin
             };
 
             var saveUser = UserService.saveUser(vm.id, vm.etag, user);
@@ -48,7 +43,7 @@
                     vm.id = getUser._id;
                     vm.etag = getUser._etag;
                     vm.username = getUser.username;
-                    vm.isAdmin = getUser.roles.indexOf('admin') != -1;
+                    vm.isAdmin = getUser.admin;
                 }
             );
         }
