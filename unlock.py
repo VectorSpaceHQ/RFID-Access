@@ -18,7 +18,7 @@ def isAllowed(resourceName, serialNo):
       if r.status_code == STATUS_OK:
          card = r.json()
 
-         for id in card['resources']:
+         for id in card['resources'].split(','):
             if id == resource['_id']:
                allowed = True
                break

@@ -56,7 +56,7 @@ settings = {
             },
 
             'resources':  {
-               'type': 'list',
+               'type': 'string',
                'required': True
             },
 
@@ -100,7 +100,7 @@ def post_get_callback(resource, request, payload):
       card = cards.find_one({ 'serialno': serialno })
 
       if not card:
-         app.data.driver.db['cards'].insert({ 'serialno': serialno, 'resources': [] })
+         app.data.driver.db['cards'].insert({ 'serialno': serialno, 'resources': '' })
 
 def before_insert_users(items):
    for i in range(len(items)):

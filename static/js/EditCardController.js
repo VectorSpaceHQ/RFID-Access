@@ -25,7 +25,7 @@
             var card = {
                 serialno:   vm.serialno,
                 member:     vm.member,
-                resources:  resources
+                resources:  resources.join(',')
             };
 
             var saveCard = CardService.saveCard(vm.id, vm.etag, card);
@@ -54,7 +54,7 @@
                     vm.serialno = getCard.serialno;
                     vm.member = getCard.member;
 
-                    loadResources(getCard.resources);
+                    loadResources(getCard.resources.split(','));
                 }
             );
         }

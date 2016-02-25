@@ -31,7 +31,12 @@
 
             getCards.$promise.then(
                 function () {
-                    vm.cards = getCards._items;
+                    var cards = getCards._items;
+                    for (var i = 0; i < cards.length; i++) {
+                        var resources = cards[i].resources.split(',');
+                        cards[i].resources = resources;
+                    }
+                    vm.cards = cards;
                 }
             );
         }
