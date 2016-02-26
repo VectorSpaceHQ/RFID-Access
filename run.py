@@ -1,115 +1,48 @@
 import re
 import bcrypt
 import os
+import hashlib
+
 from eve import Eve
 from flask import redirect
 from werkzeug.wsgi import SharedDataMiddleware
-
-settings = {
-   'DOMAIN' : {
-      'users' : {
-         'schema': {
-            'username': {
-               'type': 'string',
-               'minlength': 1,
-               'unique': True,
-               'required': True
-            },
-
-            'password': {
-               'type': 'string',
-               'minlength': 1,
-               'required': True
-            },
-
-            'admin': {
-               'type': 'boolean',
-               'required': True
-            }
-         },
-         'datasource': {
-             'projection': { 'password': 0 }
-         }
-      },
-
-      'resources': {
-         'schema': {
-            'name': {
-               'type': 'string',
-               'required': True
-            }
-         },
-
-         'additional_lookup': {
-            'url': 'regex("[\w]+")',
-            'field': 'name'
-         }
-      },
-
-      'cards': {
-         'schema': {
-            'uuid': {
-               'type': 'string',
-               'required': True,
-               'unique': True
-            },
-
-            'resources':  {
-               'type': 'string',
-               'required': True
-            },
-
-            'member': {
-               'type': 'string',
-               'required': False
-            }
-
-         },
-
-         'additional_lookup': {
-            'url': 'regex("[\w]+")',
-            'field': 'uuid'
-         }
-      }
-   },
-
-   'RESOURCE_METHODS' : ['GET', 'POST'],
-
-   'ITEM_METHODS' : ['GET', 'PATCH', 'PUT', 'DELETE'],
-
-   'CACHE_CONTROL' : 'no-cache',
-
-   'URL_PREFIX' : 'api',
-
-   'MONGO_DBNAME': 'rfid',
-
-   'DEBUG' : True
-}
+from eve_sqlalchemy import SQL
+from eve_sqlalchemy.validation import ValidatorSQL
+from tables import Users, Resources, Cards, Base
 
 def post_get_callback(resource, request, payload):
 
-   match = re.search('/cards/(\w+)$', request.path)
+    match = re.search('/cards/(uuid-\w+)$', request.path)
 
-   if (payload.status_code == 404) and match:
+    if (payload.status_code == 404) and match:
+        print "Card not found"
 
-      uuid = match.group(1)
+        uuid = match.group(1)
 
-      cards = app.data.driver.db['cards']
+        card = db.session.query(Cards).filter(Cards.uuid == uuid).first()
 
-      card = cards.find_one({ 'uuid': uuid })
+        if not card:
+            print "Adding card"
+            etag = hashlib.sha1()
+            etag.update(uuid)
+            db.session.add(Cards(uuid=uuid, resources='', _etag=etag.hexdigest()))
+            db.session.commit()
 
-      if not card:
-         app.data.driver.db['cards'].insert({ 'uuid': uuid, 'resources': '' })
 
 def before_insert_users(items):
-   for i in range(len(items)):
-      items[i]['password'] = bcrypt.hashpw(items[i]['password'], bcrypt.gensalt());
+    for i in range(len(items)):
+        items[i]['password'] = bcrypt.hashpw(items[i]['password'], bcrypt.gensalt())
 
 def before_update_users(updates, originals):
-   if 'password' in updates:
-      updates['password'] = bcrypt.hashpw(updates['password'], bcrypt.gensalt());
+    if 'password' in updates:
+        updates['password'] = bcrypt.hashpw(updates['password'], bcrypt.gensalt())
 
-app = Eve(settings=settings)
+app = Eve(validator=ValidatorSQL, data=SQL)
+
+db = app.data.driver
+Base.metadata.bind = db.engine
+db.Model = Base
+db.create_all()
 
 @app.route('/')
 def root():

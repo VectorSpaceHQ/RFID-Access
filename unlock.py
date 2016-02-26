@@ -13,13 +13,13 @@ def isAllowed(resourceName, uuid):
 
    if r.status_code == STATUS_OK:
       resource = r.json()
-      r = requests.get('%s/cards/%s' % (apiUrl, uuid));
+      r = requests.get('%s/cards/uuid-%s' % (apiUrl, uuid));
 
       if r.status_code == STATUS_OK:
          card = r.json()
-
+         
          for id in card['resources'].split(','):
-            if id == resource['_id']:
+            if str(id) == str(resource['_id']):
                allowed = True
                break
 
