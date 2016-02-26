@@ -4,11 +4,16 @@ import os
 import hashlib
 
 from eve import Eve
+from eve.auth import BasicAuth
 from flask import redirect
 from werkzeug.wsgi import SharedDataMiddleware
 from eve_sqlalchemy import SQL
 from eve_sqlalchemy.validation import ValidatorSQL
 from tables import Users, Resources, Cards, Base
+
+class MyBasicAuth(BasicAuth):
+    def check_auth(self, username, password, allowed_roles, resource, method):
+        return username == 'admin' and password == 'secret'
 
 def post_get_callback(resource, request, payload):
 
@@ -35,7 +40,7 @@ def before_update_users(updates, originals):
     if 'password' in updates:
         updates['password'] = bcrypt.hashpw(updates['password'], bcrypt.gensalt())
 
-app = Eve(validator=ValidatorSQL, data=SQL)
+app = Eve(validator=ValidatorSQL, data=SQL, auth=MyBasicAuth)
 
 db = app.data.driver
 Base.metadata.bind = db.engine
