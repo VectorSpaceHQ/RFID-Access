@@ -1,0 +1,8 @@
+TODO Items
+-------------
+ * Remove password from user repsonse
+ * Save auth data in cookies or session storage
+ * Actually authenticate against user information
+ * Use tokens instead of passing password
+ * Improve UI
+ * Add logging
