@@ -2,6 +2,7 @@ import re
 import bcrypt
 import os
 import hashlib
+import datetime
 
 from eve import Eve
 from eve.auth import BasicAuth
@@ -48,6 +49,16 @@ db = app.data.driver
 Base.metadata.bind = db.engine
 db.Model = Base
 db.create_all()
+
+if not db.session.query(Users).count():
+    hash = hashlib.sha1()
+    hash.update(datetime.datetime.now().isoformat())
+    etag = hash.hexdigest()
+
+    password = bcrypt.hashpw('password', bcrypt.gensalt())
+
+    db.session.add(Users(username='user', password=password, admin=True, _etag=etag))
+    db.session.commit()
 
 @app.route('/')
 def root():
