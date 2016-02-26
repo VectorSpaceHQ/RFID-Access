@@ -14,7 +14,7 @@
         <th>Remove</th>
     </tr>
     <tr ng-repeat="card in vm.cards">
-        <td>{{ card.uuid }}</td>
+        <td>{{ card.uuid.substring(5) }}</td>
         <td>{{ card.member }}</td>
         <td>
             <div ng-repeat="resource in card.resources">
