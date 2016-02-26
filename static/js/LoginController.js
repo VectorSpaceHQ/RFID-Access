@@ -5,10 +5,12 @@
         .module('app')
         .controller('LoginController', LoginController);
 
-    LoginController.$inject = ['AuthService'];
+    LoginController.$inject = ['$location', 'AuthService'];
 
-    function LoginController(AuthService) {
+    function LoginController($location, AuthService) {
         var vm = this;
+
+        AuthService.clearCredentials();
 
         vm.username = '';
         vm.password = '';
@@ -18,9 +20,11 @@
 
             loginReq.$promise.then(
                 function () {
+                    AuthService.saveCredentials(vm.username, vm.password);
+                    $location.path('/');
                 },
                 function () {
-                    alert('Login failed. Incorrect username or password');
+                    alert('Login failed. Incorrect username or password.');
                 }
             );
         }

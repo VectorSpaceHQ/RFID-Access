@@ -4,8 +4,11 @@ angular.module('app', ['ngRoute', 'ngResource'])
     runApp.$inject = ['$rootScope', '$location'];
 
     function runApp($rootScope, $location) {
+
+        $rootScope.globals = {};
+
         $rootScope.$on('$locationChangeStart', function () {
-            if ($location.path() != '/login') {
+            if ($location.path() != '/login' && !$rootScope.globals.currentUser) {
                 $location.path('/login');
             }
         })

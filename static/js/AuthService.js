@@ -5,16 +5,17 @@
         .module('app')
         .factory('AuthService', AuthService);
 
-    AuthService.$inject = ['$resource', '$location', 'Base64'];
+    AuthService.$inject = ['$resource', '$location', '$http', '$rootScope', 'Base64'];
 
-    function AuthService($resource, $location, Base64) {
+    function AuthService($resource, $location, $http, $rootScope, Base64) {
 
         var url = '//' + $location.host() + ':' + $location.port() + '/api/users/:userId';
 
         return {
-            loginUser: loginUser,
+            loginUser:          loginUser,
+            saveCredentials:    saveCredentials,
+            clearCredentials:   clearCredentials
         };
-
 
         function loginUser (username, password) {
             var authData = Base64.encode(username + ':' + password);
@@ -32,6 +33,24 @@
             );
 
             return login.get();
+        }
+
+        function saveCredentials(username, password) {
+            var authData = Base64.encode(username + ':' + password);
+
+            $http.defaults.headers.common['Authorization'] = 'Basic ' + authData;
+
+            $rootScope.globals = {
+                currentUser: {
+                    username: username,
+                    autData: authData
+                }
+            };
+        }
+
+        function clearCredentials() {
+            $http.defaults.headers.common['Authorization'] = 'Basic ';
+            $rootScope.globals = {};
         }
     }
 
