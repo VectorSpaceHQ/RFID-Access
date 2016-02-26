@@ -23,9 +23,8 @@ def post_get_callback(resource, request, payload):
 
         if not card:
             print "Adding card"
-            etag = hashlib.sha1()
-            etag.update(uuid)
-            db.session.add(Cards(uuid=uuid, resources='', _etag=etag.hexdigest()))
+            etag = hashlib.sha1().update(uuid).hexdigest()
+            db.session.add(Cards(uuid=uuid, resources='', _etag=etag))
             db.session.commit()
 
 
