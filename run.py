@@ -26,7 +26,9 @@ def post_get_callback(resource, request, payload):
         card = db.session.query(Cards).filter(Cards.uuid == uuid).first()
 
         if not card:
-            etag = hashlib.sha1().update(uuid).hexdigest()
+            hash = hashlib.sha1()
+            hash.update(uuid)
+            etag = hash.hexdigest()
 
             db.session.add(Cards(uuid=uuid, resources='', _etag=etag))
             db.session.commit()
