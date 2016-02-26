@@ -6,14 +6,15 @@ registerSchema('users')(Users)
 registerSchema('resources')(Resources)
 registerSchema('cards')(Cards)
 
-SQLALCHEMY_DATABASE_URI = 'sqlite:////' + os.path.join(os.path.dirname(__file__), 'rfid.db')
+SQLALCHEMY_DATABASE_URI         = 'sqlite:////' + os.path.join(os.path.dirname(__file__), 'rfid.db')
+SQLALCHEMY_ECHO                 = False
+SQLALCHEMY_RECORD_QUERIES       = False
+SQLALCHEMY_TRACK_MODIFICATIONS  = False
 
-SQLALCHEMY_ECHO = True
-SQLALCHEMY_RECORD_QUERIES = True
-RESOURCE_METHODS = ['GET', 'POST']
-ITEM_METHODS = ['GET', 'PATCH', 'PUT', 'DELETE']
-CACHE_CONTROL = 'no-cache'
-URL_PREFIX = 'api'
+RESOURCE_METHODS                = ['GET', 'POST']
+ITEM_METHODS                    = ['GET', 'PATCH', 'PUT', 'DELETE']
+CACHE_CONTROL                   = 'no-cache'
+URL_PREFIX                      = 'api'
 
 DEBUG = True
 
