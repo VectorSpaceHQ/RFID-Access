@@ -25,6 +25,10 @@ DOMAIN = {
     'resources':    Resources._eve_schema['resources'],
     'cards':        Cards._eve_schema['cards']
 }
+DOMAIN['users'].update({
+    'public_methods': [''],
+    'public_item_methods': ['']
+})
 
 DOMAIN['resources'].update({
     'additional_lookup': {

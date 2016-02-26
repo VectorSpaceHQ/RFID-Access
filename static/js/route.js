@@ -2,7 +2,12 @@ angular.module('app')
     .config(['$routeProvider', function($routeProvider) {
         $routeProvider
             .when('/', {
-                templateUrl: 'views/home.html'
+                templateUrl:    'views/home.html'
+            })
+            .when('/login', {
+                templateUrl:    'views/login.html',
+                controller:     'LoginController',
+                controllerAs:   'vm'
             })
             .when('/users', {
                 templateUrl:    'views/users.html',
