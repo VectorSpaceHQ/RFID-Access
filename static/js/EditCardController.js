@@ -53,7 +53,7 @@
                     vm.uuid = getCard.uuid;
                     vm.member = getCard.member;
 
-                    loadResources(getCard.resources.split(','));
+                    loadResources(getCard.resources);
                 }
             );
         }
