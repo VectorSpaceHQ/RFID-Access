@@ -3,7 +3,6 @@ TODO Items
  * Remove password from user repsonse
  * Save auth data in cookies or session storage
  * Form validation
- * Clear credentials on 401
  * Use tokens instead of passing password
  * Improve UI
  * Add logging
