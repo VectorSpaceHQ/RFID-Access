@@ -3,6 +3,5 @@ TODO Items
  * Form validation
  * Add logging
  * Improve UI
- * Add Logout
  * Remove password from user repsonse
  * Use tokens instead of passing password

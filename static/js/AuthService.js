@@ -22,7 +22,8 @@
         return {
             loginUser:          loginUser,
             saveCredentials:    saveCredentials,
-            clearCredentials:   clearCredentials
+            clearCredentials:   clearCredentials,
+            isLoggedIn:         isLoggedIn,
         };
 
         function loginUser (username, password) {
@@ -63,6 +64,10 @@
             $http.defaults.headers.common['Authorization'] = 'Basic ';
             $rootScope.globals = {};
             $cookies.remove('globals');
+        }
+
+        function isLoggedIn() {
+            return !!$rootScope.globals.currentUser;
         }
     }
 
