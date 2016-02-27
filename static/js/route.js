@@ -53,5 +53,10 @@ angular.module('app')
                 templateUrl:    'views/editcard.html',
                 controller:     'EditCardController',
                 controllerAs:   'vm'
+            })
+            .when('/logs', {
+                templateUrl:    'views/logs.html',
+                controller:     'LogController',
+                controllerAs:   'vm'
             });
     }]);
