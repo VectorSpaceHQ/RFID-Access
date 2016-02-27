@@ -1,8 +1,8 @@
 TODO Items
 -------------
- * Remove password from user repsonse
- * Update cards on resource remove
  * Improve UI
+ * Update cards on resource remove
  * User change own info
+ * Remove password from user repsonse
  * Add filters to lists
  * Use tokens instead of passing password
