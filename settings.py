@@ -1,10 +1,11 @@
 import os
 from eve_sqlalchemy.decorators import registerSchema
-from tables import Users, Resources, Cards
+from tables import Users, Resources, Cards, Logs
 
 registerSchema('users')(Users)
 registerSchema('resources')(Resources)
 registerSchema('cards')(Cards)
+registerSchema('logs')(Logs)
 
 SQLALCHEMY_DATABASE_URI         = 'sqlite:////' + os.path.join(os.path.dirname(__file__), 'rfid.db')
 SQLALCHEMY_ECHO                 = False
@@ -23,8 +24,10 @@ DEBUG = True
 DOMAIN = {
     'users':        Users._eve_schema['users'],
     'resources':    Resources._eve_schema['resources'],
-    'cards':        Cards._eve_schema['cards']
+    'cards':        Cards._eve_schema['cards'],
+    'logs':         Logs._eve_schema['logs']
 }
+
 DOMAIN['users'].update({
     'public_methods': [''],
     'public_item_methods': [''],

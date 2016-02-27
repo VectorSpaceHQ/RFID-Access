@@ -32,7 +32,7 @@ def post_get_callback(resource, request, payload):
             hash.update(uuid)
             etag = hash.hexdigest()
 
-            db.session.add(Cards(uuid=uuid, resources='', _etag=etag))
+            db.session.add(Cards(uuid=uuid, member='', resources='', _etag=etag))
             db.session.commit()
 
 
