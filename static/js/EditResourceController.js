@@ -10,9 +10,12 @@
     function EditResourceController($routeParams, $location, ResourceService) {
         var vm = this;
 
+        vm.saving = false;
+
         loadResource();
 
         vm.saveResource = function () {
+            vm.saving = true;
 
             var saveResource = ResourceService.saveResource(vm.id, vm.etag, { name: vm.name });
 
@@ -24,6 +27,7 @@
                 },
 
                 function () {
+                    vm.saving = false;
                     alert('Unable to save changes.');
                     loadResource();
                 }

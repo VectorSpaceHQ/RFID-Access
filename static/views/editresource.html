@@ -5,10 +5,14 @@
     <li><a href="#/resources">Resources</a></li>
 </ul>
 <hr>
-<p>
-    <label>Name</label><br>
-    <input ng-model="vm.name">
-</p>
-<p>
-    <a href="" ng-click="vm.saveResource()">Save</a> <a href="#/resources">Cancel</a>
-</p>
+<form name="editForm" ng-submit="vm.saveResource()">
+    <p>
+        <label for="name">Name</label><br>
+        <input name="name" id="name" ng-model="vm.name" ng-pattern="/^[\w ]+$/" required>
+        <span ng-show="editForm.name.$invalid">Invalid resource name</span>
+    </p>
+    <p>
+        <button type="submit" ng-disabled="editForm.$invalid || vm.saving">Save</button>
+        <a href="#/resources">Cancel</a>
+    </p>
+</form>
