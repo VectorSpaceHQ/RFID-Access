@@ -17,17 +17,20 @@ def isAllowed(resourceName, uuid):
         'reason': ''
     }
 
-    r = requests.get('%s/resources/%s' % (apiUrl, resourceName));
+    r = requests.get('%s/cards/uuid-%s' % (apiUrl, uuid));
 
     if r.status_code == STATUS_OK:
-        resource = r.json()
-        r = requests.get('%s/cards/uuid-%s' % (apiUrl, uuid));
+
+        card = r.json()
+
+        if 'member' in card:
+            log.update({ 'member': card['member'] })
+
+        r = requests.get('%s/resources/%s' % (apiUrl, resourceName));
 
         if r.status_code == STATUS_OK:
-            card = r.json()
 
-            if 'member' in card:
-                log.update({ 'member': card['member'] })
+            resource = r.json()
 
             for id in card['resources'].split(','):
                 if str(id) == str(resource['_id']):
@@ -37,9 +40,9 @@ def isAllowed(resourceName, uuid):
             if not allowed:
                 log.update({ 'reason': 'Card Unauthorized' })
         else:
-            log.update({ 'reason': 'Card Not Found' })
+            log.update({ 'reason': 'Resource Not Found' })
     else:
-        log.update({ 'reason': 'Resource Not Found' })
+        log.update({ 'reason': 'Card Not Found' })
 
     log.update({ 'granted' : allowed })
 
