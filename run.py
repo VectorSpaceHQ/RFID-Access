@@ -56,10 +56,18 @@ if not db.session.query(Users).count():
     hash.update(datetime.datetime.now().isoformat())
     etag = hash.hexdigest()
 
-    password = bcrypt.hashpw('password', bcrypt.gensalt())
+    hash.update(etag)
+    password = hash.hexdigest()
 
-    db.session.add(Users(username='user', password=password, admin=True, _etag=etag))
+    print "No users found in database"
+    print "Creating root user with password %s" % password
+    print "You should change the root password NOW!"
+
+    password = bcrypt.hashpw(password, bcrypt.gensalt())
+
+    db.session.add(Users(username='root', password=password, admin=True, _etag=etag))
     db.session.commit()
+
 
 @app.route('/')
 def root():
