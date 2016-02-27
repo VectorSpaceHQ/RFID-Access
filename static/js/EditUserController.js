@@ -10,9 +10,13 @@
     function EditUserController($routeParams, $location, UserService) {
         var vm = this;
 
+        vm.saving = false;
+
         loadUser();
 
         vm.saveUser = function () {
+
+            vm.saving = true;
 
             var user = {
                 username:   vm.username,
@@ -31,6 +35,7 @@
                 function () {
                     alert('Unable to save changes.');
                     loadUser();
+                    vm.saving = false;
                 }
             );
         };

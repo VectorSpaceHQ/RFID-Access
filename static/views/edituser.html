@@ -5,14 +5,16 @@
     <li><a href="#/users">Users</a></li>
 </ul>
 <hr>
-<p>
-    <label>Username</label><br>
-    <input ng-model="vm.username">
-</p>
-<p>
-    <input type="checkbox" ng-model="vm.isAdmin">
-    <label>Administrator</label>
-</p>
-<p>
-    <a href="" ng-click="vm.saveUser()">Save</a> <a href="#/users">Cancel</a>
-</p>
+<form name="editForm" ng-submit="vm.saveUser()">
+    <p>
+        <label for="username">Username</label><br>
+        <input id="username" ng-model="vm.username" required>
+    </p>
+    <p>
+        <input id="admin" type="checkbox" ng-model="vm.isAdmin">
+        <label for="admin">Administrator</label>
+    </p>
+    <p>
+        <button type="submit" ng-disabled="editForm.$pristine || editForm.$invalid || vm.saving">Save</button> <a href="#/users">Cancel</a>
+    </p>
+</form>
