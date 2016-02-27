@@ -5,22 +5,27 @@
     <li><a href="#/users">Users</a></li>
 </ul>
 <hr>
-<p>
-    <label>Username</label><br>
-    <input ng-model="vm.username">
-</p>
-<p>
-    <label>Password</label><br>
-    <input type="password" ng-model="vm.password">
-</p>
-<p>
-    <label>Confirm Password</label><br>
-    <input type="password" ng-model="vm.confirmPassword">
-</p>
-<p>
-    <input type="checkbox" ng-model="vm.isAdmin">
-    <label>Administrator</label>
-</p>
-<p>
-    <a href="" ng-click="vm.addUser()">Add</a> <a href="#/users">Cancel</a>
-</p>
+<form name="addForm" ng-submit="vm.addUser()">
+    <p>
+        <label for="username">Username</label><br>
+        <input name="username" id="username" ng-model="vm.username" ng-pattern="/^[\w ]+$/" required>
+        <span ng-show="addForm.username.$dirty && addForm.username.$invalid">Invalid username!</span>
+    </p>
+    <p>
+        <label for="password">Password</label><br>
+        <input name="password" id="password" type="password" ng-model="vm.password" required>
+    </p>
+    <p>
+        <label for="confirmPassword">Confirm Password</label><br>
+        <input name="confirmPassword" id="confirmPassword" type="password" ng-model="vm.confirmPassword" required>
+        <span ng-show="addForm.confirmPassword.$dirty && (vm.password != vm.confirmPassword)">Passwords don't match!</span>
+    </p>
+    <p>
+        <input id="admin" type="checkbox" ng-model="vm.isAdmin">
+        <label for="admin">Administrator</label>
+    </p>
+    <p>
+        <button type="submit" ng-disabled="addForm.$invalid || vm.adding || vm.password != vm.confirmPassword">Add</button>
+        <a href="#/users">Cancel</a>
+    </p>
+</form>

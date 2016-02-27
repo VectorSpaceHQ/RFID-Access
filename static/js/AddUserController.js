@@ -14,7 +14,11 @@
         vm.password = '';
         vm.isAdmin = false;
 
+        vm.adding = false;
+
         vm.addUser = function addUser() {
+
+            vm.adding = true;
 
             var add = UserService.addUser({
                 username:   vm.username,
@@ -30,6 +34,7 @@
                 },
 
                 function () {
+                    vm.adding = false;
                     alert('Error adding user');
                 }
             )
