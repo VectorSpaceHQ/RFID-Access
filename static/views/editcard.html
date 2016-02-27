@@ -5,22 +5,24 @@
     <li><a href="#/cards">Cards</a></li>
 </ul>
 <hr>
-
-<p>
-    <label>UUID</label><br>
-    <input ng-value="vm.uuid.substring(5)" readonly><br>
-</p>
-<p>
-    <label>Member</label><br>
-    <input ng-model="vm.member"><br>
-</p>
-<p>
-    <p>Authorized Resources</p>
-    <div ng-repeat="resource in vm.resources">
-        <input type="checkbox" ng-model="resource.isAuthorized">
-        <label>{{ resource.name }}</label>
-    </div>
-</p>
-<p>
-    <a href="" ng-click="vm.saveCard()">Save</a> <a href="#/cards">Cancel</a>
-</p>
+<form ng-submit="vm.saveCard()">
+    <p>
+        <label for="uuid">UUID</label><br>
+        <input id="uuid" ng-value="vm.uuid.substring(5)" readonly><br>
+    </p>
+    <p>
+        <label for="member">Member</label><br>
+        <input name="member" id="member" ng-model="vm.member"><br>
+    </p>
+    <p>
+        <span>Authorized Resources</span>
+        <div ng-repeat="resource in vm.resources">
+            <input id="{{ $id }}" type="checkbox" ng-model="resource.isAuthorized">
+            <label for="{{ $id }}">{{ resource.name }}</label>
+        </div>
+    </p>
+    <p>
+        <button ng-disabled="vm.saving">Save</button>
+        <a href="#/cards">Cancel</a>
+    </p>
+</form>

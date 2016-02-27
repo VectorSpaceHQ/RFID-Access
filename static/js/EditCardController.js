@@ -10,9 +10,12 @@
     function EditCardController($routeParams, $location, CardService, ResourceService) {
         var vm = this;
 
+        vm.saving = false;
+
         loadCard();
 
         vm.saveCard = function () {
+            vm.saving = true;
 
             var resources = [];
 
@@ -37,6 +40,7 @@
                 },
 
                 function () {
+                    vm.saving = false;
                     alert('Unable to save changes.');
                     loadCard();
                 }
