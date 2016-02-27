@@ -27,7 +27,11 @@ DOMAIN = {
 }
 DOMAIN['users'].update({
     'public_methods': [''],
-    'public_item_methods': ['']
+    'public_item_methods': [''],
+    'additional_lookup': {
+        'url':      'regex("[\w]+")',
+        'field':    'username'
+    }
 })
 
 DOMAIN['resources'].update({

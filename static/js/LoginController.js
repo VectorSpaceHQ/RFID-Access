@@ -20,7 +20,7 @@
 
             loginReq.$promise.then(
                 function () {
-                    AuthService.saveCredentials(vm.username, vm.password);
+                    AuthService.saveCredentials(vm.username, vm.password, loginReq.admin);
                     $location.path('/');
                 },
                 function () {

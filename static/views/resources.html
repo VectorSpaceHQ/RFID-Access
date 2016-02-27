@@ -4,17 +4,17 @@
     <li><a href="#/">Home</a></li>
 </ul>
 <hr>
-<p><a href="#/addresource/">Add new resource</a></p>
+<p ng-show="vm.isAdmin()"><a href="#/addresource/">Add new resource</a></p>
 
 <table border="1" ng-show="vm.resources.length">
     <tr>
         <th>Name</th>
-        <th>Edit</th>
-        <th>Remove</th>
+        <th ng-show="vm.isAdmin()">Edit</th>
+        <th ng-show="vm.isAdmin()">Remove</th>
     </tr>
     <tr ng-repeat="resource in vm.resources">
         <td>{{ resource.name }}</td>
-        <td><a ng-href="#/editresource/{{ resource._id }}">Edit</a></td>
-        <td><a href="" ng-click='vm.removeResource(resource._id, resource._etag)'>Remove</a></td>
+        <td ng-show="vm.isAdmin()"><a ng-href="#/editresource/{{ resource._id }}">Edit</a></td>
+        <td ng-show="vm.isAdmin()"><a href="" ng-click='vm.removeResource(resource._id, resource._etag)'>Remove</a></td>
     </tr>
 </table>

@@ -24,6 +24,7 @@
             saveCredentials:    saveCredentials,
             clearCredentials:   clearCredentials,
             isLoggedIn:         isLoggedIn,
+            isAdmin:            isAdmin
         };
 
         function loginUser (username, password) {
@@ -41,10 +42,10 @@
                 }
             );
 
-            return login.get();
+            return login.get({ userId: username });
         }
 
-        function saveCredentials(username, password) {
+        function saveCredentials(username, password, isAdmin) {
             var authData = Base64.encode(username + ':' + password);
 
             $http.defaults.headers.common['Authorization'] = 'Basic ' + authData;
@@ -52,7 +53,8 @@
             $rootScope.globals = {
                 currentUser: {
                     username: username,
-                    authData: authData
+                    authData: authData,
+                    isAdmin:  isAdmin
                 }
             };
 
@@ -68,6 +70,13 @@
 
         function isLoggedIn() {
             return !!$rootScope.globals.currentUser;
+        }
+
+        function isAdmin() {
+            if ($rootScope.globals.currentUser) {
+                return $rootScope.globals.currentUser.isAdmin;
+            }
+            return false;
         }
     }
 

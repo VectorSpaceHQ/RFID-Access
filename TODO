@@ -1,6 +1,7 @@
 TODO Items
 -------------
  * Form validation
+ * User change own password
  * Add logging
  * Improve UI
  * Remove password from user repsonse

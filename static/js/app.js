@@ -9,8 +9,6 @@ function runApp($rootScope, $location, $cookies, $http) {
 
     $rootScope.globals = $cookies.getObject('globals') || {};
 
-    console.log($rootScope.globals);
-
     if ($rootScope.globals.currentUser) {
         $http.defaults.headers.common['Authorization'] = 'Basic ' + $rootScope.globals.currentUser.authData;
     }

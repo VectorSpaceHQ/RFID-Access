@@ -5,9 +5,9 @@
         .module('app')
         .controller('CardController', CardController);
 
-    CardController.$inject = ['CardService', 'ResourceService'];
+    CardController.$inject = ['CardService', 'ResourceService', 'AuthService'];
 
-    function CardController(CardService, ResourceService) {
+    function CardController(CardService, ResourceService, AuthService) {
         var vm = this;
 
         vm.cards = [];
@@ -24,6 +24,10 @@
                     loadCards();
                 }
             )
+        };
+
+        vm.isAdmin = function isAdmin() {
+            return AuthService.isAdmin();
         };
 
         function loadCards() {

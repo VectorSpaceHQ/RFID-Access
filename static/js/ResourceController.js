@@ -5,9 +5,9 @@
         .module('app')
         .controller('ResourceController', ResourceController);
 
-    ResourceController.$inject = ['ResourceService'];
+    ResourceController.$inject = ['ResourceService', 'AuthService'];
 
-    function ResourceController(ResourceService) {
+    function ResourceController(ResourceService, AuthService) {
         var vm = this;
 
         vm.resources = [];
@@ -22,7 +22,11 @@
                     loadResources();
                 }
             )
-        }
+        };
+
+        vm.isAdmin = function isAdmin() {
+            return AuthService.isAdmin();
+        };
 
         function loadResources() {
             var getResources = ResourceService.getResources();

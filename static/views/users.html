@@ -4,21 +4,21 @@
     <li><a href="#/">Home</a></li>
 </ul>
 <hr>
-<p><a href="#/adduser/">Add new user</a></p>
+<p ng-show="vm.isAdmin()"><a href="#/adduser/">Add new user</a></p>
 
 <table border="1" ng-show="vm.users.length">
     <tr>
         <th>Username</th>
         <th>Admin</th>
-        <th>Change Password</th>
-        <th>Edit</th>
-        <th>Remove</th>
+        <th ng-show="vm.isAdmin()">Change Password</th>
+        <th ng-show="vm.isAdmin()">Edit</th>
+        <th ng-show="vm.isAdmin()">Remove</th>
     </tr>
     <tr ng-repeat="user in vm.users">
         <td>{{ user.username }}</td>
         <td>{{ user.admin ? 'Yes' : 'No' }}</td>
-        <td><a ng-href="#/changeuserpassword/{{ user._id }}">Change Password</a></td>
-        <td><a ng-href="#/edituser/{{ user._id }}">Edit</a></td>
-        <td><a href="" ng-click='vm.removeUser(user._id, user._etag)'>Remove</a></td>
+        <td ng-show="vm.isAdmin()"><a ng-href="#/changeuserpassword/{{ user._id }}">Change Password</a></td>
+        <td ng-show="vm.isAdmin()"><a ng-href="#/edituser/{{ user._id }}">Edit</a></td>
+        <td ng-show="vm.isAdmin()"><a href="" ng-click='vm.removeUser(user._id, user._etag)'>Remove</a></td>
     </tr>
 </table>
