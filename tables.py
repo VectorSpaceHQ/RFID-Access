@@ -43,3 +43,12 @@ class Cards(CommonColumns):
     member      = Column(String(256))
     resources   = Column(String(256))
 
+class Logs(CommonColumns):
+    __tablename__ = 'logs'
+
+    id          = Column(Integer, primary_key=True, autoincrement=True)
+    uuid        = Column(String(256))
+    member      = Column(String(256))
+    resource    = Column(String(256))
+    granted     = Column(Boolean)
+    reason      = Column(String(256))

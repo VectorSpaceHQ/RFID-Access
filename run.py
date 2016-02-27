@@ -10,7 +10,7 @@ from flask import redirect
 from werkzeug.wsgi import SharedDataMiddleware
 from eve_sqlalchemy import SQL
 from eve_sqlalchemy.validation import ValidatorSQL
-from tables import Users, Resources, Cards, Base
+from tables import Users, Resources, Cards, Logs, Base
 
 class MyBasicAuth(BasicAuth):
     def check_auth(self, username, password, allowed_roles, resource, method):
