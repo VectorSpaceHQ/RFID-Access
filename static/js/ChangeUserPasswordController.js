@@ -10,9 +10,13 @@
     function ChangeUserPasswordController($routeParams, UserService) {
         var vm = this;
 
+        vm.saving = false;
+
         loadUser();
 
         vm.changePassword = function () {
+            vm.saving = true;
+
             var user = {
                 password: vm.password
             };
@@ -27,6 +31,7 @@
                 },
 
                 function () {
+                    vm.saving = false;
                     alert('Unable to change password.');
                     loadUser();
                 }
