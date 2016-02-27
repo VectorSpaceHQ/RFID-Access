@@ -2,6 +2,7 @@
 
 import requests
 import sys
+from auth_settings import USERNAME, PASSWORD
 
 apiUrl = 'http://localhost:8080/api'
 STATUS_OK = 200
@@ -42,7 +43,7 @@ def isAllowed(resourceName, uuid):
 
     log.update({ 'granted' : allowed })
 
-    r = requests.post('%s/logs' % apiUrl, json = log, auth = ('user', 'password'))
+    r = requests.post('%s/logs' % apiUrl, json = log, auth = (USERNAME, PASSWORD))
 
     return allowed
 
