@@ -1,9 +1,9 @@
 TODO Items
 -------------
- * Remove password from user repsonse
  * Save auth data in cookies or session storage
  * Form validation
- * Use tokens instead of passing password
- * Improve UI
  * Add logging
+ * Improve UI
  * Add Logout
+ * Remove password from user repsonse
+ * Use tokens instead of passing password
