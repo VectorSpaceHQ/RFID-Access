@@ -12,7 +12,10 @@
 
         vm.name = '';
 
+        vm.adding = false;
+
         vm.addResource = function addUser() {
+            vm.adding = true;
 
             var add = ResourceService.addResource({ name: vm.name });
 
@@ -24,6 +27,7 @@
                 },
 
                 function () {
+                    vm.adding = false;
                     alert('Error adding resource');
                 }
             )
