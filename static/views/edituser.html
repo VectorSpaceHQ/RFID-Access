@@ -8,7 +8,8 @@
 <form name="editForm" ng-submit="vm.saveUser()">
     <p>
         <label for="username">Username</label><br>
-        <input id="username" ng-model="vm.username" required>
+        <input name="username" id="username" ng-model="vm.username" ng-pattern="/^[\w ]+$/" required>
+        <span ng-show="editForm.username.$invalid">Invalid username!</span>
     </p>
     <p>
         <input id="admin" type="checkbox" ng-model="vm.isAdmin">

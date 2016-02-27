@@ -29,14 +29,14 @@ DOMAIN['users'].update({
     'public_methods': [''],
     'public_item_methods': [''],
     'additional_lookup': {
-        'url':      'regex("[\w]+")',
+        'url':      'regex("[\w ]+")',
         'field':    'username'
     }
 })
 
 DOMAIN['resources'].update({
     'additional_lookup': {
-        'url':      'regex("[\w]+")',
+        'url':      'regex("[\w ]+")',
         'field':    'name'
     }
 })
