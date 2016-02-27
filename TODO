@@ -5,4 +5,6 @@ TODO Items
  * Add logging
  * Improve UI
  * Remove password from user repsonse
+ * Update cards on resource remove
+ * Add filters to lists
  * Use tokens instead of passing password
