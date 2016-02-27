@@ -37,8 +37,8 @@ def post_get_callback(resource, request, payload):
 
 
 def before_insert_users(items):
-    for i in range(len(items)):
-        items[i]['password'] = bcrypt.hashpw(items[i]['password'], bcrypt.gensalt())
+    for item in items:
+        item["password"] = bcrypt.hashpw(item["password"], bcrypt.gensalt())
 
 def before_update_users(updates, originals):
     if 'password' in updates:
