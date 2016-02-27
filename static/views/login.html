@@ -1,15 +1,15 @@
 <h2>Login</h2>
-<form ng-submit="vm.login()">
+<form name="loginForm" ng-submit="vm.login()">
     <p>
         <label for="username">Username</label><br>
-        <input id="username" ng-model="vm.username">
+        <input id="username" ng-model="vm.username" required>
     </p>
     <p>
         <label for="password">Password</label><br>
-        <input id="password" type="password" ng-model="vm.password">
+        <input id="password" type="password" ng-model="vm.password" required>
     </p>
     <p>
-        <button type="submit">Login</button>
+        <button type="submit" ng-disabled="loginForm.$invalid || vm.loading">Login</button>
     </p>
 
 </form>

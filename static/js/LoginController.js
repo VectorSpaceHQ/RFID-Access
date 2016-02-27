@@ -14,8 +14,10 @@
 
         vm.username = '';
         vm.password = '';
+        vm.loading = false;
 
         vm.login = function() {
+            vm.loading = true
             var loginReq = AuthService.loginUser(vm.username, vm.password);
 
             loginReq.$promise.then(
@@ -25,6 +27,7 @@
                 },
                 function () {
                     alert('Login failed. Incorrect username or password.');
+                    vm.loading = false;
                 }
             );
         }
