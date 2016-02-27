@@ -1,13 +1,19 @@
 angular
-    .module('app', ['ngRoute', 'ngResource'])
+    .module('app', ['ngRoute', 'ngResource', 'ngCookies'])
     .run(runApp)
     .config(configApp);
 
-runApp.$inject = ['$rootScope', '$location'];
+runApp.$inject = ['$rootScope', '$location', '$cookies', '$http'];
 
-function runApp($rootScope, $location) {
+function runApp($rootScope, $location, $cookies, $http) {
 
-    $rootScope.globals = {};
+    $rootScope.globals = $cookies.getObject('globals') || {};
+
+    console.log($rootScope.globals);
+
+    if ($rootScope.globals.currentUser) {
+        $http.defaults.headers.common['Authorization'] = 'Basic ' + $rootScope.globals.currentUser.authData;
+    }
 
     $rootScope.$on('$locationChangeStart', function () {
         if ($location.path() != '/login' && !$rootScope.globals.currentUser) {

@@ -1,6 +1,5 @@
 TODO Items
 -------------
- * Save auth data in cookies or session storage
  * Form validation
  * Add logging
  * Improve UI

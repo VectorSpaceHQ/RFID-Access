@@ -5,9 +5,17 @@
         .module('app')
         .factory('AuthService', AuthService);
 
-    AuthService.$inject = ['$resource', '$location', '$http', '$rootScope', 'Base64'];
+    AuthService
+        .$inject = [
+            '$resource',
+            '$location',
+            '$http',
+            '$rootScope',
+            '$cookies',
+            'Base64'
+        ];
 
-    function AuthService($resource, $location, $http, $rootScope, Base64) {
+    function AuthService($resource, $location, $http, $rootScope, $cookies, Base64) {
 
         var url = '//' + $location.host() + ':' + $location.port() + '/api/users/:userId';
 
@@ -43,14 +51,18 @@
             $rootScope.globals = {
                 currentUser: {
                     username: username,
-                    autData: authData
+                    authData: authData
                 }
             };
+
+            $cookies.putObject('globals', $rootScope.globals);
+
         }
 
         function clearCredentials() {
             $http.defaults.headers.common['Authorization'] = 'Basic ';
             $rootScope.globals = {};
+            $cookies.remove('globals');
         }
     }
 
