@@ -3,6 +3,7 @@ TODO Items
  * Replace alerts with dialogs
  * Add ability to save logs
  * Add ability to clear logs
+ * Make usernames and resoure names unique
  * Update cards on resource remove
  * User change own info
  * Remove password from user repsonse
