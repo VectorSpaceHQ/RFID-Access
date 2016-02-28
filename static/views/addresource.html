@@ -4,13 +4,11 @@
     <li>Add Resource</li>
 </ul>
 <form name="addForm" ng-submit="vm.addResource()">
-    <p>
+    <div class="form-group">
         <label for="name">Name</label><br>
-        <input name="name" id="name" ng-model="vm.name" ng-pattern="/^[\w ]+$/" required>
-        <span ng-show="addForm.name.$dirty && addForm.name.$invalid">Invalid resource name!</span>
-    </p>
-    <p>
-        <button type="submit" ng-disabled="addForm.$invalid || vm.adding">Add</button>
-        <a href="#/resources">Cancel</a>
-    </p>
+        <input name="name" id="name" ng-model="vm.name" class="form-control" ng-pattern="/^[\w ]+$/" required>
+        <div ng-show="addForm.name.$dirty && addForm.name.$invalid" class="alert-danger">Invalid resource name!</div>
+    </div>
+    <button type="submit" class="btn btn-default" ng-disabled="addForm.$invalid || vm.adding">Add</button>
+    <a href="#/resources">Cancel</a>
 </form>
