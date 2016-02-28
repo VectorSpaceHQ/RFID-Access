@@ -16,6 +16,10 @@
 
         loadResources();
 
+        vm.refresh = function refresh() {
+            loadResources();
+        };
+
         vm.removeCard = function removeCard(id, etag) {
             var removeCard = CardService.removeCard(id, etag);
 
@@ -49,17 +53,25 @@
 
             getCards.$promise.then(
                 function () {
+                    vm.loading = false;
+
                     var cards = getCards._items;
                     for (var i = 0; i < cards.length; i++) {
                         var resources = cards[i].resources.split(',');
                         cards[i].resources = resources;
                     }
                     vm.cards = cards;
+                },
+
+                function () {
+                    vm.loading = false;
                 }
             );
         }
 
         function loadResources() {
+            vm.loading = true;
+
             var getResources = ResourceService.getResources();
 
             getResources.$promise.then(
@@ -71,6 +83,10 @@
                     }
 
                     loadCards();
+                },
+
+                function () {
+                    vm.loading = false;
                 }
             );
         }
