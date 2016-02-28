@@ -5,9 +5,9 @@
         .module('app')
         .controller('AddUserController', AddUserController);
 
-    AddUserController.$inject = ['$location', 'UserService'];
+    AddUserController.$inject = ['$location', 'toastr', 'UserService'];
 
-    function AddUserController($location, UserService) {
+    function AddUserController($location, toastr, UserService) {
         var vm = this;
 
         vm.username = '';
@@ -29,16 +29,27 @@
             add.$promise.then(
 
                 function () {
-                    alert('User added successfully');
+                    toastr.success('User successfully added!');
                     $location.path('users');
                 },
 
-                function () {
+                function (rejection) {
                     vm.adding = false;
-                    alert('Error adding user');
+
+                    var message = 'Unable add new user at this time.';
+
+                    if (rejection.data && rejection.data._issues && rejection.data._issues.username)
+                    {
+                        var issue = rejection.data._issues.username;
+
+                        if (issue.indexOf('unique') != -1) {
+                            message = 'This username already exists. Change the username and try again.';
+                        }
+                    }
+
+                    toastr.error(message, 'Error Adding User');
                 }
             )
         };
     }
-
 })();
