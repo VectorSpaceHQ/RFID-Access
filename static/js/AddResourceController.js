@@ -5,9 +5,9 @@
         .module('app')
         .controller('AddResourceController', AddResourceController);
 
-    AddResourceController.$inject = ['$location', 'ResourceService', 'toastr'];
+    AddResourceController.$inject = ['$location', 'toastr','ResourceService'];
 
-    function AddResourceController($location, ResourceService, toastr) {
+    function AddResourceController($location, toastr, ResourceService) {
         var vm = this;
 
         vm.name = '';
@@ -22,13 +22,13 @@
             add.$promise.then(
 
                 function () {
-                    toastr.success('Resource added successfully!');
+                    toastr.success('Resource successfully added!');
                     $location.path('resources');
                 },
 
                 function (rejection) {
                     vm.adding = false;
-                    var message = 'Can\'t add new resource at this time.';
+                    var message = 'Unable add new resource at this time.';
 
                     if (rejection.data && rejection.data._issues && rejection.data._issues.name)
                     {
