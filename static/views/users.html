@@ -1,24 +1,34 @@
-<h2>Users</h2>
-<hr>
-<ul>
+<ul class="breadcrumb">
     <li><a href="#/">Home</a></li>
+    <li>Users</li>
 </ul>
-<hr>
-<p ng-show="vm.isAdmin()"><a href="#/adduser/">Add new user</a></p>
+<p ng-show="vm.isAdmin()">
+    <a href="#/adduser/">
+        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+        Add new user</a>
+</p>
 
-<table border="1" ng-show="vm.users.length">
+<table class="table" ng-show="vm.users.length">
     <tr>
         <th>Username</th>
         <th>Admin</th>
-        <th ng-show="vm.isAdmin()">Change Password</th>
-        <th ng-show="vm.isAdmin()">Edit</th>
-        <th ng-show="vm.isAdmin()">Remove</th>
+        <th ng-show="vm.isAdmin()"></th>
+        <th ng-show="vm.isAdmin()"></th>
+        <th ng-show="vm.isAdmin()"></th>
     </tr>
     <tr ng-repeat="user in vm.users">
         <td>{{ user.username }}</td>
         <td>{{ user.admin ? 'Yes' : 'No' }}</td>
         <td ng-show="vm.isAdmin()"><a ng-href="#/changeuserpassword/{{ user._id }}">Change Password</a></td>
-        <td ng-show="vm.isAdmin()"><a ng-href="#/edituser/{{ user._id }}">Edit</a></td>
-        <td ng-show="vm.isAdmin()"><a href="" ng-click='vm.removeUser(user._id, user._etag)'>Remove</a></td>
+        <td ng-show="vm.isAdmin()">
+            <a ng-href="#/edituser/{{ user._id }}"><span
+                class="glyphicon glyphicon-pencil"></span>
+                Edit</a>
+        </td>
+        <td ng-show="vm.isAdmin()">
+            <a href="" ng-click='vm.removeUser(user._id, user._etag)'><span
+                class="glyphicon glyphicon-remove"></span>
+                Remove</a>
+        </td>
     </tr>
 </table>
