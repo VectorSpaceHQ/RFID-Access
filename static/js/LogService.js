@@ -12,7 +12,7 @@
         var url = '//' + $location.host() + ':' + $location.port() + '/api/logs/:logId';
 
         return {
-            getLogs: getLogs,
+            getLogs: getLogs
         };
 
         function getLogs() {
