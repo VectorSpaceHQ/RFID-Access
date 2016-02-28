@@ -41,7 +41,7 @@
         vm.saveLogs = function saveLogs() {
             var csv = logsToCsv();
             var data = new Blob([csv], { type: 'text/csv;charset=utf-8' });
-            FileSaver.saveAs(data, 'hello.csv');
+            FileSaver.saveAs(data, 'rfid_logs.csv');
         };
 
         function loadLogs() {
