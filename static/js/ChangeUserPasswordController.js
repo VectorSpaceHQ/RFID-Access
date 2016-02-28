@@ -5,9 +5,9 @@
         .module('app')
         .controller('ChangeUserPasswordController', ChangeUserPasswordController);
 
-    ChangeUserPasswordController.$inject = ['$routeParams', 'UserService'];
+    ChangeUserPasswordController.$inject = ['$routeParams', '$location', 'toastr', 'UserService'];
 
-    function ChangeUserPasswordController($routeParams, UserService) {
+    function ChangeUserPasswordController($routeParams, $location, toastr, UserService) {
         var vm = this;
 
         vm.saving = false;
@@ -26,13 +26,23 @@
             saveUser.$promise.then(
 
                 function () {
-                    alert('Password changed.');
+                    toastr.success('Password changed!');
                     loadUser();
                 },
 
-                function () {
+                function (rejection) {
                     vm.saving = false;
-                    alert('Unable to change password.');
+
+                    var message = 'Unable to change password at this time.';
+
+                    if (rejection.status == 404) {
+                        message = 'This user no longer exists.';
+                    } else if (rejection.status == 412) {
+                        message = 'This user has changed since it was loaded.';
+                    }
+
+                    toastr.error(message, 'Error Changing Password');
+
                     loadUser();
                 }
             );
@@ -46,6 +56,16 @@
                     vm.id = getUser._id;
                     vm.etag = getUser._etag;
                     vm.username = getUser.username;
+                },
+
+                function (rejection) {
+                    var message = 'Unable to change password at this time.';
+                    if (rejection.status == 404) {
+                        message = 'This user no longer exists.';
+                    }
+                    toastr.error(message, 'Error Loading User');
+
+                    $location.path('users');
                 }
             );
         }
