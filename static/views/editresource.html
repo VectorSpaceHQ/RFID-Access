@@ -5,7 +5,7 @@
 </ul>
 <form name="editForm" ng-submit="vm.saveResource()">
     <div class="form-group">
-        <label for="name">Name</label><br>
+        <label for="name">Name</label>
         <input name="name" id="name" ng-model="vm.name" class="form-control" ng-pattern="/^[\w ]+$/" required>
         <div ng-show="editForm.name.$invalid" class="alert-danger">Invalid resource name</div>
     </div>

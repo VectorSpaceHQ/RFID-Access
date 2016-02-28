@@ -5,7 +5,7 @@
 </ul>
 <form name="addForm" ng-submit="vm.addResource()">
     <div class="form-group">
-        <label for="name">Name</label><br>
+        <label for="name">Name</label>
         <input name="name" id="name" ng-model="vm.name" class="form-control" ng-pattern="/^[\w ]+$/" required>
         <div ng-show="addForm.name.$dirty && addForm.name.$invalid" class="alert-danger">Invalid resource name!</div>
     </div>
