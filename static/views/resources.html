@@ -5,12 +5,17 @@
 
 <h3>Resources</h3>
 
-<p ng-show="vm.isAdmin()"><a href="#/addresource/"><span
-    class="glyphicon glyphicon-plus"></span>
-    Add new resource</a>
+<p>
+    <span ng-show="vm.isAdmin()"><a href="#/addresource/"><span
+        class="glyphicon glyphicon-plus"></span>
+        Add new resource</a>
+    </span>
+    &nbsp;&nbsp;&nbsp;<a href="" ng-click="vm.refresh()"><span class="glyphicon glyphicon-refresh"></span> Refresh</a>
 </p>
 
-<table class="table" ng-show="vm.resources.length">
+<h4 ng-show="vm.loading">Loading...</h4>
+
+<table class="table" ng-show="vm.resources.length && !vm.loading">
     <tr>
         <th>Name</th>
         <th ng-show="vm.isAdmin()"></th>

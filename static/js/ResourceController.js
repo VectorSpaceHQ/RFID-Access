@@ -14,6 +14,10 @@
 
         loadResources();
 
+        vm.refresh = function refresh() {
+            loadResources();
+        };
+
         vm.removeResource = function removeResource(id, etag) {
             var removeResource = ResourceService.removeResource(id, etag);
 
@@ -43,11 +47,17 @@
         };
 
         function loadResources() {
+            vm.loading = true;
             var getResources = ResourceService.getResources();
 
             getResources.$promise.then(
                 function () {
+                    vm.loading = false;
                     vm.resources = getResources._items;
+                },
+
+                function () {
+                    vm.loading = false;
                 }
             );
         }

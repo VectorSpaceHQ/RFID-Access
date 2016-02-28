@@ -14,6 +14,10 @@
 
         loadUsers();
 
+        vm.refresh = function refresh() {
+            loadUsers();
+        };
+
         vm.removeUser = function removeUser(id, etag) {
             var removeUser = UserService.removeUser(id, etag);
 
@@ -43,16 +47,20 @@
         };
 
         function loadUsers() {
+            vm.loading = true;
+
             var getUsers = UserService.getUsers();
 
             getUsers.$promise.then(
                 function () {
+                    vm.loading = false;
                     vm.users = getUsers._items;
+                },
+
+                function () {
+                    vm.loading = false;
                 }
             );
         }
     }
-
-
-
 })();
