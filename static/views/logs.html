@@ -9,15 +9,13 @@
         <th>UUID</th>
         <th>Member</th>
         <th>Resource</th>
-        <th>Granted?</th>
-        <th>Reason</th>
+        <th>Status</th>
     </tr>
     <tr ng-repeat="log in vm.logs" class="{{ log.granted ? '' : 'warning' }}">
         <td>{{ log.date }} </td>
         <td>{{ log.uuid.substring(5) }}</td>
         <td>{{ log.member }}</td>
         <td>{{ log.resource }}</td>
-        <td>{{ log.granted ? 'Yes' : 'No' }}</td>
-        <td>{{ log.reason }}</td>
+        <td>{{ log.granted ? 'Success' : log.reason }}</td>
     </tr>
 </table>
