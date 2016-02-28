@@ -5,9 +5,9 @@
         .module('app')
         .controller('EditCardController', EditCardController);
 
-    EditCardController.$inject = ['$routeParams', '$location', 'CardService', 'ResourceService'];
+    EditCardController.$inject = ['$routeParams', '$location', 'toastr', 'CardService', 'ResourceService'];
 
-    function EditCardController($routeParams, $location, CardService, ResourceService) {
+    function EditCardController($routeParams, $location, toastr, CardService, ResourceService) {
         var vm = this;
 
         vm.saving = false;
@@ -35,13 +35,23 @@
             saveCard.$promise.then(
 
                 function () {
-                    alert('Card saved.');
+                    toastr.success('Card Saved!');
                     $location.path('cards');
                 },
 
-                function () {
+                function (rejection) {
                     vm.saving = false;
-                    alert('Unable to save changes.');
+
+                    var message = 'Unable to save card at this time.';
+
+                    if (rejection.status == 404) {
+                        message = 'This card no longer exists.';
+                    } else if (rejection.status == 412) {
+                        message = 'This card has changed since it was loaded.';
+                    }
+
+                    toastr.error(message, 'Error Saving Card');
+
                     loadCard();
                 }
             );
@@ -58,6 +68,15 @@
                     vm.member = getCard.member;
 
                     loadResources(getCard.resources);
+                },
+                function (rejection) {
+                    var message = 'Unable to edit card at this time.';
+                    if (rejection.status == 404) {
+                        message = 'This card no longer exists.';
+                    }
+                    toastr.error(message, 'Error Loading Card');
+
+                    $location.path('cards');
                 }
             );
         }
@@ -76,6 +95,10 @@
                             vm.resources[i].isAuthorized = false;
                         }
                     }
+                },
+                function (rejection) {
+                    toastr.error('Unable to edit card at this time.', 'Error Loading Card');
+                    $location.path('cards');
                 }
             );
         }

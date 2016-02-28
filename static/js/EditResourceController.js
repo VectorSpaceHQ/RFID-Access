@@ -22,7 +22,7 @@
             saveResource.$promise.then(
 
                 function () {
-                    alert('Resource saved.');
+                    toastr.success('Resource Saved!');
                     $location.path('resources');
                 },
 
