@@ -5,9 +5,9 @@
         .module('app')
         .controller('LogController', LogController);
 
-    LogController.$inject = ['LogService', 'AuthService'];
+    LogController.$inject = ['toastr', 'LogService', 'AuthService'];
 
-    function LogController(LogService, AuthService) {
+    function LogController(toastr, LogService, AuthService) {
         var vm = this;
 
         vm.logs = [];
@@ -20,6 +20,22 @@
 
         vm.isAdmin = function isAdmin() {
             return AuthService.isAdmin();
+        };
+
+        vm.clearLogs = function clearLogs() {
+            var clearLogs = LogService.clearLogs();
+
+            clearLogs.$promise.then(
+                function () {
+                    toastr.success('Logs cleared!');
+                    loadLogs();
+                },
+
+                function (rejection) {
+                    toastr.error('Unable to clear logs at this time.');
+                    loadLogs();
+                }
+            );
         };
 
         function loadLogs() {

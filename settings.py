@@ -50,3 +50,7 @@ DOMAIN['cards'].update({
         'field':    'uuid'
     }
 })
+
+DOMAIN['logs'].update({
+    'resource_methods': ['GET', 'POST', 'DELETE']
+})

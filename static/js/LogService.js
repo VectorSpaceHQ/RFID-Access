@@ -12,13 +12,20 @@
         var url = '//' + $location.host() + ':' + $location.port() + '/api/logs/:logId';
 
         return {
-            getLogs: getLogs
+            getLogs:    getLogs,
+            clearLogs:  clearLogs
         };
 
         function getLogs() {
             var log = $resource(url);
 
             return log.get();
+        }
+
+        function clearLogs() {
+            var log = $resource(url);
+
+            return log.remove();
         }
     }
 

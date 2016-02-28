@@ -6,6 +6,11 @@
 <h3>Logs</h3>
 
 <p>
+    <span ng-show="vm.isAdmin()"><a href="" ng-click="vm.clearLogs()"><span
+        class="glyphicon glyphicon-trash"></span>
+        Clear logs</a>
+        &nbsp;&nbsp;&nbsp;
+    </span>
     <a href="" ng-click="vm.refresh()"><span class="glyphicon glyphicon-refresh"></span> Refresh</a>
 </p>
 
