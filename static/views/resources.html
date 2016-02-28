@@ -1,20 +1,29 @@
-<h2>Resources</h2>
-<hr>
-<ul>
+<ul class="breadcrumb">
     <li><a href="#/">Home</a></li>
+    <li>Resources</li>
 </ul>
-<hr>
-<p ng-show="vm.isAdmin()"><a href="#/addresource/">Add new resource</a></p>
+<p ng-show="vm.isAdmin()"><a href="#/addresource/"><span
+    class="glyphicon glyphicon-plus"></span>
+    Add new resource</a>
+</p>
 
-<table border="1" ng-show="vm.resources.length">
+<table class="table" ng-show="vm.resources.length">
     <tr>
         <th>Name</th>
-        <th ng-show="vm.isAdmin()">Edit</th>
-        <th ng-show="vm.isAdmin()">Remove</th>
+        <th ng-show="vm.isAdmin()"></th>
+        <th ng-show="vm.isAdmin()"></th>
     </tr>
     <tr ng-repeat="resource in vm.resources">
         <td>{{ resource.name }}</td>
-        <td ng-show="vm.isAdmin()"><a ng-href="#/editresource/{{ resource._id }}">Edit</a></td>
-        <td ng-show="vm.isAdmin()"><a href="" ng-click='vm.removeResource(resource._id, resource._etag)'>Remove</a></td>
+        <td ng-show="vm.isAdmin()">
+            <a ng-href="#/editresource/{{ resource._id }}"><span
+            class="glyphicon glyphicon-pencil"></span>
+            Edit</a>
+        </td>
+        <td ng-show="vm.isAdmin()">
+            <a href="" ng-click='vm.removeResource(resource._id, resource._etag)'><span
+                class="glyphicon glyphicon-remove"></span>
+            Remove</a>
+        </td>
     </tr>
 </table>
