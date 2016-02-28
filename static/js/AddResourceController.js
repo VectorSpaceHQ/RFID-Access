@@ -22,7 +22,7 @@
             add.$promise.then(
 
                 function () {
-                    alert('Resource added successfully');
+                    toastr.success('Resource added successfully!');
                     $location.path('resources');
                 },
 
