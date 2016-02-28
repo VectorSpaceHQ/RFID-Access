@@ -5,9 +5,9 @@
         .module('app')
         .controller('LogController', LogController);
 
-    LogController.$inject = ['toastr', 'LogService', 'AuthService'];
+    LogController.$inject = ['toastr', 'FileSaver', 'Blob', 'LogService', 'AuthService'];
 
-    function LogController(toastr, LogService, AuthService) {
+    function LogController(toastr, FileSaver, Blob, LogService, AuthService) {
         var vm = this;
 
         vm.logs = [];
@@ -38,6 +38,12 @@
             );
         };
 
+        vm.saveLogs = function saveLogs() {
+            var csv = logsToCsv();
+            var data = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+            FileSaver.saveAs(data, 'hello.csv');
+        };
+
         function loadLogs() {
             vm.loading = true;
             var getLogs = LogService.getLogs();
@@ -58,6 +64,21 @@
                     vm.loading = false;
                 }
             );
+        }
+
+        function logsToCsv() {
+            var csv = "Date,UUID,Member,Resource,Status\n"
+
+            for (var i = 0; i < vm.logs.length; i++) {
+                var log = vm.logs[i];
+                csv +=  log.date                + "," +
+                        log.uuid.substr(5)      + "," +
+                        log.member              + "," +
+                        log.resource            + "," +
+                        (log.granted ? 'Success' : log.reason) + "\n";
+            }
+
+            return csv;
         }
     }
 })();

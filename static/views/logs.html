@@ -8,10 +8,17 @@
 <p>
     <span ng-show="vm.isAdmin()"><a href="" ng-click="vm.clearLogs()"><span
         class="glyphicon glyphicon-trash"></span>
-        Clear logs</a>
+        Clear</a>
         &nbsp;&nbsp;&nbsp;
     </span>
-    <a href="" ng-click="vm.refresh()"><span class="glyphicon glyphicon-refresh"></span> Refresh</a>
+    <span>
+        <a href="" ng-click="vm.saveLogs()"><span class="glyphicon glyphicon-save-file"></span> Save</a>
+        &nbsp;&nbsp;&nbsp;
+    </span>
+    <span>
+        <a href="" ng-click="vm.refresh()"><span class="glyphicon glyphicon-refresh"></span> Refresh</a>
+        &nbsp;&nbsp;&nbsp;
+    </span>
 </p>
 
 <h4 ng-show="vm.loading">Loading...</h4>
