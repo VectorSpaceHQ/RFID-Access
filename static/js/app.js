@@ -1,5 +1,5 @@
 angular
-    .module('app', ['ngRoute', 'ngResource', 'ngCookies'])
+    .module('app', ['ngRoute', 'ngResource', 'ngCookies', 'toastr'])
     .run(runApp)
     .config(configApp);
 

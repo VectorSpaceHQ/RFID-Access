@@ -5,9 +5,9 @@
         .module('app')
         .controller('LoginController', LoginController);
 
-    LoginController.$inject = ['$location', 'AuthService'];
+    LoginController.$inject = ['$location', 'AuthService', 'toastr'];
 
-    function LoginController($location, AuthService) {
+    function LoginController($location, AuthService, toastr) {
         var vm = this;
 
         AuthService.clearCredentials();
@@ -26,7 +26,7 @@
                     $location.path('/');
                 },
                 function () {
-                    alert('Login failed. Incorrect username or password.');
+                    toastr.error('Incorrect username or password','Login Failed');
                     vm.loading = false;
                 }
             );
