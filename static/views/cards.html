@@ -2,11 +2,15 @@
     <li><a href="#/">Home</a></li>
     <li>Cards</li>
 </ul>
+
 <h3>Cards</h3>
+
 <p>
     <a href="" ng-click="vm.refresh()"><span class="glyphicon glyphicon-refresh"></span> Refresh</a>
 </p>
+
 <h4 ng-show="vm.loading">Loading...</h4>
+
 <table class="table" ng-show="vm.cards.length && !vm.loading">
     <tr>
         <th>UUID</th>
