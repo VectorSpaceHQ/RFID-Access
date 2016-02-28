@@ -4,26 +4,28 @@
     <li>Add User</li>
 </ul>
 <form name="addForm" ng-submit="vm.addUser()">
-    <p>
-        <label for="username">Username</label><br>
-        <input name="username" id="username" ng-model="vm.username" ng-pattern="/^[\w ]+$/" required>
-        <span ng-show="addForm.username.$dirty && addForm.username.$invalid">Invalid username!</span>
-    </p>
-    <p>
-        <label for="password">Password</label><br>
-        <input name="password" id="password" type="password" ng-model="vm.password" required>
-    </p>
-    <p>
-        <label for="confirmPassword">Confirm Password</label><br>
-        <input name="confirmPassword" id="confirmPassword" type="password" ng-model="vm.confirmPassword" required>
-        <span ng-show="addForm.confirmPassword.$dirty && (vm.password != vm.confirmPassword)">Passwords don't match!</span>
-    </p>
-    <p>
-        <input id="admin" type="checkbox" ng-model="vm.isAdmin">
-        <label for="admin">Administrator</label>
-    </p>
-    <p>
-        <button type="submit" ng-disabled="addForm.$invalid || vm.adding || vm.password != vm.confirmPassword">Add</button>
-        <a href="#/users">Cancel</a>
-    </p>
+    <div class="form-group">
+        <label for="username">Username</label>
+        <input name="username" id="username" ng-model="vm.username" class="form-control" ng-pattern="/^[\w ]+$/" required>
+        <div class="alert-danger" ng-show="addForm.username.$dirty && addForm.username.$invalid">Invalid username!</div>
+    </div>
+    <div class="form-group">
+        <label for="password">Password</label>
+        <input name="password" id="password" type="password" class="form-control" ng-model="vm.password" required>
+        <div class="alert-danger" ng-show="addForm.password.$dirty && addForm.password.$invalid">Password is required!</div>
+    </div>
+    <div class="form-group">
+        <label for="confirmPassword">Confirm Password</label>
+        <input name="confirmPassword" id="confirmPassword" type="password" class="form-control" ng-model="vm.confirmPassword" required>
+        <div class="alert-danger" ng-show="addForm.confirmPassword.$dirty && (vm.password != vm.confirmPassword)">Passwords don't match!</div>
+    </div>
+    <div class="form-group">
+        <div class="checkbox">
+            <label>
+                <input id="admin" type="checkbox" ng-model="vm.isAdmin">Administrator
+            </label>
+        </div>
+    </div>
+    <button type="submit" class="btn btn-default" ng-disabled="addForm.$invalid || vm.adding || vm.password != vm.confirmPassword">Add</button>
+    <a href="#/users">Cancel</a>
 </form>

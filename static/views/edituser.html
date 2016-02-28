@@ -4,16 +4,18 @@
     <li>Edit User</li>
 </ul>
 <form name="editForm" ng-submit="vm.saveUser()">
-    <p>
-        <label for="username">Username</label><br>
-        <input name="username" id="username" ng-model="vm.username" ng-pattern="/^[\w ]+$/" required>
-        <span ng-show="editForm.username.$invalid">Invalid username!</span>
-    </p>
-    <p>
-        <input id="admin" type="checkbox" ng-model="vm.isAdmin">
-        <label for="admin">Administrator</label>
-    </p>
-    <p>
-        <button type="submit" ng-disabled="editForm.$pristine || editForm.$invalid || vm.saving">Save</button> <a href="#/users">Cancel</a>
-    </p>
+    <div class="form-group">
+        <label for="username">Username</label>
+        <input name="username" id="username" class="form-control" ng-model="vm.username" ng-pattern="/^[\w ]+$/" required>
+        <div class="alert-danger" ng-show="editForm.username.$invalid">Invalid username!</div>
+    </div>
+    <div class="form-group">
+        <div class="checkbox">
+            <label>
+                <input id="admin" type="checkbox" ng-model="vm.isAdmin"> Administrator
+            </label>
+        </div>
+    </div>
+    <button type="submit" class="btn btn-default" ng-disabled="editForm.$pristine || editForm.$invalid || vm.saving">Save</button>
+    <a href="#/users">Cancel</a>
 </form>
