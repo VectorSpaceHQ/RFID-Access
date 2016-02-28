@@ -1,10 +1,9 @@
 TODO Items
 -------------
- * Loading indicator
  * Refresh items link
- * Replace alerts with dialogs
  * Add ability to save logs
  * Add ability to clear logs
+ * Loading indicator
  * Update cards on resource remove
  * User change own info
  * Remove password from user repsonse
