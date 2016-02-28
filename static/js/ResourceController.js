@@ -23,7 +23,6 @@
                     loadResources();
                 },
                 function (rejection) {
-                    console.log(rejection);
                     var message = 'Unable to remove resource at this time.';
 
                     if (rejection.status == 404) {
