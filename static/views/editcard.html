@@ -1,28 +1,25 @@
-<h2>Edit Card</h2>
-<hr>
-<ul>
+<ul class="breadcrumb">
     <li><a href="#/">Home</a></li>
     <li><a href="#/cards">Cards</a></li>
+    <li>Edit Card</li>
 </ul>
-<hr>
 <form ng-submit="vm.saveCard()">
-    <p>
-        <label for="uuid">UUID</label><br>
-        <input id="uuid" ng-value="vm.uuid.substring(5)" readonly><br>
-    </p>
-    <p>
-        <label for="member">Member</label><br>
-        <input name="member" id="member" ng-model="vm.member"><br>
-    </p>
-    <p>
-        <span>Authorized Resources</span>
-        <div ng-repeat="resource in vm.resources">
-            <input id="{{ $id }}" type="checkbox" ng-model="resource.isAuthorized">
-            <label for="{{ $id }}">{{ resource.name }}</label>
+    <div class="form-group">
+        <label for="uuid">UUID</label>
+        <input id="uuid" class="form-control" ng-value="vm.uuid.substring(5)" readonly>
+    </div>
+    <div class="form-group">
+        <label for="member">Member</label>
+        <input name="member" id="member" class="form-control" ng-model="vm.member"><br>
+    </div>
+    <div class="form-group">
+        <label>Authorized Resources</label>
+        <div class="checkbox" ng-repeat="resource in vm.resources">
+            <label>
+                <input type="checkbox" ng-model="resource.isAuthorized"> {{ resource.name }}
+            </label>
         </div>
-    </p>
-    <p>
-        <button ng-disabled="vm.saving">Save</button>
-        <a href="#/cards">Cancel</a>
-    </p>
+    </div>
+    <button class="btn btn-default" ng-disabled="vm.saving">Save</button>
+    <a href="#/cards">Cancel</a>
 </form>

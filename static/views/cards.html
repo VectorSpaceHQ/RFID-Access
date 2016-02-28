@@ -1,17 +1,15 @@
-<h2>Cards</h2>
-<hr>
-<ul>
+<ul class="breadcrumb">
     <li><a href="#/">Home</a></li>
+    <li>Cards</li>
 </ul>
-<hr>
 
-<table border="1" ng-show="vm.cards.length">
+<table class="table" ng-show="vm.cards.length">
     <tr>
         <th>UUID</th>
         <th>Member</th>
         <th>Resources</th>
-        <th ng-show="vm.isAdmin()">Edit</th>
-        <th ng-show="vm.isAdmin()">Remove</th>
+        <th ng-show="vm.isAdmin()"></th>
+        <th ng-show="vm.isAdmin()"></th>
     </tr>
     <tr ng-repeat="card in vm.cards">
         <td>{{ card.uuid.substring(5) }}</td>
@@ -21,7 +19,16 @@
                 {{ vm.resourceNames[resource] }}
             </div>
         </td>
-        <td ng-show="vm.isAdmin()"><a ng-href="#/editcard/{{ card._id }}">Edit</a></td>
-        <td ng-show="vm.isAdmin()"><a href="" ng-click='vm.removeCard(card._id, card._etag)'>Remove</a></td>
+        <td ng-show="vm.isAdmin()">
+            <a ng-href="#/editcard/{{ card._id }}"><span
+                class="glyphicon glyphicon-pencil"></span>
+                Edit</a>
+        </td>
+        <td ng-show="vm.isAdmin()">
+            <a href="" ng-click='vm.removeCard(card._id, card._etag)'><span
+                class="glyphicon glyphicon-remove">
+            </span>
+            Remove</a>
+        </td>
     </tr>
 </table>
