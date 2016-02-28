@@ -5,9 +5,9 @@
         .module('app')
         .controller('AddResourceController', AddResourceController);
 
-    AddResourceController.$inject = ['$location', 'ResourceService'];
+    AddResourceController.$inject = ['$location', 'ResourceService', 'toastr'];
 
-    function AddResourceController($location, ResourceService) {
+    function AddResourceController($location, ResourceService, toastr) {
         var vm = this;
 
         vm.name = '';
@@ -28,12 +28,18 @@
 
                 function (rejection) {
                     vm.adding = false;
-                    var message = 'Can\'t add new resource at this time'
-                    var issue = rejection.data._issues.name;
-                    if (issue.indexOf('unique') != -1) {
-                        message = 'This resource name already exists. Change the name and try again.';
+                    var message = 'Can\'t add new resource at this time.';
+
+                    if (rejection.data && rejection.data._issues && rejection.data._issues.name)
+                    {
+                        var issue = rejection.data._issues.name;
+
+                        if (issue.indexOf('unique') != -1) {
+                            message = 'This resource name already exists. Change the name and try again.';
+                        }
                     }
-                    alert(message);
+
+                    toastr.error(message, 'Error Adding Resource');
                 }
             )
         };
