@@ -5,9 +5,9 @@
         .module('app')
         .controller('CardController', CardController);
 
-    CardController.$inject = ['CardService', 'ResourceService', 'AuthService'];
+    CardController.$inject = ['toastr', 'CardService', 'ResourceService', 'AuthService'];
 
-    function CardController(CardService, ResourceService, AuthService) {
+    function CardController(toastr, CardService, ResourceService, AuthService) {
         var vm = this;
 
         vm.cards = [];
@@ -21,9 +21,23 @@
 
             removeCard.$promise.then(
                 function () {
-                    loadCards();
+                    toastr.success('Card successfully removed!');
+                    loadResources();
+                },
+                function (rejection) {
+                    var message = 'Unable to remove card at this time.';
+
+                    if (rejection.status == 404) {
+                        message = 'This card no longer exists.'
+                    } else if (rejection.status == 412) {
+                        message = 'This card has changed since it was loaded.';
+                    }
+
+                    toastr.error(message, 'Error Removing Card');
+
+                    loadResources();
                 }
-            )
+            );
         };
 
         vm.isAdmin = function isAdmin() {
@@ -51,6 +65,7 @@
             getResources.$promise.then(
                 function () {
                     var resources = getResources._items;
+                    vm.resourceNames = [];
                     for (var i = 0; i < resources.length; i++) {
                         vm.resourceNames[resources[i]._id] = resources[i].name;
                     }

@@ -29,12 +29,6 @@
                         message = 'This resource no longer exists.'
                     } else if (rejection.status == 412) {
                         message = 'This resource has changed since it was loaded.';
-                    } else if (rejection.data && rejection.data._issues && rejection.data._issues.name) {
-                        var issue = rejection.data._issues.name;
-
-                        if (issue.indexOf('unique') != -1) {
-                            message = 'This resource name already exists. Change the name and try again.';
-                        }
                     }
 
                     toastr.error(message, 'Error Removing Resource');
