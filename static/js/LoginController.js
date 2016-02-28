@@ -17,7 +17,8 @@
         vm.loading = false;
 
         vm.login = function() {
-            vm.loading = true
+            vm.loading = true;
+
             var loginReq = AuthService.loginUser(vm.username, vm.password);
 
             loginReq.$promise.then(
@@ -25,9 +26,16 @@
                     AuthService.saveCredentials(vm.username, vm.password, loginReq.admin);
                     $location.path('/');
                 },
-                function () {
-                    toastr.error('Incorrect username or password','Login Failed');
+                function (rejection) {
                     vm.loading = false;
+
+                    var message = 'Unable to login at this time.';
+
+                    if (rejection.status == 401) {
+                        message = 'Incorrect username or password';
+                    }
+
+                    toastr.error(message,'Login Failed');
                 }
             );
         }
