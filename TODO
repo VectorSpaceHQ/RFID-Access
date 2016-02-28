@@ -1,6 +1,8 @@
 TODO Items
 -------------
- * Improve UI
+ * Replace alerts with dialogs
+ * Add ability to save logs
+ * Add ability to clear logs
  * Update cards on resource remove
  * User change own info
  * Remove password from user repsonse
