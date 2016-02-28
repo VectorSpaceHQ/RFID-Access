@@ -15,7 +15,7 @@ from tables import Users, Resources, Cards, Logs, Base
 class MyBasicAuth(BasicAuth):
     def check_auth(self, username, password, allowed_roles, resource, method):
         user = db.session.query(Users).filter(Users.username == username).first()
-        return  user and bcrypt.checkpw(password, user.password) and (method == 'GET' or user.admin)
+        return  user and bcrypt.checkpw(password, user.password) and (method == 'GET' or user.admin or resource == 'logs')
 
 def post_get_callback(resource, request, payload):
 
