@@ -5,9 +5,9 @@
         .module('app')
         .controller('UserController', UserController);
 
-    UserController.$inject = ['UserService', 'AuthService'];
+    UserController.$inject = ['toastr', 'UserService', 'AuthService'];
 
-    function UserController(UserService, AuthService) {
+    function UserController(toastr, UserService, AuthService) {
         var vm = this;
 
         vm.users = [];
@@ -19,6 +19,20 @@
 
             removeUser.$promise.then(
                 function () {
+                    toastr.success('User successfully removed!');
+                    loadUsers();
+                },
+                function (rejection) {
+                    var message = 'Unable to remove user at this time.';
+
+                    if (rejection.status == 404) {
+                        message = 'This user no longer exists.'
+                    } else if (rejection.status == 412) {
+                        message = 'This user has changed since it was loaded.';
+                    }
+
+                    toastr.error(message, 'Error Removing User');
+
                     loadUsers();
                 }
             )
