@@ -25,7 +25,7 @@ class Users(CommonColumns):
     __tablename__ = 'users'
 
     id          = Column(Integer, primary_key=True, autoincrement=True)
-    username    = Column(String(256))
+    username    = Column(String(256), unique=True)
     password    = Column(String(256))
     admin       = Column(Boolean)
 
@@ -33,13 +33,13 @@ class Resources(CommonColumns):
     __tablename__ = 'resources'
 
     id          = Column(Integer, primary_key=True, autoincrement=True)
-    name        = Column(String(256))
+    name        = Column(String(256), unique=True)
 
 class Cards(CommonColumns):
     __tablename__ = 'cards'
 
     id          = Column(Integer, primary_key=True, autoincrement=True)
-    uuid        = Column(String(256))
+    uuid        = Column(String(256), unique=True)
     member      = Column(String(256))
     resources   = Column(String(256))
 

@@ -26,9 +26,14 @@
                     $location.path('resources');
                 },
 
-                function () {
+                function (rejection) {
                     vm.adding = false;
-                    alert('Error adding resource');
+                    var message = 'Can\'t add new resource at this time'
+                    var issue = rejection.data._issues.name;
+                    if (issue.indexOf('unique') != -1) {
+                        message = 'This resource name already exists. Change the name and try again.';
+                    }
+                    alert(message);
                 }
             )
         };
