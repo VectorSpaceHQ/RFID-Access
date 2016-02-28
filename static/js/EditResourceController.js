@@ -42,6 +42,7 @@
                     vm.id = getResource._id;
                     vm.etag = getResource._etag;
                     vm.name = getResource.name;
+                    vm.oldName = getResource.name;
                 }
             );
         }
