@@ -49,9 +49,11 @@ if not db.session.query(Users).count():
     hash.update(etag)
     password = hash.hexdigest()
 
+    print '@' * 80
     print "No users found in database"
     print "Creating root user with password %s" % password
     print "You should change the root password NOW!"
+    print '@' * 80
 
     password = bcrypt.hashpw(password, bcrypt.gensalt())
 

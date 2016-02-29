@@ -19,9 +19,12 @@
             vm.saving = true;
 
             var user = {
-                username:   vm.username,
                 admin:      vm.isAdmin
             };
+
+            if (vm.username != vm.oldUsername) {
+                user['username'] = vm.username;
+            }
 
             var saveUser = UserService.saveUser(vm.id, vm.etag, user);
 
@@ -64,6 +67,7 @@
                     vm.id = getUser._id;
                     vm.etag = getUser._etag;
                     vm.username = getUser.username;
+                    vm.oldUsername = getUser.username;
                     vm.isAdmin = getUser.admin;
                 },
                 function (rejection) {

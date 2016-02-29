@@ -2,6 +2,5 @@ TODO Items
 -------------
  * Flash of error messages
  * User change own info
- * Remove password from user repsonse
  * Add filters to lists
  * Use tokens instead of passing password
