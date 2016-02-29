@@ -6,7 +6,7 @@ import datetime
 
 from eve import Eve
 from eve.auth import BasicAuth
-from flask import redirect
+from flask import redirect, make_response, request
 from werkzeug.wsgi import SharedDataMiddleware
 from eve_sqlalchemy import SQL
 from eve_sqlalchemy.validation import ValidatorSQL
@@ -20,25 +20,6 @@ class MyBasicAuth(BasicAuth):
             and (method == 'GET' \
                     or user.admin \
                     or (resource == 'logs'and method != 'DELETE'))
-
-def post_get_callback(resource, request, payload):
-
-    match = re.search('/cards/(uuid-\w+)$', request.path)
-
-    if (payload.status_code == 404) and match:
-
-        uuid = match.group(1)
-
-        card = db.session.query(Cards).filter(Cards.uuid == uuid).first()
-
-        if not card:
-            hash = hashlib.sha1()
-            hash.update(uuid)
-            etag = hash.hexdigest()
-
-            db.session.add(Cards(uuid=uuid, member='', resources='', _etag=etag))
-            db.session.commit()
-
 
 def before_insert_users(items):
     for item in items:
@@ -77,13 +58,69 @@ if not db.session.query(Users).count():
 def root():
     return redirect("/index.html");
 
+@app.route('/unlock')
+def unlock():
+    unauthorized = make_response('', 401)
+    ok = make_response('', 200)
+
+    resourceName = request.args.get('resource') or ''
+    uuid = request.args.get('uuid') or '0'
+    uuid = 'uuid-' + uuid
+
+    allowed = False
+
+    log = Logs()
+
+    log.uuid = uuid
+    log.resource = resourceName
+    log.member = ''
+    log.reason = ''
+
+    card = db.session.query(Cards).filter(Cards.uuid == uuid).first()
+
+    if card:
+
+        log.member = card.member
+
+        resource = db.session.query(Resources).filter(Resources.name == resourceName).first()
+
+        if resource:
+            for id in card.resources.split(','):
+                if int(id) == resource.id:
+                    allowed = True
+                    break;
+
+            if not allowed:
+                log.reason = 'Card Unauthorized'
+        else:
+            log.reason = 'Resource Not Found'
+    else:
+        log.reason = 'Card Not Found'
+
+        if uuid != 'uuid-0':
+            hash = hashlib.sha1()
+            hash.update(uuid)
+            etag = hash.hexdigest()
+
+            db.session.add(Cards(uuid=uuid, member='', resources='', _etag=etag))
+            db.session.commit()
+
+    log.granted = allowed
+
+    db.session.add(log)
+    db.session.commit()
+
+    if allowed:
+        return ok
+    else:
+        return unauthorized
+
 if __name__ == '__main__':
 
    app.wsgi_app = SharedDataMiddleware(app.wsgi_app, {
        '/': os.path.join(os.path.dirname(__file__), 'static')
    })
 
-   app.on_post_GET += post_get_callback
    app.on_insert_users += before_insert_users
    app.on_update_users += before_update_users
 
