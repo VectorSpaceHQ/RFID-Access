@@ -4,3 +4,4 @@ node_modules
 *.pyc
 *.db
 auth_settings.py
+rfid-app*.js

@@ -17,5 +17,10 @@
     "angular-toastr": "^1.7.0",
     "angular-ui-bootstrap": "^1.2.1",
     "bootstrap": "^3.3.6"
+  },
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-concat": "^2.6.0",
+    "gulp-minify": "0.0.5"
   }
 }
