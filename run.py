@@ -27,6 +27,13 @@ def before_update_users(updates, originals):
     if 'password' in updates:
         updates['password'] = bcrypt.hashpw(updates['password'], bcrypt.gensalt())
 
+def delete_resource(item):
+    for card in db.session.query(Cards):
+        if card.resources:
+            resources = card.resources.split(',')
+            card.resources = ','.join(filter(lambda a: int(a) != item['id'], resources))
+            db.session.commit()
+
 app = Eve(validator=ValidatorSQL, data=SQL, auth=MyBasicAuth)
 
 db = app.data.driver
@@ -121,5 +128,6 @@ if __name__ == '__main__':
 
    app.on_insert_users += before_insert_users
    app.on_update_users += before_update_users
+   app.on_delete_item_resources += delete_resource
 
    app.run(host="0.0.0.0", port=8080)
