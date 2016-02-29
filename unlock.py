@@ -2,7 +2,6 @@
 
 import requests
 import sys
-from auth_settings import USERNAME, PASSWORD
 
 url = 'http://localhost:8080/unlock'
 STATUS_OK = 200

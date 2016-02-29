@@ -17,9 +17,7 @@ class MyBasicAuth(BasicAuth):
         user = db.session.query(Users).filter(Users.username == username).first()
         return  user \
             and bcrypt.checkpw(password, user.password) \
-            and (method == 'GET' \
-                    or user.admin \
-                    or (resource == 'logs'and method != 'DELETE'))
+            and (method == 'GET' or user.admin)
 
 def before_insert_users(items):
     for item in items:
@@ -99,7 +97,7 @@ def unlock():
 
         if uuid != 'uuid-0':
             hash = hashlib.sha1()
-            hash.update(uuid)
+            hash.update(datetime.datetime.now().isoformat())
             etag = hash.hexdigest()
 
             db.session.add(Cards(uuid=uuid, member='', resources='', _etag=etag))
