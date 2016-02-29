@@ -16,7 +16,7 @@
         <input name="member" id="member" class="form-control" ng-model="vm.member"><br>
     </div>
     <div class="form-group">
-        <label>Authorized Resources</label>
+        <label ng-show="vm.resoures.length">Authorized Resources</label>
         <div class="checkbox" ng-repeat="resource in vm.resources">
             <label>
                 <input type="checkbox" ng-model="resource.isAuthorized"> {{ resource.name }}
