@@ -7,7 +7,6 @@ url = 'http://localhost:8080/unlock'
 STATUS_OK = 200
 
 def isAllowed(resourceName, uuid):
-    allowed = False
 
     data = {
         'resource': resourceName,
