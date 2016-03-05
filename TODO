@@ -1,8 +1,9 @@
 TODO Items
 -------------
+ * Order logs
+ * Multiple pages of logs
  * Remove items, handle delay better
  * Show error instead of forever loading
- * Use HTTPS
  * User change own password
  * Add filters to lists
  * Use tokens instead of passing password
