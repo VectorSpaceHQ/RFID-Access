@@ -153,4 +153,4 @@ if __name__ == '__main__':
    app.on_delete_item_resources += delete_resource
    app.on_post_GET_users += remove_password
 
-   app.run(host="0.0.0.0", port=8080)
+   app.run(host="0.0.0.0", port=80)

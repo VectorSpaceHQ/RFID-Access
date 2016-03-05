@@ -3,7 +3,7 @@
 import requests
 import sys
 
-url = 'http://localhost:8080/unlock'
+url = 'http://localhost/unlock'
 STATUS_OK = 200
 
 def isAllowed(resourceName, uuid):
