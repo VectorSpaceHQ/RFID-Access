@@ -1,7 +1,6 @@
 TODO Items
 -------------
  * Use HTTPS
- * Re-save credentials on password change
  * User change own info
  * Add filters to lists
  * Use tokens instead of passing password
