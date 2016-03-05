@@ -144,13 +144,15 @@ def unlock():
 
 if __name__ == '__main__':
 
-   app.wsgi_app = SharedDataMiddleware(app.wsgi_app, {
-       '/': os.path.join(os.path.dirname(__file__), 'static')
-   })
+    app.wsgi_app = SharedDataMiddleware(app.wsgi_app, {
+        '/': os.path.join(os.path.dirname(__file__), 'static')
+    })
 
-   app.on_insert_users += before_insert_users
-   app.on_update_users += before_update_users
-   app.on_delete_item_resources += delete_resource
-   app.on_post_GET_users += remove_password
+    app.on_insert_users += before_insert_users
+    app.on_update_users += before_update_users
+    app.on_delete_item_resources += delete_resource
+    app.on_post_GET_users += remove_password
 
-   app.run(host="0.0.0.0", port=80)
+    context = ('RFID.crt', 'RFID.key')
+
+    app.run(host="0.0.0.0", port=443, ssl_context=context)

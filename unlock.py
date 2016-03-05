@@ -3,7 +3,7 @@
 import requests
 import sys
 
-url = 'http://localhost/unlock'
+url = 'https://localhost/unlock'
 STATUS_OK = 200
 
 def isAllowed(resourceName, uuid):
@@ -13,7 +13,7 @@ def isAllowed(resourceName, uuid):
         'uuid': uuid
     }
 
-    r = requests.get(url, params=data);
+    r = requests.get(url, params=data, verify=False);
 
     return r.status_code == STATUS_OK
 
