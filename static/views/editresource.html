@@ -6,7 +6,9 @@
 
 <h3>Edit Resource</h3>
 
-<form name="editForm" ng-submit="vm.saveResource()">
+<h4 ng-hide="vm.id">Loading...</h4>
+
+<form name="editForm" ng-submit="vm.saveResource()" ng-show="vm.id">
     <div class="form-group">
         <label for="name">Name</label>
         <input name="name" id="name" ng-model="vm.name" class="form-control" ng-pattern="/^[\w ]+$/" required>
