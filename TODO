@@ -1,8 +1,7 @@
 TODO Items
 -------------
- * Order logs
  * Multiple pages of logs
- * Remove items, handle delay better
+ * Handle delay better on Remove
  * Show error instead of forever loading
  * User change own password
  * Add filters to lists
