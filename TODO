@@ -1,6 +1,5 @@
 TODO Items
 -------------
- * Uses session storage for credientials instead of cookie
  * Use HTTPS
  * Re-save credentials on password change
  * User change own info
