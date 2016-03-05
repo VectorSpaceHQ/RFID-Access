@@ -1,5 +1,7 @@
 TODO Items
 -------------
+ * Remove items, handle delay better
+ * Show error instead of forever loading
  * Use HTTPS
  * User change own password
  * Add filters to lists
