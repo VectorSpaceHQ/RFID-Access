@@ -3,6 +3,7 @@ import bcrypt
 import os
 import hashlib
 import datetime
+import json
 
 from eve import Eve
 from eve.auth import BasicAuth
@@ -33,6 +34,21 @@ def delete_resource(item):
             resources = card.resources.split(',')
             card.resources = ','.join(filter(lambda a: int(a) != item['id'], resources))
             db.session.commit()
+
+def remove_password(request, payload):
+    user_data = json.loads(payload.data)
+
+    if '_items' in user_data:
+        for user in user_data['_items']:
+            if 'password' in user:
+                user.pop('password', None)
+
+        payload.data = json.dumps(user_data)
+
+    elif 'password' in user_data:
+        user_data.pop('password', None)
+        payload.data = json.dumps(user_data)
+
 
 app = Eve(validator=ValidatorSQL, data=SQL, auth=MyBasicAuth)
 
@@ -131,5 +147,6 @@ if __name__ == '__main__':
    app.on_insert_users += before_insert_users
    app.on_update_users += before_update_users
    app.on_delete_item_resources += delete_resource
+   app.on_post_GET_users += remove_password
 
    app.run(host="0.0.0.0", port=8080)
