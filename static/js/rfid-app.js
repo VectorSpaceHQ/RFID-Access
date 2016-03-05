@@ -855,9 +855,9 @@ function configApp($httpProvider) {
         .module('app')
         .controller('ChangeUserPasswordController', ChangeUserPasswordController);
 
-    ChangeUserPasswordController.$inject = ['$routeParams', '$location', 'toastr', 'UserService'];
+    ChangeUserPasswordController.$inject = ['$routeParams', '$location', 'toastr', 'UserService', 'AuthService'];
 
-    function ChangeUserPasswordController($routeParams, $location, toastr, UserService) {
+    function ChangeUserPasswordController($routeParams, $location, toastr, UserService, AuthService) {
         var vm = this;
 
         vm.saving = false;
@@ -877,7 +877,10 @@ function configApp($httpProvider) {
 
                 function () {
                     toastr.success('Password changed!');
-                    loadUser();
+
+                    AuthService.saveCredentials(vm.username, vm.password, vm.isAdmin);
+
+                    $location.path('users');
                 },
 
                 function (rejection) {
@@ -906,6 +909,7 @@ function configApp($httpProvider) {
                     vm.id = getUser._id;
                     vm.etag = getUser._etag;
                     vm.username = getUser.username;
+                    vm.isAdmin = getUser.admin;
                 },
 
                 function (rejection) {
