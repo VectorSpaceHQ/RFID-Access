@@ -153,6 +153,6 @@ if __name__ == '__main__':
     app.on_delete_item_resources += delete_resource
     app.on_post_GET_users += remove_password
 
-    context = ('RFID.crt', 'RFID.key')
+    context = (os.path.join(os.path.dirname(__file__), 'RFID.crt'), os.path.join(os.path.dirname(__file__), 'RFID.key'))
 
     app.run(host="0.0.0.0", port=443, ssl_context=context)
