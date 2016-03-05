@@ -11,11 +11,11 @@
             '$location',
             '$http',
             '$rootScope',
-            '$cookies',
+            '$sessionStorage',
             'Base64'
         ];
 
-    function AuthService($resource, $location, $http, $rootScope, $cookies, Base64) {
+    function AuthService($resource, $location, $http, $rootScope, $sessionStorage, Base64) {
 
         var url = '//' + $location.host() + ':' + $location.port() + '/api/users/:userId';
 
@@ -58,14 +58,14 @@
                 }
             };
 
-            $cookies.putObject('globals', $rootScope.globals);
+            $sessionStorage.globals = $rootScope.globals;
 
         }
 
         function clearCredentials() {
             $http.defaults.headers.common['Authorization'] = 'Basic ';
             $rootScope.globals = {};
-            $cookies.remove('globals');
+            delete $sessionStorage.globals;
         }
 
         function isLoggedIn() {

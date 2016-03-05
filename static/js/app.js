@@ -1,13 +1,13 @@
 angular
-    .module('app', ['ngRoute', 'ngResource', 'ngCookies', 'ngFileSaver', 'toastr'])
+    .module('app', ['ngRoute', 'ngResource', 'ngFileSaver', 'toastr', 'ngStorage'])
     .run(runApp)
     .config(configApp);
 
-runApp.$inject = ['$rootScope', '$location', '$cookies', '$http'];
+runApp.$inject = ['$rootScope', '$location', '$http', '$sessionStorage'];
 
-function runApp($rootScope, $location, $cookies, $http) {
+function runApp($rootScope, $location, $http, $sessionStorage) {
 
-    $rootScope.globals = $cookies.getObject('globals') || {};
+    $rootScope.globals = $sessionStorage.globals || {};
 
     if ($rootScope.globals.currentUser) {
         $http.defaults.headers.common['Authorization'] = 'Basic ' + $rootScope.globals.currentUser.authData;

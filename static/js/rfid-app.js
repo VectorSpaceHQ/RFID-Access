@@ -1,13 +1,14 @@
 angular
-    .module('app', ['ngRoute', 'ngResource', 'ngCookies', 'ngFileSaver', 'toastr'])
+    .module('app', ['ngRoute', 'ngResource', 'ngCookies', 'ngFileSaver', 'toastr', 'ngStorage'])
     .run(runApp)
     .config(configApp);
 
-runApp.$inject = ['$rootScope', '$location', '$cookies', '$http'];
+runApp.$inject = ['$rootScope', '$location', '$cookies', '$http', '$sessionStorage'];
 
-function runApp($rootScope, $location, $cookies, $http) {
+function runApp($rootScope, $location, $cookies, $http, $sessionStorage) {
 
-    $rootScope.globals = $cookies.getObject('globals') || {};
+    //$rootScope.globals = $cookies.getObject('globals') || {};
+    $rootScope.globals = $sessionStorage.globals || {};
 
     if ($rootScope.globals.currentUser) {
         $http.defaults.headers.common['Authorization'] = 'Basic ' + $rootScope.globals.currentUser.authData;
@@ -88,10 +89,11 @@ function configApp($httpProvider) {
             '$http',
             '$rootScope',
             '$cookies',
+            '$sessionStorage',
             'Base64'
         ];
 
-    function AuthService($resource, $location, $http, $rootScope, $cookies, Base64) {
+    function AuthService($resource, $location, $http, $rootScope, $cookies, $sessionStorage, Base64) {
 
         var url = '//' + $location.host() + ':' + $location.port() + '/api/users/:userId';
 
@@ -134,14 +136,16 @@ function configApp($httpProvider) {
                 }
             };
 
-            $cookies.putObject('globals', $rootScope.globals);
+            //$cookies.putObject('globals', $rootScope.globals);
+            $sessionStorage.globals = $rootScope.globals;
 
         }
 
         function clearCredentials() {
             $http.defaults.headers.common['Authorization'] = 'Basic ';
             $rootScope.globals = {};
-            $cookies.remove('globals');
+            //$cookies.remove('globals');
+            delete $sessionStorage.globals;
         }
 
         function isLoggedIn() {
