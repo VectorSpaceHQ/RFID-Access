@@ -4,6 +4,8 @@ import os
 import hashlib
 import datetime
 import json
+import string
+import random
 
 from eve import Eve
 from eve.auth import BasicAuth
@@ -49,6 +51,9 @@ def remove_password(request, payload):
         user_data.pop('password', None)
         payload.data = json.dumps(user_data)
 
+def generate_password(size = 10, chars = '!@#$%&*' + string.digits + string.ascii_uppercase + string.ascii_lowercase):
+    return ''.join(random.choice(chars) for _ in range(size))
+
 
 app = Eve(validator=ValidatorSQL, data=SQL, auth=MyBasicAuth)
 
@@ -62,8 +67,7 @@ if not db.session.query(Users).count():
     hash.update(datetime.datetime.now().isoformat())
     etag = hash.hexdigest()
 
-    hash.update(etag)
-    password = hash.hexdigest()
+    password = generate_password()
 
     print '@' * 80
     print "No users found in database"
