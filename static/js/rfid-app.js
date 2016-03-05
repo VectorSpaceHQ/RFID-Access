@@ -1218,7 +1218,7 @@ function configApp($httpProvider) {
         function getLogs() {
             var log = $resource(url);
 
-            return log.get();
+            return log.get({ sort: '-_created' });
         }
 
         function clearLogs() {
