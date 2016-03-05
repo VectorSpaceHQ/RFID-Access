@@ -13,9 +13,10 @@
         <div class="container">
             <div ng-controller="IndexController as vm">
                 <h2>Vector Space RFID Access</h2>
-                <p ng-show="vm.isLoggedIn()">
+                <p ng-show="vm.isLoggedIn()" ng-cloak>
                     <button id="login-button" class="btn btn-default" ng-click="vm.logout()">Logout</button>
                 </p>
+                <p ng-hide="vm">Loading...</p>
                 <div ng-view></div>
             </div>
         </div>
