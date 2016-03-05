@@ -1,5 +1,7 @@
 TODO Items
 -------------
+ * Loading for all forms
+ * Re-save credentials on password change
  * Flash of error messages
  * User change own info
  * Add filters to lists
