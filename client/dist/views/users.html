@@ -1,0 +1,46 @@
+<ul class="breadcrumb">
+    <li><a href="#/">Home</a></li>
+    <li>Users</li>
+</ul>
+
+<h3>Users</h3>
+
+<p>
+    <span ng-show="vm.isAdmin()"><a href="#/adduser/"><span
+        class="glyphicon glyphicon-plus"></span>
+        Add new user</a>
+        &nbsp;&nbsp;&nbsp;
+    </span>
+    <a href="" ng-click="vm.refresh()"><span class="glyphicon glyphicon-refresh"></span> Refresh</a>
+</p>
+
+<h4 ng-show="vm.loading">Loading...</h4>
+
+<table class="table" ng-show="vm.users.length && !vm.loading">
+    <tr>
+        <th>Username</th>
+        <th>Admin</th>
+        <th ng-show="vm.isAdmin()"></th>
+        <th ng-show="vm.isAdmin()"></th>
+        <th ng-show="vm.isAdmin()"></th>
+    </tr>
+    <tr ng-repeat="user in vm.users">
+        <td>{{ user.username }}</td>
+        <td>{{ user.admin ? 'Yes' : 'No' }}</td>
+        <td ng-show="vm.isAdmin()">
+            <a ng-href="#/changeuserpassword/{{ user._id }}"><span
+                class="glyphicon glyphicon-lock"></span>
+                Change Password</a>
+        </td>
+        <td ng-show="vm.isAdmin()">
+            <a ng-href="#/edituser/{{ user._id }}"><span
+                class="glyphicon glyphicon-pencil"></span>
+                Edit</a>
+        </td>
+        <td ng-show="vm.isAdmin()">
+            <a href="" ng-click='vm.removeUser(user._id, user._etag)'><span
+                class="glyphicon glyphicon-remove"></span>
+                Remove</a>
+        </td>
+    </tr>
+</table>

@@ -1,0 +1,35 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Vector Space RFID Access</title>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="styles/bootstrap.min.css">
+        <link rel="stylesheet" href="styles/angular-toastr.min.css">
+        <link rel="stylesheet" href="styles/main.css">
+    </head>
+    <body ng-app="app">
+        <div class="container">
+            <div ng-controller="IndexController as vm">
+                <h2>Vector Space RFID Access</h2>
+                <p ng-show="vm.isLoggedIn()" ng-cloak>
+                    <button id="login-button" class="btn btn-default" ng-click="vm.logout()">Logout</button>
+                </p>
+                <p ng-hide="vm">Loading...</p>
+                <div ng-view></div>
+            </div>
+        </div>
+
+        <!-- Angular libraries -->
+        <script src="js/lib/angular.min.js"></script>
+        <script src="js/lib/angular-route.min.js"></script>
+        <script src="js/lib/angular-resource.min.js"></script>
+        <script src="js/lib/angular-toastr.tpls.min.js"></script>
+        <script src="js/lib/angular-file-saver.bundle.min.js"></script>
+        <script src="js/lib/ngStorage.min.js"></script>
+
+        <!-- App files -->
+        <script src="js/rfid-app-min.js"></script>
+    </body>
+</html>

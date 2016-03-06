@@ -1,0 +1,17 @@
+<ul class="breadcrumb">
+    <li><a href="#/">Home</a></li>
+    <li><a href="#/resources">Resources</a></li>
+    <li>Add Resource</li>
+</ul>
+
+<h3>Add Resource</h3>
+
+<form name="addForm" ng-submit="vm.addResource()">
+    <div class="form-group">
+        <label for="name">Name</label>
+        <input name="name" id="name" ng-model="vm.name" class="form-control" ng-pattern="/^[\w ]+$/" required>
+        <div ng-show="addForm.name.$dirty && addForm.name.$invalid" class="alert-danger">Invalid resource name!</div>
+    </div>
+    <button type="submit" class="btn btn-default" ng-disabled="addForm.$invalid || vm.adding">Add</button>
+    <a href="#/resources">Cancel</a>
+</form>

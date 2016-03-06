@@ -1,0 +1,42 @@
+<ul class="breadcrumb">
+    <li><a href="#/">Home</a></li>
+    <li>Cards</li>
+</ul>
+
+<h3>Cards</h3>
+
+<p>
+    <a href="" ng-click="vm.refresh()"><span class="glyphicon glyphicon-refresh"></span> Refresh</a>
+</p>
+
+<h4 ng-show="vm.loading">Loading...</h4>
+
+<table class="table" ng-show="vm.cards.length && !vm.loading">
+    <tr>
+        <th>UUID</th>
+        <th>Member</th>
+        <th>Resources</th>
+        <th ng-show="vm.isAdmin()"></th>
+        <th ng-show="vm.isAdmin()"></th>
+    </tr>
+    <tr ng-repeat="card in vm.cards">
+        <td>{{ card.uuid.substring(5) }}</td>
+        <td>{{ card.member }}</td>
+        <td>
+            <div ng-repeat="resource in card.resources">
+                {{ vm.resourceNames[resource] }}
+            </div>
+        </td>
+        <td ng-show="vm.isAdmin()">
+            <a ng-href="#/editcard/{{ card._id }}"><span
+                class="glyphicon glyphicon-pencil"></span>
+                Edit</a>
+        </td>
+        <td ng-show="vm.isAdmin()">
+            <a href="" ng-click='vm.removeCard(card._id, card._etag)'><span
+                class="glyphicon glyphicon-remove">
+            </span>
+            Remove</a>
+        </td>
+    </tr>
+</table>
