@@ -114,7 +114,7 @@ def unlock():
 
         if resource:
             for id in card.resources.split(','):
-                if int(id) == resource.id:
+                if id and int(id) == resource.id:
                     allowed = True
                     break;
 
