@@ -1,7 +1,5 @@
 TODO Items
--------------
- * Clean up file/directory layout
- * Add README files
+===
  * Move to Github
  * Multiple pages of cards
  * Multiple pages of resources
