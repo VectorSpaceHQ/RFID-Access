@@ -17,12 +17,12 @@ def isAllowed(resourceName, uuid):
 
     return r.status_code == STATUS_OK
 
-def usage(name):
-    print "Usage: %s resource uuid" % name
+def usage():
+    print "Usage: %s resource uuid" % __file__
 
 if __name__ == '__main__':
     if len(sys.argv) != 3:
-        usage(sys.argv[0])
+        usage()
         exit(1)
 
     resource    = sys.argv[1]

@@ -1,7 +1,7 @@
-venv
+.venv
 node_modules
 .idea
 *.pyc
 *.db
-RFID.key
-RFID.crt
+*.key
+*.crt
