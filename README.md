@@ -59,8 +59,7 @@ in the prompts:
     ```
     pi@raspberrypi:~/respos/RFID-access/server $ mkdir ssl
     pi@raspberrypi:~/respos/RFID-access/server $ sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout ssl/RFID.key -out ssl/RFID.crt
-
-
+    ```
 9. Start the server by running the following command:
 
     ```
@@ -73,9 +72,8 @@ in the prompts:
      * Running on https://0.0.0.0:443/ (Press CTRL+C to quit)
     ```
 10. The first time you run the server there will not be any users in the database.  A root user will be created and a
-random password will be generated. Use a web browser to navigate to the IP address of Raspberry Pi and login as the root
-uesr with the random password. Select the __Users__ button and the select the __Change Password__ link to change the root users
-password.
+random password will be generated. Use a web browser to navigate to the IP address of Raspberry Pi (e.g. https://10.0.0.144 ) and login as the root
+uesr with the random password. Select the __Users__ button and then select the __Change Password__ link to change the root user's password.
 
 11. Stop the server by pressing CTRL+C
 
