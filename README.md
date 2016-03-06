@@ -52,7 +52,7 @@ TBD
     pi@raspberrypi:~/respos/RFID-access/server $ source .venv/bin/activate
     (.venv)pi@raspberrypi:~/respos/RFID-access/server $ pip install -r requirements.txt
     ```
-8. The server requires an SSL certificate and key to be placed in the `server/ssl` directory. They must be name `RFID.crt`
+8. The server requires an SSL certificate and key to be placed in the `server/ssl` directory. They must be named `RFID.crt`
 and `RFID.key`. You can geneate a self-signed key by running the following command and entering the appropriate details
 in the prompts:
 
