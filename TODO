@@ -1,6 +1,11 @@
 TODO Items
 -------------
- * Multiple pages of logs
+ * Clean up file/directory layout
+ * Add README files
+ * Move to Github
+ * Multiple pages of cards
+ * Multiple pages of resources
+ * Multiple pages of users
  * Handle delay better on Remove
  * Show error instead of forever loading
  * User change own password
