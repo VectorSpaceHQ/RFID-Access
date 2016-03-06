@@ -19,7 +19,7 @@ PUBLIC_ITEM_METHODS             = ['GET']
 CACHE_CONTROL                   = 'no-cache'
 URL_PREFIX                      = 'api'
 
-DEBUG = True
+DEBUG = False
 
 DOMAIN = {
     'users':        Users._eve_schema['users'],

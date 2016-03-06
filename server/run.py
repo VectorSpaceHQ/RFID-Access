@@ -1,3 +1,4 @@
+import sys
 import re
 import bcrypt
 import os
@@ -144,6 +145,9 @@ def unlock():
 
 if __name__ == '__main__':
 
+    if 'debug' in sys.argv:
+        app.debug = True
+
     app.wsgi_app = SharedDataMiddleware(app.wsgi_app, {
         '/': os.path.join(os.path.dirname(__file__), '..', 'client', 'dist')
     })
@@ -158,4 +162,8 @@ if __name__ == '__main__':
         os.path.join(os.path.dirname(__file__), 'ssl', 'RFID.key')
     )
 
-    app.run(host="0.0.0.0", port=443, ssl_context=context)
+    port = 443
+    if app.debug:
+        port = 8443
+
+    app.run(host="0.0.0.0", port=port, ssl_context=context)
