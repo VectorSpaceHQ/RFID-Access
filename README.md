@@ -15,7 +15,7 @@ The following hardware components are used in this project:
 The following software components are used in this project:
  * Card reader
  * Web client
- * Server
+ * Web server
 
 ## Installation
 TBD
