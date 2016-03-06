@@ -16,10 +16,10 @@
             clearLogs:  clearLogs
         };
 
-        function getLogs() {
+        function getLogs(page) {
             var log = $resource(url);
 
-            return log.get({ sort: '-_created' });
+            return log.get({ sort: '-_created', page: page });
         }
 
         function clearLogs() {

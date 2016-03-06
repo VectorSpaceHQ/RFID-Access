@@ -1215,10 +1215,10 @@ function configApp($httpProvider) {
             clearLogs:  clearLogs
         };
 
-        function getLogs() {
+        function getLogs(page) {
             var log = $resource(url);
 
-            return log.get({ sort: '-_created' });
+            return log.get({ sort: '-_created', page: page });
         }
 
         function clearLogs() {
@@ -1244,15 +1244,32 @@ function configApp($httpProvider) {
 
         vm.logs = [];
 
+        vm.page = 1;
+
         loadLogs();
 
         vm.refresh = function refresh() {
+            vm.page = 1;
             loadLogs();
         };
 
         vm.isAdmin = function isAdmin() {
             return AuthService.isAdmin();
         };
+
+        vm.newer = function newer() {
+            if (vm.page > 1) {
+                vm.page--;
+                loadLogs();
+            }
+        }
+
+        vm.older = function older() {
+            if (!vm.lastPage) {
+                vm.page++;
+                loadLogs();
+            }
+        }
 
         vm.clearLogs = function clearLogs() {
             var clearLogs = LogService.clearLogs();
@@ -1278,7 +1295,7 @@ function configApp($httpProvider) {
 
         function loadLogs() {
             vm.loading = true;
-            var getLogs = LogService.getLogs();
+            var getLogs = LogService.getLogs(vm.page);
 
             getLogs.$promise.then(
                 function () {
@@ -1290,6 +1307,8 @@ function configApp($httpProvider) {
                         var d = new Date(vm.logs[i]._created);
                         vm.logs[i].date = d.toLocaleDateString() + ' ' + d.toLocaleTimeString();
                     }
+
+                    vm.lastPage = (getLogs._meta.max_results * vm.page) >= getLogs._meta.total ? true : false;
                 },
 
                 function () {
