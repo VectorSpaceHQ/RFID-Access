@@ -23,7 +23,7 @@
         <th ng-show="vm.isAdmin()"></th>
         <th ng-show="vm.isAdmin()"></th>
     </tr>
-    <tr ng-repeat="resource in vm.resources">
+    <tr ng-repeat="resource in vm.resources" ng-class="{ removing: resource.removing }">
         <td>{{ resource.name }}</td>
         <td ng-show="vm.isAdmin()">
             <a ng-href="#/editresource/{{ resource._id }}"><span
@@ -31,7 +31,7 @@
             Edit</a>
         </td>
         <td ng-show="vm.isAdmin()">
-            <a href="" ng-click='vm.removeResource(resource._id, resource._etag)'><span
+            <a href="" ng-click='vm.removeResource(resource)'><span
                 class="glyphicon glyphicon-remove"></span>
             Remove</a>
         </td>
