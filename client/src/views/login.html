@@ -2,7 +2,9 @@
     <li>Login</li>
 </ul>
 
-<form name="loginForm" ng-submit="vm.login()">
+<h4 ng-show="vm.loading">Logging in...</h4>
+
+<form name="loginForm" ng-submit="vm.login()" ng-hide="vm.loading">
     <div class="form-group">
         <label for="username">Username</label><br>
         <input id="username" ng-model="vm.username" class="form-control" required>
