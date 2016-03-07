@@ -7,8 +7,9 @@
 <h3>Edit Card</h3>
 
 <h4 ng-hide="vm.id">Loading...</h4>
+<h4 ng-show="vm.saving">Saving...</h4>
 
-<form ng-submit="vm.saveCard()" ng-show="vm.id">
+<form ng-submit="vm.saveCard()" ng-show="vm.id && !vm.saving">
     <div class="form-group">
         <label for="uuid">UUID</label>
         <input id="uuid" class="form-control" ng-value="vm.uuid.substring(5)" readonly>
