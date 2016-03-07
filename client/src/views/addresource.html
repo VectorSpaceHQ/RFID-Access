@@ -6,7 +6,9 @@
 
 <h3>Add Resource</h3>
 
-<form name="addForm" ng-submit="vm.addResource()">
+<h4 ng-show="vm.adding">Adding...</h4>
+
+<form name="addForm" ng-submit="vm.addResource()" ng-hide="vm.adding">
     <div class="form-group">
         <label for="name">Name</label>
         <input name="name" id="name" ng-model="vm.name" class="form-control" ng-pattern="/^[\w ]+$/" required>
