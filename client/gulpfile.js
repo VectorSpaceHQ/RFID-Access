@@ -3,6 +3,7 @@ concat      = require('gulp-concat');
 minify      = require('gulp-minify');
 del         = require('del');
 runSequence = require('run-sequence');
+watch       = require('gulp-watch');
 
 gulp.task('build-clean', function () {
     return del(['dist']);
@@ -100,4 +101,10 @@ gulp.task('build', function (callback) {
     );
 })
 
-gulp.task('default', ['build']);
+gulp.task('watch', function () {
+    return watch('src/**/*', function () {
+        gulp.start('build');
+    });
+});
+
+gulp.task('default', ['build', 'watch']);
