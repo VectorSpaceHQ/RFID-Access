@@ -24,7 +24,8 @@
             saveCredentials:    saveCredentials,
             clearCredentials:   clearCredentials,
             isLoggedIn:         isLoggedIn,
-            isAdmin:            isAdmin
+            isAdmin:            isAdmin,
+            username:           username
         };
 
         function loginUser (username, password) {
@@ -75,8 +76,17 @@
         function isAdmin() {
             if ($rootScope.globals.currentUser) {
                 return $rootScope.globals.currentUser.isAdmin;
+            } else {
+                return false;
             }
-            return false;
+        }
+
+        function username() {
+            if ($rootScope.globals.currentUser) {
+                return $rootScope.globals.currentUser.username;
+            } else {
+                return '';
+            }
         }
     }
 

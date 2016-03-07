@@ -100,7 +100,8 @@ function configApp($httpProvider) {
             saveCredentials:    saveCredentials,
             clearCredentials:   clearCredentials,
             isLoggedIn:         isLoggedIn,
-            isAdmin:            isAdmin
+            isAdmin:            isAdmin,
+            username:           username
         };
 
         function loginUser (username, password) {
@@ -151,8 +152,17 @@ function configApp($httpProvider) {
         function isAdmin() {
             if ($rootScope.globals.currentUser) {
                 return $rootScope.globals.currentUser.isAdmin;
+            } else {
+                return false;
             }
-            return false;
+        }
+
+        function username() {
+            if ($rootScope.globals.currentUser) {
+                return $rootScope.globals.currentUser.username;
+            } else {
+                return '';
+            }
         }
     }
 
@@ -878,7 +888,9 @@ function configApp($httpProvider) {
                 function () {
                     toastr.success('Password changed!');
 
-                    AuthService.saveCredentials(vm.username, vm.password, vm.isAdmin);
+                    if (AuthService.username() == vm.username) {
+                        AuthService.saveCredentials(vm.username, vm.password, vm.isAdmin);
+                    }
 
                     $location.path('users');
                 },

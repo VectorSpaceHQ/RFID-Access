@@ -28,7 +28,9 @@
                 function () {
                     toastr.success('Password changed!');
 
-                    AuthService.saveCredentials(vm.username, vm.password, vm.isAdmin);
+                    if (AuthService.username() == vm.username) {
+                        AuthService.saveCredentials(vm.username, vm.password, vm.isAdmin);
+                    }
 
                     $location.path('users');
                 },
