@@ -14,6 +14,8 @@
 
         vm.page = 1;
 
+        vm.clearing = false;
+
         loadLogs();
 
         vm.refresh = function refresh() {
@@ -40,19 +42,25 @@
         };
 
         vm.clearLogs = function clearLogs() {
-            var clearLogs = LogService.clearLogs();
+            if (!vm.clearing) {
+                vm.clearing = true;
 
-            clearLogs.$promise.then(
-                function () {
-                    toastr.success('Logs cleared!');
-                    loadLogs();
-                },
+                var clearLogs = LogService.clearLogs();
 
-                function (rejection) {
-                    toastr.error('Unable to clear logs at this time.');
-                    loadLogs();
-                }
-            );
+                clearLogs.$promise.then(
+                    function () {
+                        vm.clearing = false;
+                        toastr.success('Logs cleared!');
+                        loadLogs();
+                    },
+
+                    function (rejection) {
+                        vm.clearing = false;
+                        toastr.error('Unable to clear logs at this time.');
+                        loadLogs();
+                    }
+                );
+            }
         };
 
         vm.saveLogs = function saveLogs() {

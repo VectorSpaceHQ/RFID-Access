@@ -22,8 +22,9 @@
 </p>
 
 <h4 ng-show="vm.loading">Loading...</h4>
+<h4 ng-show="vm.clearing">Clearing...</h4>
 
-<div ng-show="vm.logs.length && !vm.loading">
+<div ng-show="vm.logs.length && !vm.loading && !vm.clearing">
     <table class="table">
         <tr>
             <th>Date</th>
