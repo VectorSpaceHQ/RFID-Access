@@ -7,7 +7,7 @@ watch       = require('gulp-watch');
 
 gulp.task('build-clean', function () {
     return del(['dist']);
-})
+});
 
 gulp.task('build-js-scripts', function () {
     return gulp
@@ -50,7 +50,7 @@ gulp.task('build-js-libs', function () {
             'node_modules/ngstorage/ngStorage.min.js'
         ])
         .pipe(gulp.dest('dist/js/lib'));
-})
+});
 
 gulp.task('build-html-index', function () {
     return gulp
@@ -58,7 +58,7 @@ gulp.task('build-html-index', function () {
             'src/index.html'
         ])
         .pipe(gulp.dest('dist'));
-})
+});
 
 gulp.task('build-html-views', function () {
     return gulp
@@ -66,7 +66,7 @@ gulp.task('build-html-views', function () {
             'src/views/*.html'
         ])
         .pipe(gulp.dest('dist/views'));
-})
+});
 
 gulp.task('build-fonts', function () {
     return gulp
@@ -74,7 +74,7 @@ gulp.task('build-fonts', function () {
             'node_modules/bootstrap/fonts/*.*'
         ])
         .pipe(gulp.dest('dist/fonts'));
-})
+});
 
 gulp.task('build-styles', function () {
     return gulp
@@ -84,7 +84,7 @@ gulp.task('build-styles', function () {
             'node_modules/angular-toastr/dist/angular-toastr.min.css',
         ])
         .pipe(gulp.dest('dist/styles'));
-})
+});
 
 gulp.task('build', function (callback) {
     return runSequence(
@@ -99,7 +99,7 @@ gulp.task('build', function (callback) {
         ],
         callback
     );
-})
+});
 
 gulp.task('watch', function () {
     return watch('src/**/*', function () {
