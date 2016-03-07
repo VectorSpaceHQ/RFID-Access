@@ -7,8 +7,9 @@
 <h3>Edit User</h3>
 
 <h4 ng-hide="vm.id">Loading...</h4>
+<h4 ng-show="vm.saving">Saving...</h4>
 
-<form name="editForm" ng-submit="vm.saveUser()" ng-show="vm.id">
+<form name="editForm" ng-submit="vm.saveUser()" ng-show="vm.id && !vm.saving">
     <div class="form-group">
         <label for="username">Username</label>
         <input name="username" id="username" class="form-control" ng-model="vm.username" ng-pattern="/^[\w ]+$/" required>
