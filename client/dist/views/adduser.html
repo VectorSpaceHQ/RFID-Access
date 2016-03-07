@@ -6,7 +6,9 @@
 
 <h3>Add User</h3>
 
-<form name="addForm" ng-submit="vm.addUser()">
+<h4 ng-show="vm.adding">Adding...</h4>
+
+<form name="addForm" ng-submit="vm.addUser()" ng-hide="vm.adding">
     <div class="form-group">
         <label for="username">Username</label>
         <input name="username" id="username" ng-model="vm.username" class="form-control" ng-pattern="/^[\w ]+$/" required>
