@@ -23,8 +23,9 @@
 
 <h4 ng-show="vm.loading">Loading...</h4>
 <h4 ng-show="vm.clearing">Clearing...</h4>
+<h4 ng-show="vm.errorLoading" class="alert alert-danger">Unable to load logs at this time.</h4>
 
-<div ng-show="vm.logs.length && !vm.loading && !vm.clearing">
+<div ng-show="vm.logs.length && !vm.loading && !vm.clearing && !vm.errorLoading">
     <table class="table">
         <tr>
             <th>Date</th>

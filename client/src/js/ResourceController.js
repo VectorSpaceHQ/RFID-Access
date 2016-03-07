@@ -48,16 +48,19 @@
 
         function loadResources() {
             vm.loading = true;
+            vm.errorLoading = false;
             var getResources = ResourceService.getResources();
 
             getResources.$promise.then(
                 function () {
                     vm.loading = false;
+                    vm.errorLoading = false;
                     vm.resources = getResources._items;
                 },
 
                 function () {
                     vm.loading = false;
+                    vm.errorLoading = true;
                 }
             );
         }

@@ -15,8 +15,9 @@
 </p>
 
 <h4 ng-show="vm.loading">Loading...</h4>
+<h4 ng-show="vm.errorLoading" class="alert alert-danger">Unable to load users at this time.</h4>
 
-<table class="table" ng-show="vm.users.length && !vm.loading">
+<table class="table" ng-show="vm.users.length && !vm.loading && !vm.errorLoading">
     <tr>
         <th>Username</th>
         <th>Admin</th>

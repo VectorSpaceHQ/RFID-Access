@@ -71,11 +71,14 @@
 
         function loadLogs() {
             vm.loading = true;
+            vm.errorLoading = false;
+
             var getLogs = LogService.getLogs(vm.page);
 
             getLogs.$promise.then(
                 function () {
                     vm.loading = false;
+                    vm.errorLoading = false;
 
                     vm.logs = getLogs._items;
 
@@ -89,6 +92,7 @@
 
                 function () {
                     vm.loading = false;
+                    vm.errorLoading = true;
                 }
             );
         }

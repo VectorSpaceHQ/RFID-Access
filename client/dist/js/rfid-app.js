@@ -432,17 +432,20 @@ function configApp($httpProvider) {
 
         function loadUsers() {
             vm.loading = true;
+            vm.errorLoading = false;
 
             var getUsers = UserService.getUsers();
 
             getUsers.$promise.then(
                 function () {
                     vm.loading = false;
+                    vm.errorLoading = false;
                     vm.users = getUsers._items;
                 },
 
                 function () {
                     vm.loading = false;
+                    vm.errorLoading = true;
                 }
             );
         }
@@ -717,16 +720,19 @@ function configApp($httpProvider) {
 
         function loadResources() {
             vm.loading = true;
+            vm.errorLoading = false;
             var getResources = ResourceService.getResources();
 
             getResources.$promise.then(
                 function () {
                     vm.loading = false;
+                    vm.errorLoading = false;
                     vm.resources = getResources._items;
                 },
 
                 function () {
                     vm.loading = false;
+                    vm.errorLoading = true;
                 }
             );
         }
@@ -1075,12 +1081,14 @@ function configApp($httpProvider) {
 
                 function () {
                     vm.loading = false;
+                    vm.errorLoading = true;
                 }
             );
         }
 
         function loadResources() {
             vm.loading = true;
+            vm.errorLoading = false;
 
             var getResources = ResourceService.getResources();
 
@@ -1097,6 +1105,7 @@ function configApp($httpProvider) {
 
                 function () {
                     vm.loading = false;
+                    vm.errorLoading = true;
                 }
             );
         }
@@ -1315,11 +1324,14 @@ function configApp($httpProvider) {
 
         function loadLogs() {
             vm.loading = true;
+            vm.errorLoading = false;
+
             var getLogs = LogService.getLogs(vm.page);
 
             getLogs.$promise.then(
                 function () {
                     vm.loading = false;
+                    vm.errorLoading = false;
 
                     vm.logs = getLogs._items;
 
@@ -1333,6 +1345,7 @@ function configApp($httpProvider) {
 
                 function () {
                     vm.loading = false;
+                    vm.errorLoading = true;
                 }
             );
         }

@@ -65,12 +65,14 @@
 
                 function () {
                     vm.loading = false;
+                    vm.errorLoading = true;
                 }
             );
         }
 
         function loadResources() {
             vm.loading = true;
+            vm.errorLoading = false;
 
             var getResources = ResourceService.getResources();
 
@@ -87,6 +89,7 @@
 
                 function () {
                     vm.loading = false;
+                    vm.errorLoading = true;
                 }
             );
         }

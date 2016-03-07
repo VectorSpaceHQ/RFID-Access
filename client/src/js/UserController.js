@@ -48,17 +48,20 @@
 
         function loadUsers() {
             vm.loading = true;
+            vm.errorLoading = false;
 
             var getUsers = UserService.getUsers();
 
             getUsers.$promise.then(
                 function () {
                     vm.loading = false;
+                    vm.errorLoading = false;
                     vm.users = getUsers._items;
                 },
 
                 function () {
                     vm.loading = false;
+                    vm.errorLoading = true;
                 }
             );
         }
