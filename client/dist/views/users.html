@@ -25,7 +25,7 @@
         <th ng-show="vm.isAdmin()"></th>
         <th ng-show="vm.isAdmin()"></th>
     </tr>
-    <tr ng-repeat="user in vm.users">
+    <tr ng-repeat="user in vm.users" ng-class="{ removing: user.removing }">
         <td>{{ user.username }}</td>
         <td>{{ user.admin ? 'Yes' : 'No' }}</td>
         <td ng-show="vm.isAdmin()">
@@ -39,7 +39,7 @@
                 Edit</a>
         </td>
         <td ng-show="vm.isAdmin()">
-            <a href="" ng-click='vm.removeUser(user._id, user._etag)'><span
+            <a href="" ng-click='vm.removeUser(user)'><span
                 class="glyphicon glyphicon-remove"></span>
                 Remove</a>
         </td>

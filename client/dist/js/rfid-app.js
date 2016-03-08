@@ -402,28 +402,33 @@ function configApp($httpProvider) {
             loadUsers();
         };
 
-        vm.removeUser = function removeUser(id, etag) {
-            var removeUser = UserService.removeUser(id, etag);
+        vm.removeUser = function removeUser(user) {
+            if (!user.removing) {
+                user.removing = true;
 
-            removeUser.$promise.then(
-                function () {
-                    toastr.success('User successfully removed!');
-                    loadUsers();
-                },
-                function (rejection) {
-                    var message = 'Unable to remove user at this time.';
+                var removeUser = UserService.removeUser(user.id, user._etag);
 
-                    if (rejection.status == 404) {
-                        message = 'This user no longer exists.'
-                    } else if (rejection.status == 412) {
-                        message = 'This user has changed since it was loaded.';
+                removeUser.$promise.then(
+                    function () {
+                        toastr.success('User successfully removed!');
+                        loadUsers();
+                    },
+                    function (rejection) {
+                        user.removing = false;
+                        var message = 'Unable to remove user at this time.';
+
+                        if (rejection.status == 404) {
+                            message = 'This user no longer exists.'
+                        } else if (rejection.status == 412) {
+                            message = 'This user has changed since it was loaded.';
+                        }
+
+                        toastr.error(message, 'Error Removing User');
+
+                        loadUsers();
                     }
-
-                    toastr.error(message, 'Error Removing User');
-
-                    loadUsers();
-                }
-            )
+                )
+            }
         };
 
         vm.isAdmin = function isAdmin() {
