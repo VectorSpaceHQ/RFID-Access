@@ -1,5 +1,4 @@
 # TODO Items
- * Handle multiple pages of cards
  * Handle multiple pages of resources
  * Handle multiple pages of users
  * Allow users to change their own password
