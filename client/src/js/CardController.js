@@ -14,11 +14,28 @@
 
         vm.resourceNames = {};
 
+        vm.page = 1;
+
         loadResources();
 
         vm.refresh = function refresh() {
+            vm.page = 1;
             loadResources();
         };
+
+        vm.next = function next() {
+            if (!vm.lastPage) {
+                vm.page++;
+                loadResources();
+            }
+        }
+
+        vm.prev = function prev() {
+            if (vm.page > 1) {
+                vm.page--;
+                loadResources();
+            }
+        }
 
         vm.removeCard = function removeCard(card) {
             if (!card.removing) {
@@ -55,7 +72,7 @@
         };
 
         function loadCards() {
-            var getCards = CardService.getCards();
+            var getCards = CardService.getCards(vm.page);
 
             getCards.$promise.then(
                 function () {
@@ -67,6 +84,8 @@
                         cards[i].resources = resources;
                     }
                     vm.cards = cards;
+
+                    vm.lastPage = (getCards._meta.max_results * vm.page) >= getCards._meta.total ? true : false;
                 },
 
                 function () {

@@ -18,10 +18,10 @@
             removeCard: removeCard
         };
 
-        function getCards() {
+        function getCards(page) {
             var card = $resource(url);
 
-            return card.get();
+            return card.get({ page: page });
         }
 
         function getCard(id) {
