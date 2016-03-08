@@ -20,28 +20,34 @@
             loadResources();
         };
 
-        vm.removeCard = function removeCard(id, etag) {
-            var removeCard = CardService.removeCard(id, etag);
+        vm.removeCard = function removeCard(card) {
+            if (!card.removing) {
+                card.removing = true;
 
-            removeCard.$promise.then(
-                function () {
-                    toastr.success('Card successfully removed!');
-                    loadResources();
-                },
-                function (rejection) {
-                    var message = 'Unable to remove card at this time.';
+                var removeCard = CardService.removeCard(card.id, card._etag);
 
-                    if (rejection.status == 404) {
-                        message = 'This card no longer exists.'
-                    } else if (rejection.status == 412) {
-                        message = 'This card has changed since it was loaded.';
+                removeCard.$promise.then(
+                    function () {
+                        toastr.success('Card successfully removed!');
+                        loadResources();
+                    },
+                    function (rejection) {
+                        card.removing = false;
+
+                        var message = 'Unable to remove card at this time.';
+
+                        if (rejection.status == 404) {
+                            message = 'This card no longer exists.'
+                        } else if (rejection.status == 412) {
+                            message = 'This card has changed since it was loaded.';
+                        }
+
+                        toastr.error(message, 'Error Removing Card');
+
+                        loadResources();
                     }
-
-                    toastr.error(message, 'Error Removing Card');
-
-                    loadResources();
-                }
-            );
+                );
+            }
         };
 
         vm.isAdmin = function isAdmin() {

@@ -20,7 +20,7 @@
         <th ng-show="vm.isAdmin()"></th>
         <th ng-show="vm.isAdmin()"></th>
     </tr>
-    <tr ng-repeat="card in vm.cards">
+    <tr ng-repeat="card in vm.cards" ng-class="{ removing: card.removing }">
         <td>{{ card.uuid.substring(5) }}</td>
         <td>{{ card.member }}</td>
         <td>
@@ -34,7 +34,7 @@
                 Edit</a>
         </td>
         <td ng-show="vm.isAdmin()">
-            <a href="" ng-click='vm.removeCard(card._id, card._etag)'><span
+            <a href="" ng-click='vm.removeCard(card)'><span
                 class="glyphicon glyphicon-remove">
             </span>
             Remove</a>
