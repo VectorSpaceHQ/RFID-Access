@@ -25,7 +25,7 @@
         <th ng-show="vm.isAdmin()"></th>
         <th ng-show="vm.isAdmin()"></th>
     </tr>
-    <tr ng-repeat="user in vm.users" ng-class="{ removing: user.removing }">
+    <tr ng-repeat="user in vm.users" ng-class="{ 'removing danger': user.removing }">
         <td>{{ user.username }}</td>
         <td>{{ user.admin ? 'Yes' : 'No' }}</td>
         <td ng-show="vm.isAdmin()">

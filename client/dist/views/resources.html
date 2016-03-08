@@ -23,7 +23,7 @@
         <th ng-show="vm.isAdmin()"></th>
         <th ng-show="vm.isAdmin()"></th>
     </tr>
-    <tr ng-repeat="resource in vm.resources" ng-class="{ removing: resource.removing }">
+    <tr ng-repeat="resource in vm.resources" ng-class="{ 'removing danger': resource.removing }">
         <td>{{ resource.name }}</td>
         <td ng-show="vm.isAdmin()">
             <a ng-href="#/editresource/{{ resource._id }}"><span
