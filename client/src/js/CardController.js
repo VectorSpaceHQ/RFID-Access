@@ -28,14 +28,14 @@
                 vm.page++;
                 loadResources();
             }
-        }
+        };
 
         vm.prev = function prev() {
             if (vm.page > 1) {
                 vm.page--;
                 loadResources();
             }
-        }
+        };
 
         vm.removeCard = function removeCard(card) {
             if (!card.removing) {
@@ -85,7 +85,7 @@
                     }
                     vm.cards = cards;
 
-                    vm.lastPage = (getCards._meta.max_results * vm.page) >= getCards._meta.total ? true : false;
+                    vm.lastPage = (getCards._meta.max_results * vm.page) >= getCards._meta.total;
                 },
 
                 function () {

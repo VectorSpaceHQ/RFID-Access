@@ -20,10 +20,10 @@
         };
 
 
-        function getResources() {
+        function getResources(page) {
             var resource = $resource(url);
 
-            return resource.get();
+            return resource.get({ page: page });
         }
 
         function getResource(id) {

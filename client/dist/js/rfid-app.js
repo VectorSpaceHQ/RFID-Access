@@ -618,10 +618,10 @@ function configApp($httpProvider) {
         };
 
 
-        function getResources() {
+        function getResources(page) {
             var resource = $resource(url);
 
-            return resource.get();
+            return resource.get({ page: page });
         }
 
         function getResource(id) {
@@ -689,10 +689,27 @@ function configApp($httpProvider) {
 
         vm.resources = [];
 
+        vm.page = 1;
+
         loadResources();
 
         vm.refresh = function refresh() {
+            vm.page = 1;
             loadResources();
+        };
+
+        vm.next = function next() {
+            if (!vm.lastPage) {
+                vm.page++;
+                loadResources();
+            }
+        };
+
+        vm.prev = function prev() {
+            if (vm.page > 1) {
+                vm.page--;
+                loadResources();
+            }
         };
 
         vm.removeResource = function removeResource(resource) {
@@ -731,13 +748,15 @@ function configApp($httpProvider) {
         function loadResources() {
             vm.loading = true;
             vm.errorLoading = false;
-            var getResources = ResourceService.getResources();
+            var getResources = ResourceService.getResources(vm.page);
 
             getResources.$promise.then(
                 function () {
                     vm.loading = false;
                     vm.errorLoading = false;
                     vm.resources = getResources._items;
+
+                    vm.lastPage = (getResources._meta.max_results * vm.page) >= getResources._meta.total;
                 },
 
                 function () {
@@ -747,9 +766,6 @@ function configApp($httpProvider) {
             );
         }
     }
-
-
-
 })();
 (function() {
     'use strict';
@@ -1054,14 +1070,14 @@ function configApp($httpProvider) {
                 vm.page++;
                 loadResources();
             }
-        }
+        };
 
         vm.prev = function prev() {
             if (vm.page > 1) {
                 vm.page--;
                 loadResources();
             }
-        }
+        };
 
         vm.removeCard = function removeCard(card) {
             if (!card.removing) {
@@ -1111,7 +1127,7 @@ function configApp($httpProvider) {
                     }
                     vm.cards = cards;
 
-                    vm.lastPage = (getCards._meta.max_results * vm.page) >= getCards._meta.total ? true : false;
+                    vm.lastPage = (getCards._meta.max_results * vm.page) >= getCards._meta.total;
                 },
 
                 function () {

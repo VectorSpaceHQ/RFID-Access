@@ -12,10 +12,27 @@
 
         vm.resources = [];
 
+        vm.page = 1;
+
         loadResources();
 
         vm.refresh = function refresh() {
+            vm.page = 1;
             loadResources();
+        };
+
+        vm.next = function next() {
+            if (!vm.lastPage) {
+                vm.page++;
+                loadResources();
+            }
+        };
+
+        vm.prev = function prev() {
+            if (vm.page > 1) {
+                vm.page--;
+                loadResources();
+            }
         };
 
         vm.removeResource = function removeResource(resource) {
@@ -54,13 +71,15 @@
         function loadResources() {
             vm.loading = true;
             vm.errorLoading = false;
-            var getResources = ResourceService.getResources();
+            var getResources = ResourceService.getResources(vm.page);
 
             getResources.$promise.then(
                 function () {
                     vm.loading = false;
                     vm.errorLoading = false;
                     vm.resources = getResources._items;
+
+                    vm.lastPage = (getResources._meta.max_results * vm.page) >= getResources._meta.total;
                 },
 
                 function () {
@@ -70,7 +89,4 @@
             );
         }
     }
-
-
-
 })();
