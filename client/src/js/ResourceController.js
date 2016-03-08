@@ -43,6 +43,11 @@
                 removeResource.$promise.then(
                     function () {
                         toastr.success('Resource successfully removed!');
+
+                        if ((vm.resources.length == 1) && (vm.page > 1)) {
+                            vm.page--;
+                        }
+
                         loadResources();
                     },
                     function (rejection) {

@@ -325,10 +325,10 @@ function configApp($httpProvider) {
             removeUser: removeUser
         };
 
-        function getUsers() {
+        function getUsers(page) {
             var user = $resource(url);
 
-            return user.get();
+            return user.get({ page: page });
         }
 
         function getUser(id) {
@@ -396,10 +396,27 @@ function configApp($httpProvider) {
 
         vm.users = [];
 
+        vm.page = 1;
+
         loadUsers();
 
         vm.refresh = function refresh() {
+            vm.page = 1;
             loadUsers();
+        };
+
+        vm.next = function next() {
+            if (!vm.lastPage) {
+                vm.page++;
+                loadUsers();
+            }
+        };
+
+        vm.prev = function prev() {
+            if (vm.page > 1) {
+                vm.page--;
+                loadUsers();
+            }
         };
 
         vm.removeUser = function removeUser(user) {
@@ -411,6 +428,11 @@ function configApp($httpProvider) {
                 removeUser.$promise.then(
                     function () {
                         toastr.success('User successfully removed!');
+
+                        if ((vm.users.length == 1) && (vm.page > 1)) {
+                            vm.page--;
+                        }
+
                         loadUsers();
                     },
                     function (rejection) {
@@ -439,13 +461,15 @@ function configApp($httpProvider) {
             vm.loading = true;
             vm.errorLoading = false;
 
-            var getUsers = UserService.getUsers();
+            var getUsers = UserService.getUsers(vm.page);
 
             getUsers.$promise.then(
                 function () {
                     vm.loading = false;
                     vm.errorLoading = false;
                     vm.users = getUsers._items;
+
+                    vm.lastPage = (getUsers._meta.max_results * vm.page) >= getUsers._meta.total;
                 },
 
                 function () {
@@ -720,6 +744,11 @@ function configApp($httpProvider) {
                 removeResource.$promise.then(
                     function () {
                         toastr.success('Resource successfully removed!');
+
+                        if ((vm.resources.length == 1) && (vm.page > 1)) {
+                            vm.page--;
+                        }
+
                         loadResources();
                     },
                     function (rejection) {
@@ -1088,6 +1117,11 @@ function configApp($httpProvider) {
                 removeCard.$promise.then(
                     function () {
                         toastr.success('Card successfully removed!');
+
+                        if ((vm.cards.length == 1) && (vm.page > 1)) {
+                            vm.page--;
+                        }
+
                         loadResources();
                     },
                     function (rejection) {

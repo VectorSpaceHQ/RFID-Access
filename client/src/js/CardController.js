@@ -46,6 +46,11 @@
                 removeCard.$promise.then(
                     function () {
                         toastr.success('Card successfully removed!');
+
+                        if ((vm.cards.length == 1) && (vm.page > 1)) {
+                            vm.page--;
+                        }
+
                         loadResources();
                     },
                     function (rejection) {

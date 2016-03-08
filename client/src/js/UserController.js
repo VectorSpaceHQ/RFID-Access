@@ -12,10 +12,27 @@
 
         vm.users = [];
 
+        vm.page = 1;
+
         loadUsers();
 
         vm.refresh = function refresh() {
+            vm.page = 1;
             loadUsers();
+        };
+
+        vm.next = function next() {
+            if (!vm.lastPage) {
+                vm.page++;
+                loadUsers();
+            }
+        };
+
+        vm.prev = function prev() {
+            if (vm.page > 1) {
+                vm.page--;
+                loadUsers();
+            }
         };
 
         vm.removeUser = function removeUser(user) {
@@ -27,6 +44,11 @@
                 removeUser.$promise.then(
                     function () {
                         toastr.success('User successfully removed!');
+
+                        if ((vm.users.length == 1) && (vm.page > 1)) {
+                            vm.page--;
+                        }
+
                         loadUsers();
                     },
                     function (rejection) {
@@ -55,13 +77,15 @@
             vm.loading = true;
             vm.errorLoading = false;
 
-            var getUsers = UserService.getUsers();
+            var getUsers = UserService.getUsers(vm.page);
 
             getUsers.$promise.then(
                 function () {
                     vm.loading = false;
                     vm.errorLoading = false;
                     vm.users = getUsers._items;
+
+                    vm.lastPage = (getUsers._meta.max_results * vm.page) >= getUsers._meta.total;
                 },
 
                 function () {

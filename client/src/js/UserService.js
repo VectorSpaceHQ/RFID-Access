@@ -19,10 +19,10 @@
             removeUser: removeUser
         };
 
-        function getUsers() {
+        function getUsers(page) {
             var user = $resource(url);
 
-            return user.get();
+            return user.get({ page: page });
         }
 
         function getUser(id) {
