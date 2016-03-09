@@ -93,7 +93,7 @@ function configApp($httpProvider) {
 
     function AuthService($resource, $location, $http, $rootScope, $sessionStorage, Base64) {
 
-        var url = '//' + $location.host() + ':' + $location.port() + '/api/users/:userId';
+        var url = '//' + $location.host() + ':' + $location.port() + '/auth';
 
         return {
             loginUser:          loginUser,
@@ -105,25 +105,15 @@ function configApp($httpProvider) {
         };
 
         function loginUser (username, password) {
-            var authData = Base64.encode(username + ':' + password);
+            var login = $resource(url);
 
-            var login = $resource(url,
-                {
-                    userId: '@id'
-                },
-                {
-                    get: {
-                        method: 'GET',
-                        headers: { 'Authorization': 'Basic ' + authData }
-                    }
-                }
-            );
-
-            return login.get({ userId: username });
+            return login.save({ username: username, password: password });
         }
 
-        function saveCredentials(username, password, isAdmin) {
-            var authData = Base64.encode(username + ':' + password);
+        function saveCredentials(username, token, isAdmin) {
+            console.log(token);
+            var authData = Base64.encode(token + ':');
+            console.log(authData)
 
             $http.defaults.headers.common['Authorization'] = 'Basic ' + authData;
 
@@ -165,7 +155,6 @@ function configApp($httpProvider) {
             }
         }
     }
-
 })();
 
 (function () {
@@ -286,7 +275,7 @@ function configApp($httpProvider) {
 
             loginReq.$promise.then(
                 function () {
-                    AuthService.saveCredentials(vm.username, vm.password, loginReq.admin);
+                    AuthService.saveCredentials(vm.username, loginReq.token, loginReq.admin);
                     $location.path('/');
                 },
                 function (rejection) {

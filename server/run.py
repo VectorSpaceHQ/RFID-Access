@@ -4,24 +4,32 @@ import bcrypt
 import os
 import hashlib
 import datetime
+import time
 import json
 import string
 import random
 
 from eve import Eve
-from eve.auth import BasicAuth
-from flask import redirect, make_response, request
+from eve.auth import TokenAuth
+from flask import redirect, make_response, request, jsonify
 from werkzeug.wsgi import SharedDataMiddleware
 from eve_sqlalchemy import SQL
 from eve_sqlalchemy.validation import ValidatorSQL
-from tables import Users, Resources, Cards, Logs, Base
+from tables import Users, Resources, Cards, Logs, Tokens, Base
 
-class MyBasicAuth(BasicAuth):
-    def check_auth(self, username, password, allowed_roles, resource, method):
-        user = db.session.query(Users).filter(Users.username == username).first()
-        return  user \
-            and bcrypt.checkpw(password, user.password) \
-            and (method == 'GET' or user.admin)
+class MyTokenAuth(TokenAuth):
+    def check_auth(self, token, allowed_roles, resource, method):
+        sessionToken = db.session.query(Tokens).filter(Tokens.token == token).first();
+
+        if sessionToken:
+            if time.time() < sessionToken.expires:
+                return (method == 'GET' or sessionToken.admin)
+            else:
+                db.session.query(Tokens).filter(Tokens.expires < time.time()).delete()
+                db.session.commit()
+                return False
+        else:
+            return False
 
 def before_insert_users(items):
     for item in items:
@@ -56,7 +64,7 @@ def generate_password(size = 10, chars = '!@#$%&*' + string.digits + string.asci
     return ''.join(random.choice(chars) for _ in range(size))
 
 
-app = Eve(validator=ValidatorSQL, data=SQL, auth=MyBasicAuth)
+app = Eve(validator=ValidatorSQL, data=SQL, auth=MyTokenAuth)
 
 db = app.data.driver
 Base.metadata.bind = db.engine
@@ -85,6 +93,38 @@ if not db.session.query(Users).count():
 @app.route('/')
 def root():
     return redirect("/index.html");
+
+@app.route('/auth', methods=['POST'])
+def auth():
+    unauthorized = make_response('', 401)
+
+    data = request.get_json()
+
+    username = ''
+    if 'username' in data:
+        username = data['username']
+
+    password = ''
+    if 'password' in data:
+        password = data['password']
+
+    user = db.session.query(Users).filter(Users.username == username).first()
+
+    if user and bcrypt.checkpw(password, user.password):
+        hash = hashlib.sha1()
+        hash.update(os.urandom(128))
+
+        token = hash.hexdigest();
+
+        db.session.add(Tokens(token = hash.hexdigest(), admin = user.admin, expires =  int(time.time()) + 3600))
+        db.session.commit()
+
+        return jsonify({
+            "token" : token,
+            "admin" : user.admin
+        })
+    else:
+        return unauthorized
 
 @app.route('/unlock')
 def unlock():

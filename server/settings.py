@@ -13,9 +13,7 @@ SQLALCHEMY_RECORD_QUERIES       = False
 SQLALCHEMY_TRACK_MODIFICATIONS  = False
 
 RESOURCE_METHODS                = ['GET', 'POST']
-PUBLIC_METHODS                  = ['GET']
 ITEM_METHODS                    = ['GET', 'PATCH', 'PUT', 'DELETE']
-PUBLIC_ITEM_METHODS             = ['GET']
 CACHE_CONTROL                   = 'no-cache'
 URL_PREFIX                      = 'api'
 

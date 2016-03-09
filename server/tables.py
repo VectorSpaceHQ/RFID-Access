@@ -52,3 +52,11 @@ class Logs(CommonColumns):
     resource    = Column(String(256))
     granted     = Column(Boolean)
     reason      = Column(String(256))
+
+class Tokens(Base):
+    __tablename__ = 'tokens'
+
+    id          = Column(Integer, primary_key=True, autoincrement=True)
+    token       = Column(String(256))
+    admin       = Column(Boolean)
+    expires     = Column(Integer)
