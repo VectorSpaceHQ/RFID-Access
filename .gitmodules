@@ -1,3 +1,0 @@
-[submodule "reader/MFRC522-python"]
-	path = reader/MFRC522-python
-	url = https://github.com/mxgxw/MFRC522-python.git
