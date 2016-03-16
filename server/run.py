@@ -47,7 +47,7 @@ def delete_resource(item):
             db.session.commit()
 
 def remove_password(request, payload):
-    user_data = json.loads(payload.data)
+    user_data = json.loads(payload.data.decode('utf-8'))
 
     if '_items' in user_data:
         for user in user_data['_items']:
@@ -78,11 +78,11 @@ if not db.session.query(Users).count():
 
     password = generate_password()
 
-    print '@' * 80
-    print "No users found in database"
-    print "Creating root user with password %s" % password
-    print "You should change the root password NOW!"
-    print '@' * 80
+    print('@' * 80)
+    print("No users found in database")
+    print("Creating root user with password %s" % password)
+    print("You should change the root password NOW!")
+    print('@' * 80)
 
     password = bcrypt.hashpw(password, bcrypt.gensalt())
 
