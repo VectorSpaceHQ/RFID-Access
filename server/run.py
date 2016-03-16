@@ -19,7 +19,7 @@ from tables import Users, Resources, Cards, Logs, Tokens, Base
 
 class MyTokenAuth(TokenAuth):
     def check_auth(self, token, allowed_roles, resource, method):
-        sessionToken = db.session.query(Tokens).filter(Tokens.token == token).first();
+        sessionToken = db.session.query(Tokens).filter(Tokens.token == token).first()
 
         if sessionToken:
             if time.time() < sessionToken.expires:
@@ -92,7 +92,7 @@ if not db.session.query(Users).count():
 
 @app.route('/')
 def root():
-    return redirect("/index.html");
+    return redirect("/index.html")
 
 @app.route('/auth', methods=['POST'])
 def auth():
@@ -114,7 +114,7 @@ def auth():
         hash = hashlib.sha1()
         hash.update(os.urandom(128))
 
-        token = hash.hexdigest();
+        token = hash.hexdigest()
 
         db.session.add(Tokens(token = hash.hexdigest(), admin = user.admin, expires =  int(time.time()) + 3600))
         db.session.commit()
@@ -156,7 +156,7 @@ def unlock():
             for id in card.resources.split(','):
                 if id and int(id) == resource.id:
                     allowed = True
-                    break;
+                    break
 
             if not allowed:
                 log.reason = 'Card Unauthorized'
