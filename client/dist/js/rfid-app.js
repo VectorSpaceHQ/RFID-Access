@@ -1139,17 +1139,39 @@ function configApp($httpProvider) {
         function loadCards() {
             var getCards = CardService.getCards(vm.page);
 
+	    // document.write(getCards._meta.max_results);
+	    // var maxPage = Math.ceil(getCards._meta.total / getCards._meta.max_results);
+	    // vm.lastPage = getCards._meta.max_results;
+	    // var getCards = CardService.getCards(vm.lastPage-1);
+	    // getCards._meta.total;
+	    // try to find max page
+	    // var i=1;
+	    // var cards = getCards._items;
+	    // while (i < 3) {
+	    // 	i++;
+	    // 	var getCards = CardService.getCards(i);
+	    // 	var cards = getCards._items;
+	    // 	// document.write(cards.length);
+	    // }
+
+
+
             getCards.$promise.then(
                 function () {
+		    var maxPage = Math.ceil(getCards._meta.total / getCards._meta.max_results);
+		    // getCards = CardService.getCards(2);
+		    
                     vm.loading = false;
 
                     var cards = getCards._items;
+
                     for (var i = 0; i < cards.length; i++) {
                         var resources = cards[i].resources.split(',');
                         cards[i].resources = resources;
                     }
-                    vm.cards = cards;
-
+		    // document.write(cards.length)
+		    vm.cards = cards.reverse(); // Adam added .reverse
+		    
                     vm.lastPage = (getCards._meta.max_results * vm.page) >= getCards._meta.total;
                 },
 
@@ -1170,8 +1192,10 @@ function configApp($httpProvider) {
                 function () {
                     var resources = getResources._items;
                     vm.resourceNames = [];
+		    
                     for (var i = 0; i < resources.length; i++) {
                         vm.resourceNames[resources[i]._id] = resources[i].name;
+			// vm.resourceNames[resources[i]._id] = resources[0].name;
                     }
 
                     loadCards();
@@ -1292,6 +1316,7 @@ function configApp($httpProvider) {
         }
     }
 })();
+
 (function () {
     'use strict';
 
@@ -1441,6 +1466,12 @@ function configApp($httpProvider) {
     }
 })();
 
+// ADAM ADDED 12/18  https://stackoverflow.com/questions/38913371/angularjs-route-provider-changes-into-2f#41848944
+angular.module('app')
+    .config(['$locationProvider', function($locationProvider){
+	$locationProvider.hashPrefix('');
+    }]);
+
 angular.module('app')
     .config(['$routeProvider', function($routeProvider) {
         $routeProvider
@@ -1501,5 +1532,5 @@ angular.module('app')
                 templateUrl:    'views/logs.html',
                 controller:     'LogController',
                 controllerAs:   'vm'
-            });
+            })
     }]);

@@ -6,11 +6,12 @@ import sys
 url = 'https://localhost/unlock'
 STATUS_OK = 200
 
-def isAllowed(resourceName, uuid):
+def isAllowed(resourceName, uuid, uuid_bin):
 
     data = {
         'resource': resourceName,
-        'uuid': uuid
+        'uuid': uuid,
+        'uuid_bin': uuid_bin
     }
 
     r = requests.get(url, params=data, verify=False);
@@ -18,7 +19,7 @@ def isAllowed(resourceName, uuid):
     return r.status_code == STATUS_OK
 
 def usage(name):
-    print "Usage: %s resource uuid" % name
+    print("Usage: {} resource uuid".format(name))
 
 if __name__ == '__main__':
     if len(sys.argv) != 3:
@@ -29,8 +30,8 @@ if __name__ == '__main__':
     uuid        = sys.argv[2]
 
     if isAllowed(resource, uuid):
-        print 'Allowed'
+        print('Allowed')
         exit(0)
     else:
-        print 'Not allowed'
+        print('Not allowed')
         exit(1)

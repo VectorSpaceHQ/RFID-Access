@@ -40,6 +40,8 @@ class Cards(CommonColumns):
 
     id          = Column(Integer, primary_key=True, autoincrement=True)
     uuid        = Column(String(256), unique=True)
+    uuid_bin    = Column(String(256), unique=True)
+    # uuid_wiegand= Column(String(128))
     member      = Column(String(256))
     resources   = Column(String(256))
 
@@ -48,6 +50,8 @@ class Logs(CommonColumns):
 
     id          = Column(Integer, primary_key=True, autoincrement=True)
     uuid        = Column(String(256))
+    uuid_bin    = Column(String(256))
+    # uuid_wiegand= Column(String(128))
     member      = Column(String(256))
     resource    = Column(String(256))
     granted     = Column(Boolean)

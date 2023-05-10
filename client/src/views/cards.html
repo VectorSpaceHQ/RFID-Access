@@ -23,7 +23,7 @@
             <th ng-show="vm.isAdmin()"></th>
         </tr>
         <tr ng-repeat="card in vm.cards" ng-class="{ 'removing danger': card.removing }">
-            <td>{{ card.uuid.substring(5) }}</td>
+            <td>{{ card.uuid }}</td>
             <td>{{ card.member }}</td>
             <td>
                 <div ng-repeat="resource in card.resources">

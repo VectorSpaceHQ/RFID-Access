@@ -37,7 +37,7 @@
         </tr>
         <tr ng-repeat="log in vm.logs" class="{{ log.granted ? '' : 'warning' }}">
             <td>{{ log.date }} </td>
-            <td>{{ log.uuid.substring(5) }}</td>
+            <td>{{ log.uuid_bin.substring(5) }}</td>
             <td>{{ log.member }}</td>
             <td>{{ log.resource }}</td>
             <td>{{ log.granted ? 'Success' : log.reason }}</td>

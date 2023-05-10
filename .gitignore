@@ -5,3 +5,5 @@ node_modules
 *.db
 *.key
 *.crt
+*~
+*bkup*

@@ -24,8 +24,10 @@ signal.signal(signal.SIGINT, end_read)
 # Create an object of the class MFRC522
 MIFAREReader = MFRC522.MFRC522()
 
+# MFRC522 READER
 GPIO.setup(7,GPIO.OUT)
 GPIO.setup(12, GPIO.OUT)
+
 
 # Welcome message
 print "Welcome to the MFRC522 data read example"
@@ -49,8 +51,16 @@ while continue_reading:
 
         # Print UID
         print "Card read UID: "+str(uid[0])+","+str(uid[1])+","+str(uid[2])+","+str(uid[3])
+        uidStr = str(uid[0])+str(uid[1])+str(uid[2])+str(uid[3])
+        uid_bin = ''
+        for block in uid:
+            uid_bin += "{:08b}".format(block)
+            print("{:08b}".format(block))
+        print("card binary uid:", uid_bin)
+
+        print(type(uidStr), type(uid_bin))
     
-	if unlock.isAllowed("Front Door", uidStr):
+	if unlock.isAllowed("Front Door", uidStr, uid_bin):
 		print "Open Sesame"
 		GPIO.output(7,True)
 		GPIO.output(12,True)
@@ -60,3 +70,6 @@ while continue_reading:
 		GPIO.output(12,False)	
 	else:
 		print "Sorry About Your Luck"
+
+
+

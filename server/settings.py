@@ -19,6 +19,9 @@ URL_PREFIX                      = 'api'
 
 DEBUG = False
 
+PAGINATION_DEFAULT = 500
+PAGINATION_LIMIT = 500
+
 DOMAIN = {
     'users':        Users._eve_schema['users'],
     'resources':    Resources._eve_schema['resources'],

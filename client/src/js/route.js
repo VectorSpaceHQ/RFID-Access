@@ -1,3 +1,9 @@
+// ADAM ADDED 12/18  https://stackoverflow.com/questions/38913371/angularjs-route-provider-changes-into-2f#41848944
+angular.module('app')
+    .config(['$locationProvider', function($locationProvider){
+	$locationProvider.hashPrefix('');
+    }]);
+
 angular.module('app')
     .config(['$routeProvider', function($routeProvider) {
         $routeProvider
@@ -58,5 +64,5 @@ angular.module('app')
                 templateUrl:    'views/logs.html',
                 controller:     'LogController',
                 controllerAs:   'vm'
-            });
+            })
     }]);
