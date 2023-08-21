@@ -4,12 +4,24 @@ Vector Space members need 24/7 access to our building. In order to provide this 
 
 ## Hardware
 The following hardware components are used in this project:
- * Mifare MFRC522 RFID module
+ * HID card readers
  * Mifare RFID cards
  * Raspberry Pi
  * Electric door catch
  * Relay
  * 12 VDC power supply
+
+### HID Card Reader
+HID Readers use the 26 bit Wiegand protocol.
+Power and signals both at 12VDC.
+
+6 wires, 4 logic:
+PWR
+GND
+A - INPUT
+B - INPUT
+LED - OUTPUT
+SPKR - OUTPUT
 
 ## Software
 The following software components are used in this project:
