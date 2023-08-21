@@ -86,3 +86,8 @@ uesr with the random password. Select the __Users__ button and then select the _
 
 ## Development
 TBD
+
+
+# Troubleshooting
+RPI not booting. Pin 36 seemed to cause issues for me that were resolved by adding the following to /boot/config.txt
+    dtoverlay=gpio-poweroff,gpiopin=36,active_low
