@@ -9,18 +9,6 @@ GPIO.setmode(GPIO.BOARD)
 MAX_BITS = 26
 READER_TIMEOUT = 25000000 #was 1000000. Alan found code that used 25000000
 READER_TIMEOUT = 10000000 # lowered by adam 7/12/22
-REAR_DOOR_A_PIN = 11
-REAR_DOOR_B_PIN = 12
-REAR_DOOR_RELAY_PIN = 8
-REAR_DOOR_LED_PIN = 16
-REAR_DOOR_SPKR_PIN = 15
-FRONT_DOOR_A_PIN = 37
-FRONT_DOOR_B_PIN = 38
-FRONT_DOOR_LED_PIN = 36
-FRONT_DOOR_SPKR_PIN = 35
-FRONT_DOOR_RELAY_PIN = 10
-
-
 
 REAR_DOOR_A_PIN = 8
 REAR_DOOR_B_PIN = 10
@@ -104,7 +92,7 @@ class decoder():
         
 if __name__ == "__main__":
    print("Starting")
-   scantime = datetime.now()
+   last_scantime = datetime.now()
    w = decoder(REAR_DOOR_A_PIN, REAR_DOOR_B_PIN)
    w2 = decoder(FRONT_DOOR_A_PIN, FRONT_DOOR_B_PIN)
    w3 = decoder(BSMITH_DOOR_A_PIN, BSMITH_DOOR_B_PIN)
@@ -117,16 +105,12 @@ if __name__ == "__main__":
        else:
            data = "{:026b}".format(w.read_data())
            print("scan detected at front door: " + str(data))
-           if scantime + timedelta(seconds = 3) < datetime.now(): 
-               scantime = datetime.now()
-
+           if last_scantime + timedelta(seconds = 3) < datetime.now(): 
+               last_scantime = datetime.now()
 
                if str(data) == "00000000000000000000000000":
                    print("Ignoring 00000 read")
                    # continue
-
-               # wiegand_one = data[17:25] + data[9:17] # big white
-               # wiegand_two = data[9:17] + data[17:25] # small blue
 
                if unlock.isAllowed("Front Door", data, data):
                    print("Front Door: Open Sesame")
@@ -147,14 +131,14 @@ if __name__ == "__main__":
 
 
        bitLen2 = w2.get_pending_bit_count()
-       if bitLen2 <= 4:
+       if bitLen2 <= 5:
            time.sleep(0.2)
            pass
        else:
            data = "{:026b}".format(w2.read_data())
            print("scan detected at rear door: " + str(data))
-           if scantime + timedelta(seconds = 5) < datetime.now(): 
-               scantime = datetime.now()
+           if last_scantime + timedelta(seconds = 5) < datetime.now(): 
+               last_scantime = datetime.now()
            else:
                continue
                
@@ -180,18 +164,19 @@ if __name__ == "__main__":
 
 
        bitLen3 = w3.get_pending_bit_count()
-       if bitLen3 <= 4:
+       if bitLen3 <= 5:
            time.sleep(0.2)
            pass
        else:
            data = "{:026b}".format(w3.read_data())
            print("scan detected at rear door: " + str(data))
-           if scantime + timedelta(seconds = 5) < datetime.now(): 
-               scantime = datetime.now()
+           if last_scantime + timedelta(seconds = 5) < datetime.now(): 
+               last_scantime = datetime.now()
            else:
-               continue
+               continue # end this iteration of the loop
                
-           if unlock.isAllowed("Rear Door", data, data):
+           # if unlock.isAllowed("Rear Door", data, data):
+           if unlock.isAllowed("Blacksmithing", data, data):               
                print("Blacksmithing Door: Open Sesame")
                GPIO.output(BSMITH_DOOR_RELAY_PIN, True)
                GPIO.output(BSMITH_DOOR_LED_PIN, GPIO.LOW)
