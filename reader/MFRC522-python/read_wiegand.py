@@ -17,7 +17,7 @@ MAX_BITS = 26
 # These are in nanoseconds. Neither comes close to setting the limit. The Pi is too slow.
 READER_TIMEOUT = 25000000 #was 1000000. Alan found code that used 25000000
 #READER_TIMEOUT = 10000000 # lowered by adam 7/12/22 (0.01 sec)
-READER_TIMEOUT = 250000000
+#READER_TIMEOUT = 250000000
 
 REAR_DOOR_A_PIN = 8
 REAR_DOOR_B_PIN = 10
@@ -103,21 +103,21 @@ class decoder():
         GPIO.add_event_detect(gpio_1, GPIO.FALLING, callback=lambda x: self.getData1())
 
     def getData0(self):
+        self.bit_time = time.time_ns()
         if self.bit_count < MAX_BITS:
             self.bit_count += 1
             self.data = self.data << 1
-        self.bit_time = time.time_ns()
-
-        # self.process_scan()
+        else:
+            self.process_scan()
 
     def getData1(self):
+        self.bit_time = time.time_ns()
         if self.bit_count < MAX_BITS:
             self.bit_count += 1
             self.data = self.data << 1
             self.data = self.data | 1
-        self.bit_time = time.time_ns()
-
-        # self.process_scan()
+        else:
+            self.process_scan()
 
     def get_pending_bit_count(self):
         """
@@ -151,7 +151,7 @@ class decoder():
 
         # data = self.read_data()
         # bitLen = len(str(data))
-        # print("processing scan, {}".format(bitLen))
+        print("processing scan, {}".format(bitLen))
         
         if bitLen > 0 and bitLen <= 24: # changed 6/24/23 to help avoid spurious readings.
             data = "{:026b}".format(self.read_data())
@@ -197,8 +197,8 @@ if __name__ == "__main__":
    logging.debug("Starting")
 
    status_LED = LED(LED_PIN)
-   # w = decoder(REAR_DOOR_A_PIN, REAR_DOOR_B_PIN, REAR_DOOR_RELAY_PIN,
-   #             REAR_DOOR_LED_PIN, REAR_DOOR_SPKR_PIN, "Loading Dock")
+   w = decoder(REAR_DOOR_A_PIN, REAR_DOOR_B_PIN, REAR_DOOR_RELAY_PIN,
+               REAR_DOOR_LED_PIN, REAR_DOOR_SPKR_PIN, "Loading Dock")
    w2 = decoder(FRONT_DOOR_A_PIN, FRONT_DOOR_B_PIN, FRONT_DOOR_RELAY_PIN,
                 FRONT_DOOR_LED_PIN, FRONT_DOOR_SPKR_PIN, "Front Door")
    # w3 = decoder(BSMITH_DOOR_A_PIN, BSMITH_DOOR_B_PIN, BSMITH_DOOR_RELAY_PIN,
@@ -209,7 +209,8 @@ if __name__ == "__main__":
        # w.reset() # does this help??
        status_LED.blink()
        
-       w2.process_scan()
+       # w.process_scan()
+       # w2.process_scan()
 
        # time.sleep(0.1)
 
