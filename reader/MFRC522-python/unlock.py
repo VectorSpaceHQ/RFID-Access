@@ -5,8 +5,10 @@ import sys
 
 url = 'https://localhost/unlock'
 STATUS_OK = 200
+# session = requests.Session()
 
-def isAllowed(resourceName, uuid, uuid_bin):
+# This function is currently too slow
+def isAllowed(session, resourceName, uuid, uuid_bin):
 
     data = {
         'resource': resourceName,
@@ -14,7 +16,7 @@ def isAllowed(resourceName, uuid, uuid_bin):
         'uuid_bin': uuid_bin
     }
 
-    r = requests.get(url, params=data, verify=False);
+    r = session.get(url, params=data, verify=False);
 
     return r.status_code == STATUS_OK
 
