@@ -90,9 +90,9 @@ class decoder():
         self.bit_count = 0
         self.bit_time = 0
         self.location = location
-        self.relay_pin = relay_pin
-        self.led_pin = led_pin
-        self.spkr_pin = spkr_pin
+        self.relay_pin = 1
+        self.led_pin = 1
+        self.spkr_pin = 1
         self.last_scantime = datetime.now()
         
         GPIO.setup(gpio_0, GPIO.IN, pull_up_down=GPIO.PUD_UP)
@@ -302,8 +302,5 @@ if __name__ == "__main__":
                GPIO.output(BSMITH_DOOR_SPKR_PIN, GPIO.HIGH)
 
                
->>>>>>> 1692c42
-
-       # time.sleep(0.1)
 
        
