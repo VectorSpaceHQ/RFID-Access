@@ -6,7 +6,7 @@ import sys
 url = 'https://localhost/unlock'
 STATUS_OK = 200
 
-def isAllowed(resourceName, uuid, uuid_bin):
+def isAllowed(session, resourceName, uuid, uuid_bin):
 
     data = {
         'resource': resourceName,
