@@ -16,8 +16,7 @@ session.verify = False
 MAX_BITS = 26
 # These are in nanoseconds. Neither comes close to setting the limit. The Pi is too slow.
 READER_TIMEOUT = 25000000 #was 1000000. Alan found code that used 25000000
-#READER_TIMEOUT = 10000000 # lowered by adam 7/12/22 (0.01 sec)
-#READER_TIMEOUT = 250000000
+#READER_TIMEOUT = 10000000 # lowered by adam 7/12/22
 
 REAR_DOOR_A_PIN = 8
 REAR_DOOR_B_PIN = 10
@@ -86,7 +85,7 @@ class LED():
         
 
 class decoder():
-    def __init__(self, gpio_0, gpio_1, relay_pin, led_pin, spkr_pin, location=""):
+    def __init__(self, gpio_0, gpio_1, location=""):
         self.data = 0
         self.bit_count = 0
         self.bit_time = 0
@@ -145,72 +144,165 @@ class decoder():
         self.data = 0
 
     def process_scan(self):
-        # self.reset()
-
         bitLen = self.get_pending_bit_count()
-
-        # data = self.read_data()
-        # bitLen = len(str(data))
-        print("processing scan, {}".format(bitLen))
-        
         if bitLen > 0 and bitLen <= 24: # changed 6/24/23 to help avoid spurious readings.
-            data = "{:026b}".format(self.read_data())
-            logging.debug("\n{}: BAD scan detected at {}: \n{}, {}".format(datetime.now(),
-                                                                           self.location, bitLen, data))
-            print("{}: bad scan: {}, {}".format(self.location, bitLen, data))
-            # self.reset() # fixed the triple scan problem
-            # time.sleep(0.1)
+            logging.debug("\n{}: BAD scan detected at {}: {}".format(datetime.now(), self.location, bitLen))
+            print("load dock bad scan: {}".format(bitLen))
+            self.reset() # fixed the triple scan problem
+            time.sleep(0.1)
            
         elif bitLen > 24:
             data = "{:026b}".format(self.read_data())
-            print("\n{}: scan detected at {}: {}".format(datetime.now(),
-                                                                 self.location, bitLen))
-            logging.debug("\n{}: scan detected at {}: {}".format(datetime.now(),
-                                                                 self.location, bitLen))
+            print("\nscan detected at loading dock: " + str(data))
+            logging.debug("\n{}: scan detected at {}: {}".format(datetime.now(), self.location, bitLen))
 
-            if self.last_scantime + timedelta(seconds = 1) < datetime.now(): 
-                self.last_scantime = datetime.now()
-            else:
-                return
+           # if last_scantime + timedelta(seconds = 3) < datetime.now(): 
+           #     last_scantime = datetime.now()
+           # else:
+           # continue
 
             if unlock.isAllowed(session, self.location, data, data):
                 logging.debug("{}: Open Sesame".format(self.location))
-                GPIO.output(self.relay_pin, True)
-                GPIO.output(self.led_pin, GPIO.LOW)
+                GPIO.output(REAR_DOOR_RELAY_PIN, True)
+                GPIO.output(REAR_DOOR_LED_PIN, GPIO.LOW)
                 for i in range(0,8):
-                    GPIO.output(self.spkr_pin, GPIO.LOW)
+                    GPIO.output(REAR_DOOR_SPKR_PIN, GPIO.LOW)
                     time.sleep(.05)
-                    GPIO.output(self.spkr_pin, GPIO.HIGH)
+                    GPIO.output(REAR_DOOR_SPKR_PIN, GPIO.HIGH)
                     time.sleep(.3)
-                GPIO.output(self.led_pin, GPIO.HIGH)
-                GPIO.output(self.relay_pin, False)                       
+                GPIO.output(REAR_DOOR_LED_PIN, GPIO.HIGH)
+                GPIO.output(REAR_DOOR_RELAY_PIN, False)                       
             else:
-                logging.debug("{}: Access denied".format(self.location))
-                GPIO.output(self.spkr_pin, GPIO.LOW)
+                logging.debug("Loading Dock: Access denied")
+                GPIO.output(REAR_DOOR_SPKR_PIN, GPIO.LOW)
                 time.sleep(0.5)
-                GPIO.output(self.spkr_pin, GPIO.HIGH)
+                GPIO.output(REAR_DOOR_SPKR_PIN, GPIO.HIGH)
 
-
-
-                
+    
 if __name__ == "__main__":
    logging.debug("Starting")
-
+   last_scantime = datetime.now()
    status_LED = LED(LED_PIN)
-   w = decoder(REAR_DOOR_A_PIN, REAR_DOOR_B_PIN, REAR_DOOR_RELAY_PIN,
-               REAR_DOOR_LED_PIN, REAR_DOOR_SPKR_PIN, "Loading Dock")
-   w2 = decoder(FRONT_DOOR_A_PIN, FRONT_DOOR_B_PIN, FRONT_DOOR_RELAY_PIN,
-                FRONT_DOOR_LED_PIN, FRONT_DOOR_SPKR_PIN, "Front Door")
-   # w3 = decoder(BSMITH_DOOR_A_PIN, BSMITH_DOOR_B_PIN, BSMITH_DOOR_RELAY_PIN,
-   #              BSMITH_DOOR_LED_PIN, BSMITH_DOOR_SPKR_PIN, "Blacksmithin")
+   w = decoder(REAR_DOOR_A_PIN, REAR_DOOR_B_PIN)
+   w2 = decoder(FRONT_DOOR_A_PIN, FRONT_DOOR_B_PIN)
+   w3 = decoder(BSMITH_DOOR_A_PIN, BSMITH_DOOR_B_PIN)
    logging.debug("READY")
+   loop_counter = 1
 
    while True:
+       time.sleep(0.3) # without this, readings get reset to 0 too quickly I think.
+       
        # w.reset() # does this help??
        status_LED.blink()
-       
-       # w.process_scan()
-       # w2.process_scan()
+
+
+       bitLen = w.get_pending_bit_count()
+       if bitLen > 0 and bitLen <= 24: # changed 6/24/23 to help avoid spurious readings.
+           logging.debug("\n" + str(datetime.now()) + ": BAD scan detected at loading dock: " + str(bitLen))
+           print("load dock bad scan: {}".format(bitLen))
+           w.reset() # fixed the triple scan problem
+           time.sleep(0.1)
+
+       elif bitLen > 24:
+           data = "{:026b}".format(w.read_data())
+           # print("\nscan detected at loading dock: " + str(data))
+           logging.debug("\n" + str(datetime.now()) + ": scan detected at loading dock: " + str(data))
+
+
+           if last_scantime + timedelta(seconds = 3) < datetime.now(): 
+               last_scantime = datetime.now()
+           else:
+               continue
+
+           if unlock.isAllowed(session, "Loading Dock", data, data):
+               logging.debug("Loading Dock: Open Sesame")
+               GPIO.output(REAR_DOOR_RELAY_PIN, True)
+               GPIO.output(REAR_DOOR_LED_PIN, GPIO.LOW)
+               for i in range(0,8):
+                   GPIO.output(REAR_DOOR_SPKR_PIN, GPIO.LOW)
+                   time.sleep(.05)
+                   GPIO.output(REAR_DOOR_SPKR_PIN, GPIO.HIGH)
+                   time.sleep(.3)
+               GPIO.output(REAR_DOOR_LED_PIN, GPIO.HIGH)
+               GPIO.output(REAR_DOOR_RELAY_PIN, False)                       
+           else:
+               logging.debug("Loading Dock: Access denied")
+               GPIO.output(REAR_DOOR_SPKR_PIN, GPIO.LOW)
+               time.sleep(0.5)
+               GPIO.output(REAR_DOOR_SPKR_PIN, GPIO.HIGH)
+
+
+       bitLen2 = w2.get_pending_bit_count()
+       if bitLen2 > 0 and bitLen2 <= 24:
+           data = "{:026b}".format(w2.read_data())
+           print("front door bad scan: {}, {}".format(bitLen2, data))
+           logging.debug("\n" + str(datetime.now()) + ": BAD scan detected at front door: " + str(bitLen2))
+           w2.reset()
+           time.sleep(0.1)
+       elif bitLen2 > 24:
+           print(bitLen2)
+           data = "{:026b}".format(w2.read_data())
+           logging.debug("\n" + str(datetime.now()) + ": scan detected at front door: " + str(data))
+           if last_scantime + timedelta(seconds = 3) < datetime.now(): 
+               last_scantime = datetime.now()
+           else:
+               continue
+
+           if unlock.isAllowed(session, "Front Door", data, data):
+               logging.debug("Front Door: Open Sesame")
+               GPIO.output(FRONT_DOOR_RELAY_PIN, True)
+               GPIO.output(FRONT_DOOR_LED_PIN, GPIO.LOW)
+
+               for i in range(0,8):
+                   GPIO.output(FRONT_DOOR_SPKR_PIN, GPIO.LOW)
+                   time.sleep(.05)
+                   GPIO.output(FRONT_DOOR_SPKR_PIN, GPIO.HIGH)
+                   time.sleep(.3)
+
+               GPIO.output(FRONT_DOOR_LED_PIN, GPIO.HIGH)
+               GPIO.output(FRONT_DOOR_RELAY_PIN, False)
+           else:
+               logging.debug("Front Door: Access denied")
+               GPIO.output(FRONT_DOOR_SPKR_PIN, GPIO.LOW)
+               time.sleep(0.5)
+               GPIO.output(FRONT_DOOR_SPKR_PIN, GPIO.HIGH)               
+
+               
+       bitLen3 = w3.get_pending_bit_count()
+       if bitLen3 > 0 and bitLen3 <= 24: # changed 3/8/24 to help avoid spurious readings.
+           # data = "{:026b}".format(w2.read_data())
+           logging.debug("\n" + str(datetime.now()) + ": BAD scan detected at blacksmithing: " + str(bitLen3))
+           # w2.reset()
+           time.sleep(0.1)
+       elif bitLen3 > 24:
+           data = "{:026b}".format(w3.read_data())
+           logging.debug("\n" + str(datetime.now()) + ": scan detected at blacksmithing: " + str(data))
+           if last_scantime + timedelta(seconds = 3) < datetime.now(): 
+               last_scantime = datetime.now()
+           else:
+               continue # end this iteration of the loop
+
+           if unlock.isAllowed(session, "Blacksmithing", data, data):               
+               logging.debug("Blacksmithing Door: Open Sesame")
+               GPIO.output(BSMITH_DOOR_RELAY_PIN, True)
+               GPIO.output(BSMITH_DOOR_LED_PIN, GPIO.LOW)
+
+               for i in range(0,8):
+                   GPIO.output(BSMITH_DOOR_SPKR_PIN, GPIO.LOW)
+                   time.sleep(.05)
+                   GPIO.output(BSMITH_DOOR_SPKR_PIN, GPIO.HIGH)
+                   time.sleep(.3)
+
+               GPIO.output(BSMITH_DOOR_LED_PIN, GPIO.HIGH)
+               GPIO.output(BSMITH_DOOR_RELAY_PIN, False)
+           else:
+               logging.debug("Blacksmithing Door: Access denied")
+               GPIO.output(BSMITH_DOOR_SPKR_PIN, GPIO.LOW)
+               time.sleep(0.5)
+               GPIO.output(BSMITH_DOOR_SPKR_PIN, GPIO.HIGH)
+
+               
+>>>>>>> 1692c42
 
        # time.sleep(0.1)
 

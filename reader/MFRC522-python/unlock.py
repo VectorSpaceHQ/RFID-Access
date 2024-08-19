@@ -7,6 +7,7 @@ url = 'https://localhost/unlock'
 STATUS_OK = 200
 # session = requests.Session()
 
+
 # This function is currently too slow
 def isAllowed(session, resourceName, uuid, uuid_bin):
 
