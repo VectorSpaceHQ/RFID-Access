@@ -187,7 +187,7 @@ class KeypadDecoder():
         self.relay_pin = 1
         self.led_pin = 1
         self.spkr_pin = 1
-        self.MAX_BITS = 32 # 8 bits per keypress
+        self.MAX_BITS = 40 # 8 bits per keypress
         self.last_scantime = datetime.now()
         
         GPIO.setup(gpio_0, GPIO.IN, pull_up_down=GPIO.PUD_UP)
@@ -423,22 +423,21 @@ if __name__ == "__main__":
 
 
        bitLen4 = w4.get_pending_bit_count()
-       if bitLen4 > 0 and bitLen4 <= 31: # changed 3/8/24 to help avoid spurious readings.
+       if bitLen4 > 0 and bitLen4 <= (w4.MAX_BITS-1): # changed 3/8/24 to help avoid spurious readings.
            print("HERE", bitLen4)
-           # data = "{:026b}".format(w2.read_data())
            logging.debug("\n" + str(datetime.now()) + ": BAD scan detected at lobby: " + str(bitLen3))
            time.sleep(0.1)
-       elif bitLen4 > 31:
-           data = "{:032b}".format(w4.read_data())
+       elif bitLen4 >= w4.MAX_BITS:
+           data = "{:040b}".format(w4.read_data())
            logging.debug("\n" + str(datetime.now()) + ": scan detected at lobby: " + str(data))
            if last_scantime + timedelta(seconds = 3) < datetime.now(): 
                last_scantime = datetime.now()
            else:
                continue # end this iteration of the loop
 
-           print(w4.decode_data(data))
+           keycode = w4.decode_data(data)
 
-           if unlock.isAllowed(session, "Lobby", data, data):               
+           if unlock.isAllowed(session, "Lobby", keycode, keycode):               
                logging.debug("Lobby Door: Open Sesame")
                GPIO.output(BSMITH_DOOR_RELAY_PIN, True)
                GPIO.output(BSMITH_DOOR_LED_PIN, GPIO.LOW)
