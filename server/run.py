@@ -166,61 +166,12 @@ def unlock():
     log.member = ''
     log.reason = ''
 
-    # wiegand_one = uuid_bin[17:25] + uuid_bin[9:17] # big white
-    # wiegand_two = uuid_bin[9:17] + uuid_bin[17:25] # small blue
 
-    # allcards = db.session.query(Cards)
-    # for onecard in allcards:
-    #     print(onecard.uuid, onecard.uuid_bin)
-    # print("Cards.uuid", Cards.uuid)
-    # print("wiegand_one", wiegand_one)
-    # print("wiegand_two", wiegand_two)
-
-    # card = db.session.query(Cards).filter(Cards.uuid_bin == uuid_bin).first()
     card = db.session.query(Cards).filter(Cards.uuid == uuid_bin).first()
+    keycode = db.session.query(Keycodes).filter(Keycodes.uuid == uuid_bin).first()
 
-    # cards = db.session.query(Cards).all()
-    # for c in cards:
-    #     print(c.uuid_bin, c.uuid)
-
-
-    # ADAM 9/12/20
-    # 10000000100111000000001001 wallet
-    # (u'Adam Spontarelli', 296, u'uuid-8507210', u'0101010100000000000001111101001010000000') keys
-    # Should be able to replace 3 readings with the following one
-    # card = db.session.query(Cards).filter(Cards.uuid_bin == uuid_bin).first()
-
-
-    # -----------------------------------------
-    # Adam removing 11/16/23
-    # This code was meant to keep old keys working. Time to remove it
-    #-
-    # if card:
-    #     if card.member:
-    #         print("card found in system")
-    #         print(card.member, uuid_bin, card.uuid_bin, log.uuid_bin)
-    # else:
-    #     print("card NOT found in system")
-    #     card_wiegand_one = db.session.query(Cards).filter(Cards.uuid_bin.like("%"+str(wiegand_one)+"%")).first()
-    #     if card_wiegand_one:
-    #         if card_wiegand_one.member:
-    #             print("\nWIEGAND ONE FOUND\n")
-    #             card = card_wiegand_one
-    #             log.uuid_bin = wiegand_one
-    #             print(card.member, uuid_bin, card.uuid_bin, log.uuid_bin)
-
-    #             print("Modifying uuid_bin")
-    #             card.uuid_bin = uuid_bin
-    #     else:
-    #         card_wiegand_two = db.session.query(Cards).filter(Cards.uuid_bin.like("%"+str(wiegand_two)+"%")).first()
-    #         if card_wiegand_two:
-    #             if card_wiegand_two.member:
-    #                 print("\nWIEGAND TWO FOUND\n")
-    #                 card = card_wiegand_two
-    #                 log.uuid_bin = wiegand_two
-    # -----------------------------------------                    
-
-    # print(card.member, card.id, card.uuid, card.uuid_bin)
+    if keycode:
+        pass
 
     if card:
         print("card found in system")
@@ -231,16 +182,8 @@ def unlock():
         resource = db.session.query(Resources).filter(Resources.name == "Front Door").first()
         if resource:
             for id in card.resources.split(','):
-                # print("id:",id)
-                # print("resource.id:", resource.id) # 1= front door
-
                 if id and int(id) == resource.id:
                     allowed = True
-                    # if uuid_wiegand null, add it
-                    # if card.uuid_wiegand == None:
-                    #     print("\nNO WIEGAND\n")
-                    #     card.uuid_wiegand = uuid_bin
-                    #     print("wiegand added")
                     break
 
             if not allowed:

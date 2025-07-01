@@ -17,7 +17,10 @@ def isAllowed(session, resourceName, uuid, uuid_bin):
         'uuid_bin': uuid_bin
     }
 
-    r = session.get(url, params=data, verify=False);
+    if (resourceName == "Lobby"):
+        r = session.get(url, params=data, verify=False);
+    else:
+        r = session.get(url, params=data, verify=False);
 
     return r.status_code == STATUS_OK
 
