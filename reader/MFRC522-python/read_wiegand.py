@@ -179,19 +179,24 @@ class decoder():
                 GPIO.output(REAR_DOOR_SPKR_PIN, GPIO.HIGH)
 
 class KeypadDecoder():
-    def __init__(self, gpio_0, gpio_1, location=""):
+    def __init__(self, gpio_0, gpio_1, led_pin, spkr_pin, relay_pin, location="default"):
         self.data = 0
         self.bit_count = 0
         self.bit_time = 0
         self.location = location
-        self.relay_pin = 1
-        self.led_pin = 1
-        self.spkr_pin = 1
-        self.MAX_BITS = 32 # 8 bits per keypress
+        self.relay_pin = relay_pin
+        self.led_pin = led_pin
+        self.spkr_pin = spkr_pin
+        self.MAX_BITS = 8 * 5 # 8 bits per keypress
         self.last_scantime = datetime.now()
+        self.READER_TIMEOUT = 2 # seconds
         
         GPIO.setup(gpio_0, GPIO.IN, pull_up_down=GPIO.PUD_UP)
         GPIO.setup(gpio_1, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+
+        GPIO.setup(self.relay_pin, GPIO.OUT, initial=GPIO.LOW)
+        GPIO.setup(self.led_pin, GPIO.OUT, initial=GPIO.HIGH)
+        GPIO.setup(self.spkr_pin, GPIO.OUT, initial=GPIO.HIGH)
 
         GPIO.add_event_detect(gpio_0, GPIO.FALLING, callback=lambda x: self.getData0())
         GPIO.add_event_detect(gpio_1, GPIO.FALLING, callback=lambda x: self.getData1())
@@ -202,6 +207,7 @@ class KeypadDecoder():
             self.bit_count += 1
             self.data = self.data << 1
         else:
+            # print("getdata0 bitcount: "+str(self.bit_count))
             self.process_scan()
 
     def getData1(self):
@@ -211,6 +217,7 @@ class KeypadDecoder():
             self.data = self.data << 1
             self.data = self.data | 1
         else:
+            # print("getdata1 bitcount: "+str(self.bit_count))
             self.process_scan()
 
     def get_pending_bit_count(self):
@@ -220,11 +227,11 @@ class KeypadDecoder():
         """
         delta_sec = time.time() - (self.bit_time / 10**9)
         delta_nsec = time.time_ns() - self.bit_time
-        if (delta_sec > 1 or delta_nsec > READER_TIMEOUT):
+        if (delta_sec > self.READER_TIMEOUT):
             # print("bit count:", self.bit_count)
             # print(delta_sec, delta_nsec)
-            return self.bit_count
-        return 0
+            self.reset()
+        return self.bit_count
 
     def read_data(self):
         # if self.get_pending_bit_count() > 0:
@@ -257,45 +264,55 @@ class KeypadDecoder():
         except:
             return 0
 
-
     def reset(self):
         self.bit_count = 0
         self.data = 0
 
     def process_scan(self):
         bitLen = self.get_pending_bit_count()
-        if bitLen > 0 and bitLen <= 24: # changed 6/24/23 to help avoid spurious readings.
-            logging.debug("\n{}: BAD scan detected at {}: {}".format(datetime.now(), self.location, bitLen))
-            print("load dock bad scan: {}".format(bitLen))
-            self.reset() # fixed the triple scan problem
+        if bitLen > 0 and bitLen <= self.MAX_BITS - 1:
+            logging.debug("\n" + str(datetime.now()) + ": BAD scan detected at lobby: " + str(bitLen))
+            print("{} bad scan: {}".format(self.location, bitLen))
             time.sleep(0.1)
            
-        elif bitLen > 24:
-            data = "{:026b}".format(self.read_data())
-            print("\nscan detected at loading dock: " + str(data))
+        elif bitLen >= self.MAX_BITS:
+            bitstr = "{:0"+str(self.MAX_BITS)+"b}"
+            data = bitstr.format(self.read_data())
+            print("\nscan detected at {}: {}".format(self.location, str(data)))
             logging.debug("\n{}: scan detected at {}: {}".format(datetime.now(), self.location, bitLen))
+            print(self.decode_data(data))            
+
+       # if bitLen4 > 0 and bitLen4 <= 31: # changed 3/8/24 to help avoid spurious readings.
+       #     print("HERE", bitLen4)
+       #     # data = "{:026b}".format(w2.read_data())
+       #     logging.debug("\n" + str(datetime.now()) + ": BAD scan detected at lobby: " + str(bitLen3))
+       #     time.sleep(0.1)
+       # elif bitLen4 > 31:
+       #     data = "{:032b}".format(w4.read_data())
+       #     logging.debug("\n" + str(datetime.now()) + ": scan detected at lobby: " + str(data))
+            
 
            # if last_scantime + timedelta(seconds = 3) < datetime.now(): 
            #     last_scantime = datetime.now()
            # else:
            # continue
 
-            if unlock.isAllowed(session, self.location, data, data):
-                logging.debug("{}: Open Sesame".format(self.location))
-                GPIO.output(REAR_DOOR_RELAY_PIN, True)
-                GPIO.output(REAR_DOOR_LED_PIN, GPIO.LOW)
-                for i in range(0,8):
-                    GPIO.output(REAR_DOOR_SPKR_PIN, GPIO.LOW)
-                    time.sleep(.05)
-                    GPIO.output(REAR_DOOR_SPKR_PIN, GPIO.HIGH)
-                    time.sleep(.3)
-                GPIO.output(REAR_DOOR_LED_PIN, GPIO.HIGH)
-                GPIO.output(REAR_DOOR_RELAY_PIN, False)                       
-            else:
-                logging.debug("Loading Dock: Access denied")
-                GPIO.output(REAR_DOOR_SPKR_PIN, GPIO.LOW)
-                time.sleep(0.5)
-                GPIO.output(REAR_DOOR_SPKR_PIN, GPIO.HIGH)
+            # if unlock.isAllowed(session, self.location, data, data):
+            #     logging.debug("{}: Open Sesame".format(self.location))
+            #     GPIO.output(REAR_DOOR_RELAY_PIN, True)
+            #     GPIO.output(REAR_DOOR_LED_PIN, GPIO.LOW)
+            #     for i in range(0,8):
+            #         GPIO.output(REAR_DOOR_SPKR_PIN, GPIO.LOW)
+            #         time.sleep(.05)
+            #         GPIO.output(REAR_DOOR_SPKR_PIN, GPIO.HIGH)
+            #         time.sleep(.3)
+            #     GPIO.output(REAR_DOOR_LED_PIN, GPIO.HIGH)
+            #     GPIO.output(REAR_DOOR_RELAY_PIN, False)                       
+            # else:
+            #     logging.debug("{}: Access denied".format(self.location))
+            #     GPIO.output(REAR_DOOR_SPKR_PIN, GPIO.LOW)
+            #     time.sleep(0.5)
+            #     GPIO.output(REAR_DOOR_SPKR_PIN, GPIO.HIGH)
 
                 
 if __name__ == "__main__":
@@ -305,7 +322,8 @@ if __name__ == "__main__":
    w = decoder(REAR_DOOR_A_PIN, REAR_DOOR_B_PIN)
    w2 = decoder(FRONT_DOOR_A_PIN, FRONT_DOOR_B_PIN)
    w3 = decoder(BSMITH_DOOR_A_PIN, BSMITH_DOOR_B_PIN)
-   w4 = KeypadDecoder(FOURTH_DOOR_A_PIN, FOURTH_DOOR_B_PIN)   
+   w4 = KeypadDecoder(FOURTH_DOOR_A_PIN, FOURTH_DOOR_B_PIN, FOURTH_DOOR_LED_PIN,
+                      FOURTH_DOOR_SPKR_PIN, FOURTH_DOOR_RELAY_PIN, "Lobby")   
    logging.debug("READY")
 
    while True:
@@ -422,40 +440,41 @@ if __name__ == "__main__":
 
 
 
-       bitLen4 = w4.get_pending_bit_count()
-       if bitLen4 > 0 and bitLen4 <= 31: # changed 3/8/24 to help avoid spurious readings.
-           print("HERE", bitLen4)
-           # data = "{:026b}".format(w2.read_data())
-           logging.debug("\n" + str(datetime.now()) + ": BAD scan detected at lobby: " + str(bitLen3))
-           time.sleep(0.1)
-       elif bitLen4 > 31:
-           data = "{:032b}".format(w4.read_data())
-           logging.debug("\n" + str(datetime.now()) + ": scan detected at lobby: " + str(data))
-           if last_scantime + timedelta(seconds = 3) < datetime.now(): 
-               last_scantime = datetime.now()
-           else:
-               continue # end this iteration of the loop
+       # KEYPAD READER = w4        
+       bitLen4 = w4.process_scan()
+       # if bitLen4 > 0 and bitLen4 <= 31: # changed 3/8/24 to help avoid spurious readings.
+       #     print("HERE", bitLen4)
+       #     # data = "{:026b}".format(w2.read_data())
+       #     logging.debug("\n" + str(datetime.now()) + ": BAD scan detected at lobby: " + str(bitLen3))
+       #     time.sleep(0.1)
+       # elif bitLen4 > 31:
+       #     data = "{:032b}".format(w4.read_data())
+       #     logging.debug("\n" + str(datetime.now()) + ": scan detected at lobby: " + str(data))
+       #     if last_scantime + timedelta(seconds = 3) < datetime.now(): 
+       #         last_scantime = datetime.now()
+       #     else:
+       #         continue # end this iteration of the loop
 
-           print(w4.decode_data(data))
+       #     print(w4.decode_data(data))
 
-           if unlock.isAllowed(session, "Lobby", data, data):               
-               logging.debug("Lobby Door: Open Sesame")
-               GPIO.output(BSMITH_DOOR_RELAY_PIN, True)
-               GPIO.output(BSMITH_DOOR_LED_PIN, GPIO.LOW)
+       #     if unlock.isAllowed(session, "Lobby", data, data):               
+       #         logging.debug("Lobby Door: Open Sesame")
+       #         GPIO.output(BSMITH_DOOR_RELAY_PIN, True)
+       #         GPIO.output(BSMITH_DOOR_LED_PIN, GPIO.LOW)
 
-               for i in range(0,8):
-                   GPIO.output(BSMITH_DOOR_SPKR_PIN, GPIO.LOW)
-                   time.sleep(.05)
-                   GPIO.output(BSMITH_DOOR_SPKR_PIN, GPIO.HIGH)
-                   time.sleep(.3)
+       #         for i in range(0,8):
+       #             GPIO.output(BSMITH_DOOR_SPKR_PIN, GPIO.LOW)
+       #             time.sleep(.05)
+       #             GPIO.output(BSMITH_DOOR_SPKR_PIN, GPIO.HIGH)
+       #             time.sleep(.3)
 
-               GPIO.output(BSMITH_DOOR_LED_PIN, GPIO.HIGH)
-               GPIO.output(BSMITH_DOOR_RELAY_PIN, False)
-           else:
-               logging.debug("Lobby Door: Access denied")
-               GPIO.output(BSMITH_DOOR_SPKR_PIN, GPIO.LOW)
-               time.sleep(0.5)
-               GPIO.output(BSMITH_DOOR_SPKR_PIN, GPIO.HIGH)               
+       #         GPIO.output(BSMITH_DOOR_LED_PIN, GPIO.HIGH)
+       #         GPIO.output(BSMITH_DOOR_RELAY_PIN, False)
+       #     else:
+       #         logging.debug("Lobby Door: Access denied")
+       #         GPIO.output(BSMITH_DOOR_SPKR_PIN, GPIO.LOW)
+       #         time.sleep(0.5)
+       #         GPIO.output(BSMITH_DOOR_SPKR_PIN, GPIO.HIGH)               
 
                
 
