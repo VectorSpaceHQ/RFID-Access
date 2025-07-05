@@ -55,6 +55,11 @@ angular.module('app')
                 controller:     'CardController',
                 controllerAs:   'vm'
             })
+            .when('/keycodes', {
+                templateUrl:    'views/keycodes.html',
+                controller:     'CardController',
+                controllerAs:   'vm'
+            })
             .when('/editcard/:cardId', {
                 templateUrl:    'views/editcard.html',
                 controller:     'EditCardController',
