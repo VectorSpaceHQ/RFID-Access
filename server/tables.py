@@ -64,3 +64,11 @@ class Tokens(Base):
     token       = Column(String(256))
     admin       = Column(Boolean)
     expires     = Column(Integer)
+
+class KeyCodes(CommonColumns):
+    __tablename__ = 'cards'
+
+    id          = Column(Integer, primary_key=True, autoincrement=True)
+    code        = Column(String(256), unique=True)
+    expires     = Column(Integer)
+
