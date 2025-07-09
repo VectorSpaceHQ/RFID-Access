@@ -156,6 +156,8 @@ def unlock():
     uuid_bin = request.args.get('uuid_bin') or '0'
     uuid_bin = uuid_bin
 
+    keycode = request.args.get('code') or '0'
+
     allowed = False
 
     log = Logs()
@@ -168,10 +170,13 @@ def unlock():
 
 
     card = db.session.query(Cards).filter(Cards.uuid == uuid_bin).first()
-    keycode = db.session.query(Keycodes).filter(Keycodes.uuid == uuid_bin).first()
+    key = db.session.query(Keycodes).filter(Keycodes.code == keycode).first()
 
-    if keycode:
-        pass
+    if key:
+        print("keycode found in system")
+
+        # if not expired
+        # allowed = True
 
     if card:
         print("card found in system")
