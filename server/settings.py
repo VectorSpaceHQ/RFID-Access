@@ -6,6 +6,7 @@ registerSchema('users')(Users)
 registerSchema('resources')(Resources)
 registerSchema('cards')(Cards)
 registerSchema('logs')(Logs)
+registerSchema('keycodes')(Keycodes)
 
 SQLALCHEMY_DATABASE_URI         = 'sqlite:////' + os.path.join(os.path.dirname(__file__), 'rfid.db')
 SQLALCHEMY_ECHO                 = False
@@ -26,7 +27,8 @@ DOMAIN = {
     'users':        Users._eve_schema['users'],
     'resources':    Resources._eve_schema['resources'],
     'cards':        Cards._eve_schema['cards'],
-    'logs':         Logs._eve_schema['logs']
+    'logs':         Logs._eve_schema['logs'],
+    'keycodes':     Keycodes._eve_schema['keycodes']
 }
 
 DOMAIN['users'].update({
@@ -49,6 +51,13 @@ DOMAIN['cards'].update({
     'additional_lookup': {
         'url':      'regex("uuid-[\d]+")',
         'field':    'uuid'
+    }
+})
+
+DOMAIN['keycodes'].update({
+    'additional_lookup': {
+        'url':      'regex("[\d]+")',
+        'field':    'code'
     }
 })
 

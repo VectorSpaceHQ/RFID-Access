@@ -170,9 +170,9 @@ def unlock():
 
 
     card = db.session.query(Cards).filter(Cards.uuid == uuid_bin).first()
-    key = db.session.query(Keycodes).filter(Keycodes.code == keycode).first()
+    code = db.session.query(Keycodes).filter(Keycodes.code == keycode).first()
 
-    if key:
+    if code:
         print("keycode found in system")
 
         # if not expired

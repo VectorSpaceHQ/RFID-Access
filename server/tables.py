@@ -6,7 +6,9 @@ from sqlalchemy import (
     Integer,
     String,
     Boolean,
-    DateTime)
+    Date,
+    DateTime,
+    Time)
 
 Base = declarative_base()
 
@@ -66,9 +68,16 @@ class Tokens(Base):
     expires     = Column(Integer)
 
 class KeyCodes(CommonColumns):
-    __tablename__ = 'cards'
+    __tablename__ = 'keycodes'
 
     id          = Column(Integer, primary_key=True, autoincrement=True)
+    name        = Column(String(256))
     code        = Column(String(256), unique=True)
-    expires     = Column(Integer)
+    start_date  = Column(Date, default=func.now())
+    end_date    = Column(Date, default=func.now())
+    daily_start_time = Column(Time, default=func.now())
+    daily_end_time = Column(Time, default=func.now())
+    resource    = Column(String(256))
+    granted     = Column(Boolean)
+    reason      = Column(String(256))
 
