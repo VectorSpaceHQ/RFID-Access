@@ -4,6 +4,7 @@
   "description": "Vector Space RFID Access Client",
   "main": "",
   "scripts": {
+    "build": "gulp",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Jordan Goulder",
@@ -19,9 +20,9 @@
   },
   "devDependencies": {
     "del": "^2.2.0",
-    "gulp": "^3.9.1",
+    "gulp": "^5.0.1",
     "gulp-concat": "^2.6.0",
-    "gulp-minify": "0.0.5",
+    "gulp-terser": "^2.1.0",
     "gulp-watch": "^4.3.5",
     "run-sequence": "^1.1.5"
   }
