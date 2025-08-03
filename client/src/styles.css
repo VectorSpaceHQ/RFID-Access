@@ -1,0 +1,24 @@
+/* You can add global styles to this file, and also import other style files */
+@import 'styles/main.css';
+
+.right-arrow {
+  font-size: 2.5em;
+  float: right;
+}
+
+#login-button {
+  float: right;
+}
+
+[ng\:cloak],
+[ng-cloak],
+[data-ng-cloak],
+[x-ng-cloak],
+.ng-cloak,
+.x-ng-cloak {
+  display: none !important;
+}
+
+.removing {
+  text-decoration: line-through;
+}

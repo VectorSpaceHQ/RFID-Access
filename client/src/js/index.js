@@ -1,1 +1,22 @@
- 
+// Modern ES module entry point
+import './app.js';
+import './AuthHttpInterceptor.js';
+import './AuthService.js';
+import './Base64.js';
+import './CardController.js';
+import './CardService.js';
+import './ChangeUserPasswordController.js';
+import './EditCardController.js';
+import './EditResourceController.js';
+import './EditUserController.js';
+import './IndexController.js';
+import './LogController.js';
+import './LoginController.js';
+import './LogService.js';
+import './ResourceController.js';
+import './ResourceService.js';
+import './route.js';
+import './UserController.js';
+import './UserService.js';
+import './AddResourceController.js';
+import './AddUserController.js';

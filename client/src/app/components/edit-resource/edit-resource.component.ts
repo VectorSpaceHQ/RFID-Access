@@ -1,0 +1,152 @@
+import { Component, OnInit } from '@angular/core';
+import {
+  FormBuilder,
+  FormGroup,
+  Validators,
+  ReactiveFormsModule,
+} from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { CommonModule } from '@angular/common';
+import { ResourceService } from '../../services/resource.service';
+
+@Component({
+  selector: 'app-edit-resource',
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule, MatSnackBarModule],
+  template: `
+    <ul class="breadcrumb">
+      <li><a routerLink="/home">Home</a></li>
+      <li><a routerLink="/resources">Resources</a></li>
+      <li>Edit Resource</li>
+    </ul>
+
+    <h3>Edit Resource</h3>
+
+    <h4 *ngIf="loading">Loading...</h4>
+    <h4 *ngIf="saving">Saving...</h4>
+
+    <form
+      [formGroup]="editForm"
+      (ngSubmit)="saveResource()"
+      *ngIf="!loading && !saving"
+    >
+      <div class="form-group">
+        <label for="name">Name</label>
+        <input
+          name="name"
+          id="name"
+          formControlName="name"
+          class="form-control"
+          required
+        />
+      </div>
+      <div class="form-group">
+        <label for="description">Description</label>
+        <input
+          name="description"
+          id="description"
+          formControlName="description"
+          class="form-control"
+          required
+        />
+      </div>
+      <button
+        type="submit"
+        class="btn btn-default"
+        [disabled]="editForm.invalid || saving"
+      >
+        Save
+      </button>
+      <a routerLink="/resources">Cancel</a>
+    </form>
+  `,
+  styles: [
+    `
+      .form-group {
+        margin-bottom: 1rem;
+      }
+      .form-control {
+        width: 100%;
+        padding: 0.5rem;
+      }
+    `,
+  ],
+})
+export class EditResourceComponent implements OnInit {
+  editForm: FormGroup;
+  loading = false;
+  saving = false;
+  resourceId = '';
+
+  constructor(
+    private fb: FormBuilder,
+    private resourceService: ResourceService,
+    private route: ActivatedRoute,
+    private router: Router,
+    private snackBar: MatSnackBar
+  ) {
+    this.editForm = this.fb.group({
+      name: ['', Validators.required],
+      description: ['', Validators.required],
+    });
+  }
+
+  ngOnInit() {
+    this.resourceId = this.route.snapshot.paramMap.get('resourceId') || '';
+    this.loadResource();
+  }
+
+  loadResource() {
+    this.loading = true;
+    this.resourceService.getResource(this.resourceId).subscribe({
+      next: (resource) => {
+        this.loading = false;
+        this.editForm.patchValue({
+          name: resource.name,
+          description: resource.description,
+        });
+      },
+      error: () => {
+        this.loading = false;
+        this.snackBar.open('Unable to load resource.', 'Error', {
+          duration: 3000,
+        });
+        this.router.navigate(['/resources']);
+      },
+    });
+  }
+
+  saveResource() {
+    if (this.editForm.valid) {
+      this.saving = true;
+      const updates = this.editForm.value;
+
+      this.resourceService
+        .saveResource(this.resourceId, '', updates)
+        .subscribe({
+          next: () => {
+            this.saving = false;
+            this.snackBar.open('Resource successfully updated!', '', {
+              duration: 2000,
+            });
+            this.router.navigate(['/resources']);
+          },
+          error: (error) => {
+            this.saving = false;
+            let message = 'Unable to update resource at this time.';
+
+            if (error.status === 404) {
+              message = 'Resource not found.';
+            } else if (error.status === 409) {
+              message = 'Resource name already exists.';
+            }
+
+            this.snackBar.open(message, 'Error Updating Resource', {
+              duration: 3000,
+            });
+          },
+        });
+    }
+  }
+}

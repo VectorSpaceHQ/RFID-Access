@@ -11,28 +11,8 @@
     <link rel="stylesheet" href="styles/main.css">
 </head>
 
-<body ng-app="app">
-    <div class="container">
-        <div ng-controller="IndexController as vm">
-            <h2>Vector Space RFID Access 5</h2>
-            <p ng-show="vm.isLoggedIn()" ng-cloak>
-                <button id="login-button" class="btn btn-default" ng-click="vm.logout()">Logout</button>
-            </p>
-            <p ng-hide="vm">Loading...</p>
-            <div ng-view></div>
-        </div>
-    </div>
-
-    <!-- Angular libraries -->
-    <script src="js/lib/angular.min.js"></script>
-    <script src="js/lib/angular-route.min.js"></script>
-    <script src="js/lib/angular-resource.min.js"></script>
-    <script src="js/lib/angular-toastr.tpls.min.js"></script>
-    <script src="js/lib/angular-file-saver.bundle.min.js"></script>
-    <script src="js/lib/ngStorage.min.js"></script>
-
-    <!-- App files -->
-    <script type="module" src="js/index.js"></script>
+<body>
+    <app-root></app-root>
 </body>
 
 </html>
