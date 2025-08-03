@@ -98,3 +98,21 @@ gulp.task('watch', function () {
 });
 
 gulp.task('default', gulp.series('build', 'watch'));
+
+// Add a new task that builds, starts server, and watches
+gulp.task(
+  'dev',
+  gulp.series('build', function () {
+    // Start the server in the background
+    const { spawn } = require('child_process');
+    const server = spawn('python', ['-m', 'http.server', '3000'], {
+      cwd: 'dist',
+      stdio: 'inherit',
+    });
+
+    // Start watch mode
+    return watch('src/**/*', function () {
+      gulp.start('build');
+    });
+  })
+);

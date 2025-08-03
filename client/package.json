@@ -4,7 +4,10 @@
   "description": "Vector Space RFID Access Client",
   "main": "",
   "scripts": {
-    "build": "gulp",
+    "build": "gulp build",
+    "serve": "cd dist && python -m http.server 3000",
+    "open-browser": "sleep 3 && pwd && bash open_localhost.sh",
+    "dev": "concurrently \"gulp dev\" \"npm run open-browser\"",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Jordan Goulder",
@@ -19,6 +22,7 @@
     "ngstorage": "^0.3.10"
   },
   "devDependencies": {
+    "concurrently": "^8.2.2",
     "del": "^2.2.0",
     "gulp": "^5.0.1",
     "gulp-concat": "^2.6.0",
