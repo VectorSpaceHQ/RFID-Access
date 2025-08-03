@@ -1,0 +1,48 @@
+<ul class="breadcrumb">
+    <li><a href="#/">Home</a></li>
+    <li>Resources</li>
+</ul>
+
+<h3>Resources</h3>
+
+<p>
+    <span ng-show="vm.isAdmin()"><a href="#/addresource/"><span
+        class="glyphicon glyphicon-plus"></span>
+        Add new resource</a>
+        &nbsp;&nbsp;&nbsp;
+    </span>
+    <a href="" ng-click="vm.refresh()"><span class="glyphicon glyphicon-refresh"></span> Refresh</a>
+</p>
+
+<h4 ng-show="vm.loading">Loading...</h4>
+<h4 ng-show="vm.errorLoading" class="alert alert-danger">Unable to load resources at this time.</h4>
+<h4 ng-hide="vm.resources.length || vm.loading || vm.errorLoading" class="alert alert-info">There are no resources at this time.</h4>
+
+<div ng-show="vm.resources.length && !vm.loading && !vm.errorLoading">
+    <table class="table">
+        <tr>
+            <th>Name</th>
+            <th ng-show="vm.isAdmin()"></th>
+            <th ng-show="vm.isAdmin()"></th>
+        </tr>
+        <tr ng-repeat="resource in vm.resources" ng-class="{ 'removing danger': resource.removing }">
+            <td>{{ resource.name }}</td>
+            <td ng-show="vm.isAdmin()">
+                <a ng-href="#/editresource/{{ resource._id }}"><span
+                class="glyphicon glyphicon-pencil"></span>
+                Edit</a>
+            </td>
+            <td ng-show="vm.isAdmin()">
+                <a href="" ng-click='vm.removeResource(resource)'><span
+                    class="glyphicon glyphicon-remove"></span>
+                Remove</a>
+            </td>
+        </tr>
+    </table>
+    <nav ng-hide="(vm.page == 1) && vm.lastPage">
+        <ul class="pager">
+            <li class="previous" ng-class="{disabled: vm.page == 1}"><a href="" ng-click="vm.prev()"><span aria-hidden="true">&larr;</span>Prev</a></li>
+            <li class="next" ng-class="{disabled: vm.lastPage }"><a href="" ng-click="vm.next()">Next<span aria-hidden="true">&rarr;</span></a></li>
+        </ul>
+    </nav>
+</div>

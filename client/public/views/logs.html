@@ -1,0 +1,52 @@
+<ul class="breadcrumb">
+    <li><a href="#/">Home</a></li>
+    <li>Logs</li>
+</ul>
+
+<h3>Logs</h3>
+
+<p>
+    <span ng-show="vm.isAdmin()"><a href="" ng-click="vm.clearLogs()"><span
+        class="glyphicon glyphicon-trash"></span>
+        Clear</a>
+        &nbsp;&nbsp;&nbsp;
+    </span>
+    <span>
+        <a href="" ng-click="vm.saveLogs()"><span class="glyphicon glyphicon-save-file"></span> Save</a>
+        &nbsp;&nbsp;&nbsp;
+    </span>
+    <span>
+        <a href="" ng-click="vm.refresh()"><span class="glyphicon glyphicon-refresh"></span> Refresh</a>
+        &nbsp;&nbsp;&nbsp;
+    </span>
+</p>
+
+<h4 ng-show="vm.loading">Loading...</h4>
+<h4 ng-show="vm.clearing">Clearing...</h4>
+<h4 ng-show="vm.errorLoading" class="alert alert-danger">Unable to load logs at this time.</h4>
+<h4 ng-hide="vm.logs.length || vm.loading || vm.clearing || vm.errorLoading" class="alert alert-info">There are no logs at this time.</h4>
+
+<div ng-show="vm.logs.length && !vm.loading && !vm.clearing && !vm.errorLoading">
+    <table class="table">
+        <tr>
+            <th>Date</th>
+            <th>UUID</th>
+            <th>Member</th>
+            <th>Resource</th>
+            <th>Status</th>
+        </tr>
+        <tr ng-repeat="log in vm.logs" class="{{ log.granted ? '' : 'warning' }}">
+            <td>{{ log.date }} </td>
+            <td>{{ log.uuid_bin.substring(5) }}</td>
+            <td>{{ log.member }}</td>
+            <td>{{ log.resource }}</td>
+            <td>{{ log.granted ? 'Success' : log.reason }}</td>
+        </tr>
+    </table>
+    <nav>
+        <ul class="pager">
+            <li class="previous" ng-class="{disabled: vm.page == 1}"><a href="" ng-click="vm.newer()"><span aria-hidden="true">&larr;</span>Newer</a></li>
+            <li class="next" ng-class="{disabled: vm.lastPage }"><a href="" ng-click="vm.older()">Older<span aria-hidden="true">&rarr;</span></a></li>
+        </ul>
+    </nav>
+</div>

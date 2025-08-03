@@ -3,11 +3,13 @@
   "version": "1.0.0",
   "description": "Vector Space RFID Access Client",
   "main": "",
+  "type": "module",
   "scripts": {
-    "build": "gulp build",
-    "serve": "cd dist && python -m http.server 3000",
-    "open-browser": "sleep 3 && pwd && bash open_localhost.sh",
-    "dev": "concurrently \"gulp dev\" \"npm run open-browser\"",
+    "setup": "node scripts/setup-dev.js",
+    "dev": "npm run setup && vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "serve": "vite preview --port 3000",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Jordan Goulder",
@@ -22,12 +24,7 @@
     "ngstorage": "^0.3.10"
   },
   "devDependencies": {
-    "concurrently": "^8.2.2",
-    "del": "^2.2.0",
-    "gulp": "^5.0.1",
-    "gulp-concat": "^2.6.0",
-    "gulp-terser": "^2.1.0",
-    "gulp-watch": "^4.3.5",
-    "run-sequence": "^1.1.5"
+    "vite": "^5.0.0",
+    "vite-plugin-html": "^3.2.0"
   }
 }
