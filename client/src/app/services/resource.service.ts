@@ -7,6 +7,7 @@ export interface Resource {
   name: string;
   description: string;
   _etag: string;
+  removing?: boolean;
 }
 
 export interface ResourcesResponse {

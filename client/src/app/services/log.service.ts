@@ -4,11 +4,12 @@ import { Observable } from 'rxjs';
 
 export interface Log {
   _id: string;
-  timestamp: string;
-  cardId?: string;
-  resourceId?: string;
-  action: string;
-  success: boolean;
+  date: string;
+  uuid_bin: string;
+  member: string;
+  resource: string;
+  granted: boolean;
+  reason?: string;
   _etag: string;
 }
 

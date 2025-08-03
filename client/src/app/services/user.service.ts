@@ -7,6 +7,7 @@ export interface User {
   username: string;
   admin: boolean;
   _etag: string;
+  removing?: boolean;
 }
 
 export interface UsersResponse {

@@ -4,9 +4,11 @@ import { Observable } from 'rxjs';
 
 export interface Card {
   _id: string;
-  cardId: string;
-  description: string;
+  uuid: string;
+  member: string;
+  resources: string[];
   _etag: string;
+  removing?: boolean;
 }
 
 export interface CardsResponse {

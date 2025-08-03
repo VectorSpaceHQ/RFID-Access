@@ -146,28 +146,26 @@ export class AddUserComponent {
       this.adding = true;
       const { username, password, isAdmin } = this.addForm.value;
 
-      this.userService
-        .addUser({ username, password, admin: isAdmin })
-        .subscribe({
-          next: () => {
-            this.snackBar.open('User successfully added!', '', {
-              duration: 2000,
-            });
-            this.router.navigate(['/users']);
-          },
-          error: (error) => {
-            this.adding = false;
-            let message = 'Unable to add user at this time.';
+      this.userService.addUser({ username, admin: isAdmin }).subscribe({
+        next: () => {
+          this.snackBar.open('User successfully added!', '', {
+            duration: 2000,
+          });
+          this.router.navigate(['/users']);
+        },
+        error: (error) => {
+          this.adding = false;
+          let message = 'Unable to add user at this time.';
 
-            if (error.status === 409) {
-              message = 'Username already exists.';
-            }
+          if (error.status === 409) {
+            message = 'Username already exists.';
+          }
 
-            this.snackBar.open(message, 'Error Adding User', {
-              duration: 3000,
-            });
-          },
-        });
+          this.snackBar.open(message, 'Error Adding User', {
+            duration: 3000,
+          });
+        },
+      });
     }
   }
 }
