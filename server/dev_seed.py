@@ -472,37 +472,38 @@ def main():
     print("Starting database seeding process...")
     print("=" * 50)
     
-    try:
-        # Seed data in order of dependencies
-        seed_users()
-        print()
-        
-        seed_resources()
-        print()
-        
-        seed_cards()
-        print()
-        
-        seed_logs()
-        print()
-        
-        seed_keycodes()
-        print()
-        
-        print("=" * 50)
-        print("Database seeding completed successfully!")
-        print("\nSeed Data Summary:")
-        print(f"  Users: {db.session.query(Users).count()}")
-        print(f"  Resources: {db.session.query(Resources).count()}")
-        print(f"  Cards: {db.session.query(Cards).count()}")
-        print(f"  Logs: {db.session.query(Logs).count()}")
-        print(f"  KeyCodes: {db.session.query(KeyCodes).count()}")
-        print(f"  Tokens: {db.session.query(Tokens).count()}")
-        
-    except Exception as e:
-        print(f"Error during seeding: {e}")
-        db.session.rollback()
-        raise
+    with app.app_context():
+        try:
+            # Seed data in order of dependencies
+            seed_users()
+            print()
+            
+            seed_resources()
+            print()
+            
+            seed_cards()
+            print()
+            
+            seed_logs()
+            print()
+            
+            seed_keycodes()
+            print()
+            
+            print("=" * 50)
+            print("Database seeding completed successfully!")
+            print("\nSeed Data Summary:")
+            print(f"  Users: {db.session.query(Users).count()}")
+            print(f"  Resources: {db.session.query(Resources).count()}")
+            print(f"  Cards: {db.session.query(Cards).count()}")
+            print(f"  Logs: {db.session.query(Logs).count()}")
+            print(f"  KeyCodes: {db.session.query(KeyCodes).count()}")
+            print(f"  Tokens: {db.session.query(Tokens).count()}")
+            
+        except Exception as e:
+            print(f"Error during seeding: {e}")
+            db.session.rollback()
+            raise
 
 if __name__ == "__main__":
     main() 

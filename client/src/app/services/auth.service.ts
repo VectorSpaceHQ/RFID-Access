@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { Router } from '@angular/router';
+import { ConfigService } from './config.service';
 
 export interface User {
   username: string;
@@ -26,7 +27,11 @@ export class AuthService {
   private currentUserSubject = new BehaviorSubject<User | null>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
 
-  constructor(private http: HttpClient, private router: Router) {
+  constructor(
+    private http: HttpClient,
+    private router: Router,
+    private configService: ConfigService
+  ) {
     // Check for existing session
     const storedUser = sessionStorage.getItem('currentUser');
     if (storedUser) {
@@ -35,16 +40,21 @@ export class AuthService {
   }
 
   login(username: string, password: string): Observable<LoginResponse> {
-    return this.http.post<LoginResponse>('/auth', { username, password }).pipe(
-      tap((response) => {
-        const user: User = {
-          username,
-          token: response.token,
-          isAdmin: response.admin,
-        };
-        this.saveCredentials(user);
+    return this.http
+      .post<LoginResponse>(this.configService.getAuthUrl(), {
+        username,
+        password,
       })
-    );
+      .pipe(
+        tap((response) => {
+          const user: User = {
+            username,
+            token: response.token,
+            isAdmin: response.admin,
+          };
+          this.saveCredentials(user);
+        })
+      );
   }
 
   logout(): void {

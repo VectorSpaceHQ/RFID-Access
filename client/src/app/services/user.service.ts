@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { ConfigService } from './config.service';
 
 export interface User {
   _id: string;
@@ -22,29 +23,40 @@ export interface UsersResponse {
   providedIn: 'root',
 })
 export class UserService {
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private configService: ConfigService) {}
 
   getUsers(page: number): Observable<UsersResponse> {
-    return this.http.get<UsersResponse>(`/api/users?page=${page}`);
+    return this.http.get<UsersResponse>(
+      `${this.configService.getApiUrl('users')}?page=${page}`
+    );
   }
 
   getUser(id: string): Observable<User> {
-    return this.http.get<User>(`/api/users/${id}`);
+    return this.http.get<User>(
+      `${this.configService.getApiUrl('users')}/${id}`
+    );
   }
 
   addUser(newUser: Partial<User>): Observable<User> {
-    return this.http.post<User>('/api/users', newUser);
+    return this.http.post<User>(this.configService.getApiUrl('users'), newUser);
   }
 
   saveUser(id: string, etag: string, updates: Partial<User>): Observable<User> {
-    return this.http.patch<User>(`/api/users/${id}`, updates, {
-      headers: { 'If-Match': etag },
-    });
+    return this.http.patch<User>(
+      `${this.configService.getApiUrl('users')}/${id}`,
+      updates,
+      {
+        headers: { 'If-Match': etag },
+      }
+    );
   }
 
   removeUser(id: string, etag: string): Observable<void> {
-    return this.http.delete<void>(`/api/users/${id}`, {
-      headers: { 'If-Match': etag },
-    });
+    return this.http.delete<void>(
+      `${this.configService.getApiUrl('users')}/${id}`,
+      {
+        headers: { 'If-Match': etag },
+      }
+    );
   }
 }

@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { ConfigService } from './config.service';
 
 export interface Log {
   _id: string;
@@ -25,13 +26,15 @@ export interface LogsResponse {
   providedIn: 'root',
 })
 export class LogService {
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private configService: ConfigService) {}
 
   getLogs(page: number): Observable<LogsResponse> {
-    return this.http.get<LogsResponse>(`/api/logs?sort=-_created&page=${page}`);
+    return this.http.get<LogsResponse>(
+      `${this.configService.getApiUrl('logs')}?sort=-_created&page=${page}`
+    );
   }
 
   clearLogs(): Observable<void> {
-    return this.http.delete<void>('/api/logs');
+    return this.http.delete<void>(this.configService.getApiUrl('logs'));
   }
 }

@@ -9,27 +9,24 @@ import json
 import string
 import random
 
-from eve import Eve
-from eve.auth import TokenAuth
-from flask import redirect, make_response, request, jsonify
-from werkzeug.wsgi import SharedDataMiddleware
-from eve_sqlalchemy import SQL
-from eve_sqlalchemy.validation import ValidatorSQL
-from tables import Users, Resources, Cards, Logs, Tokens, Base
+from flask import Flask, redirect, make_response, request, jsonify
+from werkzeug.middleware.shared_data import SharedDataMiddleware
+from flask_sqlalchemy import SQLAlchemy
+from tables import Users, Resources, Cards, Logs, Tokens, KeyCodes, Base
 
-class MyTokenAuth(TokenAuth):
-    def check_auth(self, token, allowed_roles, resource, method):
-        sessionToken = db.session.query(Tokens).filter(Tokens.token == token).first()
+# Simple token authentication
+def check_auth(token, allowed_roles, resource, method):
+    sessionToken = db.session.query(Tokens).filter(Tokens.token == token).first()
 
-        if sessionToken:
-            if time.time() < sessionToken.expires:
-                return (method == 'GET' or sessionToken.admin)
-            else:
-                db.session.query(Tokens).filter(Tokens.expires < time.time()).delete()
-                db.session.commit()
-                return False
+    if sessionToken:
+        if time.time() < sessionToken.expires:
+            return (method == 'GET' or sessionToken.admin)
         else:
+            db.session.query(Tokens).filter(Tokens.expires < time.time()).delete()
+            db.session.commit()
             return False
+    else:
+        return False
 
 def before_insert_users(items):
     for item in items:
@@ -78,30 +75,35 @@ def prune_database():
                 db.session.commit()
 
     
-app = Eve(validator=ValidatorSQL, data=SQL, auth=MyTokenAuth)
+# Flask configuration
+app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///rfid.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-db = app.data.driver
-Base.metadata.bind = db.engine
-db.Model = Base
-db.create_all()
+db = SQLAlchemy()
+db.init_app(app)
 
-if not db.session.query(Users).count():
-    hash = hashlib.sha1()
-    hash.update(datetime.datetime.now().isoformat())
-    etag = hash.hexdigest()
+with app.app_context():
+    # Create all tables
+    Base.metadata.create_all(db.engine)
 
-    password = generate_password()
+    if not db.session.query(Users).count():
+        hash = hashlib.sha1()
+        hash.update(datetime.datetime.now().isoformat().encode('utf-8'))
+        etag = hash.hexdigest()
 
-    print('@' * 80)
-    print("No users found in database")
-    print("Creating root user with password %s" % password)
-    print("You should change the root password NOW!")
-    print('@' * 80)
+        password = generate_password()
 
-    password = bcrypt.hashpw(password, bcrypt.gensalt())
+        print('@' * 80)
+        print("No users found in database")
+        print("Creating root user with password %s" % password)
+        print("You should change the root password NOW!")
+        print('@' * 80)
 
-    db.session.add(Users(username='root', password=password, admin=True, _etag=etag))
-    db.session.commit()
+        password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+
+        db.session.add(Users(username='root', password=password, admin=True, _etag=etag))
+        db.session.commit()
 
 
 @app.route('/')
@@ -170,7 +172,7 @@ def unlock():
 
 
     card = db.session.query(Cards).filter(Cards.uuid == uuid_bin).first()
-    code = db.session.query(Keycodes).filter(Keycodes.code == keycode).first()
+    code = db.session.query(KeyCodes).filter(KeyCodes.code == keycode).first()
 
     if code:
         print("keycode found in system")
@@ -231,22 +233,131 @@ if __name__ == '__main__':
     if 'debug' in sys.argv:
         app.debug = True
 
-    app.wsgi_app = SharedDataMiddleware(app.wsgi_app, {
-        '/': os.path.join(os.path.dirname(__file__), '..', 'client', 'dist')
-    })
-
-    app.on_insert_users += before_insert_users
-    app.on_update_users += before_update_users
-    app.on_delete_item_resources += delete_resource
-    app.on_post_GET_users += remove_password
-
-    context = (
-        os.path.join(os.path.dirname(__file__), 'ssl', 'RFID.crt'),
-        os.path.join(os.path.dirname(__file__), 'ssl', 'RFID.key')
-    )
-
-    port = 443
+    # In development mode, proxy to Angular dev server
     if app.debug:
-        port = 8443
+        from flask_cors import CORS
+        CORS(app)  # Enable CORS for development
+        
+        # Proxy to Angular dev server for frontend requests
+        @app.route('/', defaults={'path': ''})
+        @app.route('/<path:path>')
+        def serve_angular(path):
+            if path.startswith('api/') or path.startswith('auth') or path.startswith('unlock'):
+                # Let Flask handle API routes
+                return app.view_functions.get(path.split('/')[0])(path)
+            
+            # Proxy to Angular dev server for frontend routes
+            import requests
+            try:
+                angular_response = requests.get(f'http://localhost:4200/{path}')
+                return angular_response.content, angular_response.status_code, angular_response.headers.items()
+            except requests.exceptions.ConnectionError:
+                return f"""
+                <html>
+                <head><title>Angular Dev Server Not Running</title></head>
+                <body>
+                <h1>Angular Development Server Not Running</h1>
+                <p>Please start the Angular development server:</p>
+                <pre>cd client && npm start</pre>
+                <p>Then refresh this page.</p>
+                </body>
+                </html>
+                """, 503
+    else:
+        # Production mode - serve built Angular app
+        app.wsgi_app = SharedDataMiddleware(app.wsgi_app, {
+            '/': os.path.join(os.path.dirname(__file__), '..', 'client', 'dist')
+        })
 
-    app.run(host="0.0.0.0", port=port, ssl_context=context)
+    # Add API routes for CRUD operations
+    @app.route('/api/users', methods=['GET'])
+    def get_users():
+        users = db.session.query(Users).all()
+        return jsonify([{
+            'id': user.id,
+            'username': user.username,
+            'admin': user.admin,
+            '_created': user._created.isoformat() if user._created else None,
+            '_updated': user._updated.isoformat() if user._updated else None,
+            '_etag': user._etag
+        } for user in users])
+
+    @app.route('/api/users', methods=['POST'])
+    def create_user():
+        data = request.get_json()
+        user = Users(
+            username=data['username'],
+            password=bcrypt.hashpw(data['password'].encode('utf-8'), bcrypt.gensalt()).decode('utf-8'),
+            admin=data.get('admin', False)
+        )
+        db.session.add(user)
+        db.session.commit()
+        return jsonify({'id': user.id, 'username': user.username, 'admin': user.admin}), 201
+
+    @app.route('/api/resources', methods=['GET'])
+    def get_resources():
+        resources = db.session.query(Resources).all()
+        return jsonify([{
+            'id': resource.id,
+            'name': resource.name,
+            '_created': resource._created.isoformat() if resource._created else None,
+            '_updated': resource._updated.isoformat() if resource._updated else None,
+            '_etag': resource._etag
+        } for resource in resources])
+
+    @app.route('/api/resources', methods=['POST'])
+    def create_resource():
+        data = request.get_json()
+        resource = Resources(name=data['name'])
+        db.session.add(resource)
+        db.session.commit()
+        return jsonify({'id': resource.id, 'name': resource.name}), 201
+
+    @app.route('/api/cards', methods=['GET'])
+    def get_cards():
+        cards = db.session.query(Cards).all()
+        return jsonify([{
+            'id': card.id,
+            'uuid': card.uuid,
+            'uuid_bin': card.uuid_bin,
+            'member': card.member,
+            'resources': card.resources,
+            '_created': card._created.isoformat() if card._created else None,
+            '_updated': card._updated.isoformat() if card._updated else None,
+            '_etag': card._etag
+        } for card in cards])
+
+    @app.route('/api/logs', methods=['GET'])
+    def get_logs():
+        logs = db.session.query(Logs).all()
+        return jsonify([{
+            'id': log.id,
+            'uuid': log.uuid,
+            'uuid_bin': log.uuid_bin,
+            'member': log.member,
+            'resource': log.resource,
+            'granted': log.granted,
+            'reason': log.reason,
+            '_created': log._created.isoformat() if log._created else None,
+            '_updated': log._updated.isoformat() if log._updated else None,
+            '_etag': log._etag
+        } for log in logs])
+
+    @app.route('/api/logs', methods=['DELETE'])
+    def clear_logs():
+        db.session.query(Logs).delete()
+        db.session.commit()
+        return '', 204
+
+    if app.debug:
+        # Development mode - no SSL
+        port = 8443
+        app.run(host="0.0.0.0", port=port)
+    else:
+        # Production mode - with SSL
+        context = (
+            os.path.join(os.path.dirname(__file__), 'ssl', 'RFID.crt'),
+            os.path.join(os.path.dirname(__file__), 'ssl', 'RFID.key')
+        )
+        port = 443
+        app.run(host="0.0.0.0", port=port, ssl_context=context)
