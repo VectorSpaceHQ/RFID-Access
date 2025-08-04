@@ -15,7 +15,6 @@ import { AuthService } from './services/auth.service';
           Logout
         </button>
       </p>
-      <p *ngIf="!authService.isLoggedIn()">Loading...</p>
       <router-outlet></router-outlet>
     </div>
   `,
