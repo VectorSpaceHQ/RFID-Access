@@ -30,11 +30,11 @@ def check_auth(token, allowed_roles, resource, method):
 
 def before_insert_users(items):
     for item in items:
-        item["password"] = bcrypt.hashpw(item["password"], bcrypt.gensalt())
+        item["password"] = bcrypt.hashpw(item["password"].encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
 
 def before_update_users(updates, originals):
     if 'password' in updates:
-        updates['password'] = bcrypt.hashpw(updates['password'], bcrypt.gensalt())
+        updates['password'] = bcrypt.hashpw(updates['password'].encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
 
 def delete_resource(item):
     for card in db.session.query(Cards):
@@ -127,7 +127,7 @@ def auth():
 
     user = db.session.query(Users).filter(Users.username == username).first()
 
-    if user and bcrypt.checkpw(password, user.password):
+    if user and bcrypt.checkpw(password.encode('utf-8'), user.password.encode('utf-8')):
         hash = hashlib.sha1()
         hash.update(os.urandom(128))
 
