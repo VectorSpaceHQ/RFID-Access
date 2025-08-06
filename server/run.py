@@ -265,9 +265,21 @@ if __name__ == '__main__':
                 """, 503
     else:
         # Production mode - serve built Angular app
-        app.wsgi_app = SharedDataMiddleware(app.wsgi_app, {
-            '/': os.path.join(os.path.dirname(__file__), '..', 'client', 'dist')
-        })
+        from flask import send_from_directory
+        
+        @app.route('/', defaults={'path': ''})
+        @app.route('/<path:path>')
+        def serve_angular(path):
+            if path.startswith('api/') or path.startswith('auth') or path.startswith('unlock'):
+                # Let Flask handle API routes
+                return app.view_functions.get(path.split('/')[0])(path)
+            
+            # Serve Angular static files
+            angular_path = os.path.join(os.path.dirname(__file__), '..', 'client', 'dist', 'vs-rfid-client')
+            if path and os.path.exists(os.path.join(angular_path, path)):
+                return send_from_directory(angular_path, path)
+            else:
+                return send_from_directory(angular_path, 'index.html')
 
     # Add API routes for CRUD operations
     @app.route('/api/users', methods=['GET'])
@@ -379,10 +391,6 @@ if __name__ == '__main__':
         port = 8443
         app.run(host="0.0.0.0", port=port)
     else:
-        # Production mode - with SSL
-        context = (
-            os.path.join(os.path.dirname(__file__), 'ssl', 'RFID.crt'),
-            os.path.join(os.path.dirname(__file__), 'ssl', 'RFID.key')
-        )
+        # Production mode - without SSL for now (since SSL certs are missing)
         port = 443
-        app.run(host="0.0.0.0", port=port, ssl_context=context)
+        app.run(host="0.0.0.0", port=port)

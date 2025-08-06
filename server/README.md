@@ -18,9 +18,8 @@ Install a GitBash terminal, launch it, then use the same steps as Linux/Mac
 
 ## Access URLs
 
-- **Main Application:** http://localhost:8443 (serves Angular + API)
-- **Angular Dev Server:** http://localhost:4200 (hot reload)
-- **Flask API:** http://localhost:8443/api
+- **Angular Dev Server:** http://localhost:4200 (serves client)
+- **Flask API:** http://localhost:8443/api (serves api)
 
 ## Features
 
@@ -36,5 +35,18 @@ This provides a seamless development experience with hot reload while maintainin
 
 ## Production Build
 
-- For production, build using `ng build`
-- Then the Flask server will serve the pages as flat files. Note: The Angular server is not used in production.
+- For production, build client using
+
+```bash
+cd client
+ng build
+```
+
+Start the server, which serves the built Angular app on port 443
+
+```bash
+cd server
+python run.py
+```
+
+Note: The Angular server is not used in production.
