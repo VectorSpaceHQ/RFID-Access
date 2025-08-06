@@ -55,7 +55,7 @@ import { AuthService } from '../../services/auth.service';
           <td>{{ resource.name }}</td>
           <td>{{ resource.description }}</td>
           <td *ngIf="isAdmin()">
-            <a [routerLink]="['/editresource', resource._id]">
+            <a [routerLink]="['/editresource', resource.id]">
               <span class="glyphicon glyphicon-pencil"></span> Edit
             </a>
           </td>
@@ -150,7 +150,7 @@ export class ResourcesComponent implements OnInit {
       resource.removing = true;
 
       this.resourceService
-        .removeResource(resource._id, resource._etag)
+        .removeResource(resource.id, resource._etag)
         .subscribe({
           next: () => {
             this.snackBar.open('Resource successfully removed!', '', {

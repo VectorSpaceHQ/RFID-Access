@@ -297,13 +297,20 @@ if __name__ == '__main__':
     @app.route('/api/resources', methods=['GET'])
     def get_resources():
         resources = db.session.query(Resources).all()
-        return jsonify([{
-            'id': resource.id,
-            'name': resource.name,
-            '_created': resource._created.isoformat() if resource._created else None,
-            '_updated': resource._updated.isoformat() if resource._updated else None,
-            '_etag': resource._etag
-        } for resource in resources])
+        return jsonify({
+            '_items': [{
+                'id': resource.id,
+                'name': resource.name,
+                'description': '',  # Add description field for compatibility
+                '_created': resource._created.isoformat() if resource._created else None,
+                '_updated': resource._updated.isoformat() if resource._updated else None,
+                '_etag': resource._etag
+            } for resource in resources],
+            '_meta': {
+                'max_results': len(resources),
+                'total': len(resources)
+            }
+        })
 
     @app.route('/api/resources', methods=['POST'])
     def create_resource():

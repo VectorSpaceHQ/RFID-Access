@@ -134,7 +134,7 @@ export class CardsComponent implements OnInit {
     this.resourceService.getResources(1).subscribe({
       next: (response) => {
         response._items.forEach((resource) => {
-          this.resourceNames[resource._id] = resource.name;
+          this.resourceNames[resource.id] = resource.name;
         });
       },
     });

@@ -1,13 +1,16 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { ConfigService } from './config.service';
 
 export interface Resource {
-  _id: string;
+  id: number;
   name: string;
   description: string;
   _etag: string;
+  _created?: string;
+  _updated?: string;
   removing?: boolean;
 }
 
@@ -58,7 +61,7 @@ export class ResourceService {
     );
   }
 
-  removeResource(id: string, etag: string): Observable<void> {
+  removeResource(id: number, etag: string): Observable<void> {
     return this.http.delete<void>(
       `${this.configService.getApiUrl('resources')}/${id}`,
       {
