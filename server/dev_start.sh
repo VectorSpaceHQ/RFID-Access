@@ -47,7 +47,7 @@ fi
 
 # Start Angular dev server in the background
 echo "Starting Angular development server..."
-ng serve --port 4200 --host 0.0.0.0 &
+npm start &
 ANGULAR_PID=$!
 
 # Wait for Angular to start
