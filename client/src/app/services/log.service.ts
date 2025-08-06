@@ -4,14 +4,17 @@ import { Observable } from 'rxjs';
 import { ConfigService } from './config.service';
 
 export interface Log {
-  _id: string;
-  date: string;
+  id: number;
+  uuid: string;
   uuid_bin: string;
   member: string;
   resource: string;
   granted: boolean;
   reason?: string;
+  date?: string;
   _etag: string;
+  _created?: string;
+  _updated?: string;
 }
 
 export interface LogsResponse {

@@ -4,11 +4,14 @@ import { Observable } from 'rxjs';
 import { ConfigService } from './config.service';
 
 export interface Card {
-  _id: string;
+  id: number;
   uuid: string;
+  uuid_bin: string;
   member: string;
-  resources: string[];
+  resources: string;
   _etag: string;
+  _created?: string;
+  _updated?: string;
   removing?: boolean;
 }
 
@@ -32,13 +35,13 @@ export class CardService {
     );
   }
 
-  getCard(id: string): Observable<Card> {
+  getCard(id: number): Observable<Card> {
     return this.http.get<Card>(
       `${this.configService.getApiUrl('cards')}/${id}`
     );
   }
 
-  saveCard(id: string, etag: string, updates: Partial<Card>): Observable<Card> {
+  saveCard(id: number, etag: string, updates: Partial<Card>): Observable<Card> {
     return this.http.patch<Card>(
       `${this.configService.getApiUrl('cards')}/${id}`,
       updates,
@@ -48,7 +51,7 @@ export class CardService {
     );
   }
 
-  removeCard(id: string, etag: string): Observable<void> {
+  removeCard(id: number, etag: string): Observable<void> {
     return this.http.delete<void>(
       `${this.configService.getApiUrl('cards')}/${id}`,
       {

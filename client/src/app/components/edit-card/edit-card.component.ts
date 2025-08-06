@@ -51,7 +51,7 @@ import { ResourceService } from '../../services/resource.service';
           class="form-control"
           multiple
         >
-          <option *ngFor="let resource of resources" [value]="resource._id">
+          <option *ngFor="let resource of resources" [value]="resource.id">
             {{ resource.name }}
           </option>
         </select>
@@ -107,7 +107,7 @@ export class EditCardComponent implements OnInit {
 
   loadCard() {
     this.loading = true;
-    this.cardService.getCard(this.cardId).subscribe({
+    this.cardService.getCard(Number(this.cardId)).subscribe({
       next: (card) => {
         this.loading = false;
         this.editForm.patchValue({
@@ -136,7 +136,7 @@ export class EditCardComponent implements OnInit {
       this.saving = true;
       const updates = this.editForm.value;
 
-      this.cardService.saveCard(this.cardId, '', updates).subscribe({
+      this.cardService.saveCard(Number(this.cardId), '', updates).subscribe({
         next: () => {
           this.saving = false;
           this.snackBar.open('Card successfully updated!', '', {

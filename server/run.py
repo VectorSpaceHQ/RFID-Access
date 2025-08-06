@@ -273,14 +273,20 @@ if __name__ == '__main__':
     @app.route('/api/users', methods=['GET'])
     def get_users():
         users = db.session.query(Users).all()
-        return jsonify([{
-            'id': user.id,
-            'username': user.username,
-            'admin': user.admin,
-            '_created': user._created.isoformat() if user._created else None,
-            '_updated': user._updated.isoformat() if user._updated else None,
-            '_etag': user._etag
-        } for user in users])
+        return jsonify({
+            '_items': [{
+                'id': user.id,
+                'username': user.username,
+                'admin': user.admin,
+                '_created': user._created.isoformat() if user._created else None,
+                '_updated': user._updated.isoformat() if user._updated else None,
+                '_etag': user._etag
+            } for user in users],
+            '_meta': {
+                'max_results': len(users),
+                'total': len(users)
+            }
+        })
 
     @app.route('/api/users', methods=['POST'])
     def create_user():
@@ -323,32 +329,44 @@ if __name__ == '__main__':
     @app.route('/api/cards', methods=['GET'])
     def get_cards():
         cards = db.session.query(Cards).all()
-        return jsonify([{
-            'id': card.id,
-            'uuid': card.uuid,
-            'uuid_bin': card.uuid_bin,
-            'member': card.member,
-            'resources': card.resources,
-            '_created': card._created.isoformat() if card._created else None,
-            '_updated': card._updated.isoformat() if card._updated else None,
-            '_etag': card._etag
-        } for card in cards])
+        return jsonify({
+            '_items': [{
+                'id': card.id,
+                'uuid': card.uuid,
+                'uuid_bin': card.uuid_bin,
+                'member': card.member,
+                'resources': card.resources,
+                '_created': card._created.isoformat() if card._created else None,
+                '_updated': card._updated.isoformat() if card._updated else None,
+                '_etag': card._etag
+            } for card in cards],
+            '_meta': {
+                'max_results': len(cards),
+                'total': len(cards)
+            }
+        })
 
     @app.route('/api/logs', methods=['GET'])
     def get_logs():
         logs = db.session.query(Logs).all()
-        return jsonify([{
-            'id': log.id,
-            'uuid': log.uuid,
-            'uuid_bin': log.uuid_bin,
-            'member': log.member,
-            'resource': log.resource,
-            'granted': log.granted,
-            'reason': log.reason,
-            '_created': log._created.isoformat() if log._created else None,
-            '_updated': log._updated.isoformat() if log._updated else None,
-            '_etag': log._etag
-        } for log in logs])
+        return jsonify({
+            '_items': [{
+                'id': log.id,
+                'uuid': log.uuid,
+                'uuid_bin': log.uuid_bin,
+                'member': log.member,
+                'resource': log.resource,
+                'granted': log.granted,
+                'reason': log.reason,
+                '_created': log._created.isoformat() if log._created else None,
+                '_updated': log._updated.isoformat() if log._updated else None,
+                '_etag': log._etag
+            } for log in logs],
+            '_meta': {
+                'max_results': len(logs),
+                'total': len(logs)
+            }
+        })
 
     @app.route('/api/logs', methods=['DELETE'])
     def clear_logs():

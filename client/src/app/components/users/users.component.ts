@@ -56,12 +56,12 @@ import { AuthService } from '../../services/auth.service';
           <td>{{ user.username }}</td>
           <td>{{ user.admin ? 'Yes' : 'No' }}</td>
           <td *ngIf="isAdmin()">
-            <a [routerLink]="['/changeuserpassword', user._id]">
+            <a [routerLink]="['/changeuserpassword', user.id]">
               <span class="glyphicon glyphicon-lock"></span> Change Password
             </a>
           </td>
           <td *ngIf="isAdmin()">
-            <a [routerLink]="['/edituser', user._id]">
+            <a [routerLink]="['/edituser', user.id]">
               <span class="glyphicon glyphicon-pencil"></span> Edit
             </a>
           </td>
@@ -155,7 +155,7 @@ export class UsersComponent implements OnInit {
     if (!user.removing) {
       user.removing = true;
 
-      this.userService.removeUser(user._id, user._etag).subscribe({
+      this.userService.removeUser(user.id, user._etag).subscribe({
         next: () => {
           this.snackBar.open('User successfully removed!', '', {
             duration: 2000,

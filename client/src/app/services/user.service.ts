@@ -4,10 +4,12 @@ import { Observable } from 'rxjs';
 import { ConfigService } from './config.service';
 
 export interface User {
-  _id: string;
+  id: number;
   username: string;
   admin: boolean;
   _etag: string;
+  _created?: string;
+  _updated?: string;
   removing?: boolean;
 }
 
@@ -31,7 +33,7 @@ export class UserService {
     );
   }
 
-  getUser(id: string): Observable<User> {
+  getUser(id: number): Observable<User> {
     return this.http.get<User>(
       `${this.configService.getApiUrl('users')}/${id}`
     );
@@ -41,7 +43,7 @@ export class UserService {
     return this.http.post<User>(this.configService.getApiUrl('users'), newUser);
   }
 
-  saveUser(id: string, etag: string, updates: Partial<User>): Observable<User> {
+  saveUser(id: number, etag: string, updates: Partial<User>): Observable<User> {
     return this.http.patch<User>(
       `${this.configService.getApiUrl('users')}/${id}`,
       updates,
@@ -51,7 +53,7 @@ export class UserService {
     );
   }
 
-  removeUser(id: string, etag: string): Observable<void> {
+  removeUser(id: number, etag: string): Observable<void> {
     return this.http.delete<void>(
       `${this.configService.getApiUrl('users')}/${id}`,
       {

@@ -100,7 +100,7 @@ export class EditUserComponent implements OnInit {
 
   loadUser() {
     this.loading = true;
-    this.userService.getUser(this.userId).subscribe({
+    this.userService.getUser(Number(this.userId)).subscribe({
       next: (user) => {
         this.loading = false;
         this.editForm.patchValue({
@@ -121,7 +121,7 @@ export class EditUserComponent implements OnInit {
       this.saving = true;
       const updates = this.editForm.value;
 
-      this.userService.saveUser(this.userId, '', updates).subscribe({
+      this.userService.saveUser(Number(this.userId), '', updates).subscribe({
         next: () => {
           this.saving = false;
           this.snackBar.open('User successfully updated!', '', {

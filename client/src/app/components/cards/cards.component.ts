@@ -56,7 +56,7 @@ import { AuthService } from '../../services/auth.service';
             </div>
           </td>
           <td *ngIf="isAdmin()">
-            <a [routerLink]="['/editcard', card._id]">
+            <a [routerLink]="['/editcard', card.id]">
               <span class="glyphicon glyphicon-pencil"></span> Edit
             </a>
           </td>
@@ -163,7 +163,7 @@ export class CardsComponent implements OnInit {
     if (!card.removing) {
       card.removing = true;
 
-      this.cardService.removeCard(card._id, card._etag).subscribe({
+      this.cardService.removeCard(card.id, card._etag).subscribe({
         next: () => {
           this.snackBar.open('Card successfully removed!', '', {
             duration: 2000,

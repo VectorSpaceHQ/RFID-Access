@@ -129,7 +129,7 @@ export class ChangePasswordComponent implements OnInit {
       const { newPassword } = this.passwordForm.value;
 
       this.userService
-        .saveUser(this.userId, '', { password: newPassword } as any)
+        .saveUser(Number(this.userId), '', { password: newPassword } as any)
         .subscribe({
           next: () => {
             this.snackBar.open('Password successfully changed!', '', {
