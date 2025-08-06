@@ -45,7 +45,16 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
             "proxyConfig": "proxy.conf.json"
-          }
+          },
+          "configurations": {
+            "development": {
+              "buildTarget": "vs-rfid-client:build"
+            },
+            "production": {
+              "buildTarget": "vs-rfid-client:build"
+            }
+          },
+          "defaultConfiguration": "development"
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",

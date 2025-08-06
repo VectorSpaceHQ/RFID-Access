@@ -2,15 +2,20 @@
 
 A Angular application for managing RFID access control systems.
 
-## 🚀 Quick Start
+## 🚀 Quick Start (Development)
 
 ```bash
-# Install dependencies
-npm install
+cd server
+./dev_start.sh
+```
 
-# Start development server
+If the server is already running, you can start the client with
+
+```bash
 npm start
 ```
+
+Note: If server is not running, you won't be able to log in.
 
 The development server will start on `http://localhost:4200` with hot reload enabled.
 
@@ -18,6 +23,8 @@ The development server will start on `http://localhost:4200` with hot reload ena
 
 - Node.js 22+
 - npm 9+
+
+## Prodution
 
 ```bash
 # Build for production
