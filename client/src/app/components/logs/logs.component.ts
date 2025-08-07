@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { LogService, Log } from '../../services/log.service';
 import { AuthService } from '../../services/auth.service';
@@ -7,7 +8,7 @@ import { AuthService } from '../../services/auth.service';
 @Component({
   selector: 'app-logs',
   standalone: true,
-  imports: [CommonModule, MatSnackBarModule],
+  imports: [CommonModule, RouterLink, MatSnackBarModule],
   template: `
     <ul class="breadcrumb">
       <li><a routerLink="/home">Home</a></li>
@@ -18,21 +19,15 @@ import { AuthService } from '../../services/auth.service';
 
     <p>
       <span *ngIf="isAdmin()">
-        <a href="" (click)="clearLogs()">
-          <span class="glyphicon glyphicon-trash"></span> Clear
-        </a>
+        <a href="" (click)="clearLogs()"> 🗑️ Clear </a>
         &nbsp;&nbsp;&nbsp;
       </span>
       <span>
-        <a href="" (click)="saveLogs()">
-          <span class="glyphicon glyphicon-save-file"></span> Save
-        </a>
+        <a href="" (click)="saveLogs()"> 💾 Save </a>
         &nbsp;&nbsp;&nbsp;
       </span>
       <span>
-        <a href="" (click)="refresh()">
-          <span class="glyphicon glyphicon-refresh"></span> Refresh
-        </a>
+        <a href="" (click)="refresh()"> ↻ Refresh </a>
         &nbsp;&nbsp;&nbsp;
       </span>
     </p>
@@ -67,14 +62,14 @@ import { AuthService } from '../../services/auth.service';
         </tr>
       </table>
       <nav>
-        <ul class="pager">
-          <li class="previous" [ngClass]="{ disabled: page == 1 }">
-            <a href="" (click)="newer()"
+        <ul class="pagination">
+          <li class="page-item" [ngClass]="{ disabled: page == 1 }">
+            <a class="page-link" href="" (click)="newer()"
               ><span aria-hidden="true">&larr;</span>Newer</a
             >
           </li>
-          <li class="next" [ngClass]="{ disabled: lastPage }">
-            <a href="" (click)="older()"
+          <li class="page-item" [ngClass]="{ disabled: lastPage }">
+            <a class="page-link" href="" (click)="older()"
               >Older<span aria-hidden="true">&rarr;</span></a
             >
           </li>

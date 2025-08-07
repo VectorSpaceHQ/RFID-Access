@@ -19,9 +19,7 @@ import { AuthService } from '../../services/auth.service';
     <h3>Cards</h3>
 
     <p>
-      <a href="" (click)="refresh()"
-        ><span class="glyphicon glyphicon-refresh"></span> Refresh</a
-      >
+      <a href="" (click)="refresh()">↻ Refresh</a>
     </p>
 
     <h4 *ngIf="loading">Loading...</h4>
@@ -56,26 +54,22 @@ import { AuthService } from '../../services/auth.service';
             </div>
           </td>
           <td *ngIf="isAdmin()">
-            <a [routerLink]="['/editcard', card.id]">
-              <span class="glyphicon glyphicon-pencil"></span> Edit
-            </a>
+            <a [routerLink]="['/editcard', card.id]"> ✏️ Edit </a>
           </td>
           <td *ngIf="isAdmin()">
-            <a href="" (click)="removeCard(card)">
-              <span class="glyphicon glyphicon-remove"></span> Remove
-            </a>
+            <a href="" (click)="removeCard(card)"> ❌ Remove </a>
           </td>
         </tr>
       </table>
       <nav *ngIf="!(page == 1 && lastPage)">
-        <ul class="pager">
-          <li class="previous" [ngClass]="{ disabled: page == 1 }">
-            <a href="" (click)="prev()"
+        <ul class="pagination">
+          <li class="page-item" [ngClass]="{ disabled: page == 1 }">
+            <a class="page-link" href="" (click)="prev()"
               ><span aria-hidden="true">&larr;</span>Prev</a
             >
           </li>
-          <li class="next" [ngClass]="{ disabled: lastPage }">
-            <a href="" (click)="next()"
+          <li class="page-item" [ngClass]="{ disabled: lastPage }">
+            <a class="page-link" href="" (click)="next()"
               >Next<span aria-hidden="true">&rarr;</span></a
             >
           </li>

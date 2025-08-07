@@ -42,7 +42,7 @@ import { CommonModule } from '@angular/common';
         />
       </div>
       <button
-        class="btn btn-default"
+        class="btn btn-secondary"
         type="submit"
         [disabled]="loginForm.invalid || loading"
       >

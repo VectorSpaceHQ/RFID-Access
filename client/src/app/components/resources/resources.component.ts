@@ -19,14 +19,10 @@ import { AuthService } from '../../services/auth.service';
 
     <p>
       <span *ngIf="isAdmin()">
-        <a routerLink="/addresource"
-          ><span class="glyphicon glyphicon-plus"></span> Add new resource</a
-        >
+        <a routerLink="/addresource">+ Add new resource</a>
         &nbsp;&nbsp;&nbsp;
       </span>
-      <a href="" (click)="refresh()"
-        ><span class="glyphicon glyphicon-refresh"></span> Refresh</a
-      >
+      <a href="" (click)="refresh()">↻ Refresh</a>
     </p>
 
     <h4 *ngIf="loading">Loading...</h4>
@@ -55,26 +51,22 @@ import { AuthService } from '../../services/auth.service';
           <td>{{ resource.name }}</td>
           <td>{{ resource.description }}</td>
           <td *ngIf="isAdmin()">
-            <a [routerLink]="['/editresource', resource.id]">
-              <span class="glyphicon glyphicon-pencil"></span> Edit
-            </a>
+            <a [routerLink]="['/editresource', resource.id]"> ✏️ Edit </a>
           </td>
           <td *ngIf="isAdmin()">
-            <a href="" (click)="removeResource(resource)">
-              <span class="glyphicon glyphicon-remove"></span> Remove
-            </a>
+            <a href="" (click)="removeResource(resource)"> ❌ Remove </a>
           </td>
         </tr>
       </table>
       <nav *ngIf="!(page == 1 && lastPage)">
-        <ul class="pager">
-          <li class="previous" [ngClass]="{ disabled: page == 1 }">
-            <a href="" (click)="prev()"
+        <ul class="pagination">
+          <li class="page-item" [ngClass]="{ disabled: page == 1 }">
+            <a class="page-link" href="" (click)="prev()"
               ><span aria-hidden="true">&larr;</span>Prev</a
             >
           </li>
-          <li class="next" [ngClass]="{ disabled: lastPage }">
-            <a href="" (click)="next()"
+          <li class="page-item" [ngClass]="{ disabled: lastPage }">
+            <a class="page-link" href="" (click)="next()"
               >Next<span aria-hidden="true">&rarr;</span></a
             >
           </li>
