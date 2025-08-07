@@ -24,18 +24,7 @@ import { RefreshButtonComponent } from '../refresh-button/refresh-button.compone
     <h3>Logs</h3>
 
     <p>
-      <span *ngIf="isAdmin()">
-        <a href="" (click)="clearLogs()"> 🗑️ Clear </a>
-        &nbsp;&nbsp;&nbsp;
-      </span>
-      <span>
-        <a href="" (click)="saveLogs()"> 💾 Save </a>
-        &nbsp;&nbsp;&nbsp;
-      </span>
-      <span>
-        <app-refresh-button (refresh)="refresh()"></app-refresh-button>
-        &nbsp;&nbsp;&nbsp;
-      </span>
+      <app-refresh-button (refresh)="refresh()"></app-refresh-button>
     </p>
 
     <h4 *ngIf="loading">Loading...</h4>
