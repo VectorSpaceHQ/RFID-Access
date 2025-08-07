@@ -5,11 +5,17 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { CardService, Card } from '../../services/card.service';
 import { ResourceService } from '../../services/resource.service';
 import { AuthService } from '../../services/auth.service';
+import { RefreshButtonComponent } from '../refresh-button/refresh-button.component';
 
 @Component({
   selector: 'app-cards',
   standalone: true,
-  imports: [CommonModule, RouterLink, MatSnackBarModule],
+  imports: [
+    CommonModule,
+    RouterLink,
+    MatSnackBarModule,
+    RefreshButtonComponent,
+  ],
   template: `
     <ul class="breadcrumb">
       <li><a routerLink="/home">Home</a></li>
@@ -19,7 +25,7 @@ import { AuthService } from '../../services/auth.service';
     <h3>Cards</h3>
 
     <p>
-      <a href="" (click)="refresh()">↻ Refresh</a>
+      <app-refresh-button (refresh)="refresh()"></app-refresh-button>
     </p>
 
     <h4 *ngIf="loading">Loading...</h4>

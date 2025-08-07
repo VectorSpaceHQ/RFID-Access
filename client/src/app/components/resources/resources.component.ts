@@ -4,11 +4,17 @@ import { RouterLink } from '@angular/router';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { ResourceService, Resource } from '../../services/resource.service';
 import { AuthService } from '../../services/auth.service';
+import { RefreshButtonComponent } from '../refresh-button/refresh-button.component';
 
 @Component({
   selector: 'app-resources',
   standalone: true,
-  imports: [CommonModule, RouterLink, MatSnackBarModule],
+  imports: [
+    CommonModule,
+    RouterLink,
+    MatSnackBarModule,
+    RefreshButtonComponent,
+  ],
   template: `
     <ul class="breadcrumb">
       <li><a routerLink="/home">Home</a></li>
@@ -22,7 +28,7 @@ import { AuthService } from '../../services/auth.service';
         <a routerLink="/addresource">+ Add new resource</a>
         &nbsp;&nbsp;&nbsp;
       </span>
-      <a href="" (click)="refresh()">↻ Refresh</a>
+      <app-refresh-button (refresh)="refresh()"></app-refresh-button>
     </p>
 
     <h4 *ngIf="loading">Loading...</h4>
