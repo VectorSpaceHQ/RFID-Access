@@ -99,6 +99,7 @@ def seed_users():
                 _created=get_current_time(),
                 _updated=get_current_time(),
                 _etag=create_hash()
+                
             )
             db.session.add(user)
             print(f"  Added user: {user_data['username']}")

@@ -48,7 +48,7 @@ import { ResourceService } from '../../services/resource.service';
       </div>
       <button
         type="submit"
-        class="btn btn-default"
+        class="btn btn-default me-3"
         [disabled]="addForm.invalid || adding"
       >
         Add
