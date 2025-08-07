@@ -52,7 +52,7 @@ import { AuthService } from '../../services/auth.service';
             <td>{{ card.uuid }}</td>
             <td>{{ card.member }}</td>
             <td>
-              <div *ngFor="let resource of card.resources">
+              <div *ngFor="let resource of getResourceArray(card.resources)">
                 {{ resourceNames[resource] }}
               </div>
             </td>
@@ -188,6 +188,11 @@ export class CardsComponent implements OnInit {
         },
       });
     }
+  }
+
+  getResourceArray(resources: string): string[] {
+    if (!resources) return [];
+    return resources.split(',').filter((r) => r.trim());
   }
 
   isAdmin(): boolean {
