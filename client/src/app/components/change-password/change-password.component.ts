@@ -5,7 +5,7 @@ import {
   Validators,
   ReactiveFormsModule,
 } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { CommonModule } from '@angular/common';
 import { UserService } from '../../services/user.service';
@@ -13,7 +13,7 @@ import { UserService } from '../../services/user.service';
 @Component({
   selector: 'app-change-password',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, MatSnackBarModule],
+  imports: [CommonModule, ReactiveFormsModule, MatSnackBarModule, RouterLink],
   template: `
     <ul class="breadcrumb">
       <li><a routerLink="/home">Home</a></li>
@@ -71,7 +71,7 @@ import { UserService } from '../../services/user.service';
       </div>
       <button
         type="submit"
-        class="btn btn-default"
+        class="btn btn-outline me-3"
         [disabled]="passwordForm.invalid || changing || !passwordsMatch()"
       >
         Change Password
