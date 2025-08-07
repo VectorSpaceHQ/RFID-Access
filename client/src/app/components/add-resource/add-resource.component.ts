@@ -5,7 +5,7 @@ import {
   Validators,
   ReactiveFormsModule,
 } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { CommonModule } from '@angular/common';
 import { ResourceService } from '../../services/resource.service';
@@ -13,7 +13,7 @@ import { ResourceService } from '../../services/resource.service';
 @Component({
   selector: 'app-add-resource',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, MatSnackBarModule],
+  imports: [CommonModule, ReactiveFormsModule, MatSnackBarModule, RouterLink],
   template: `
     <ul class="breadcrumb">
       <li><a routerLink="/home">Home</a></li>
@@ -48,7 +48,7 @@ import { ResourceService } from '../../services/resource.service';
       </div>
       <button
         type="submit"
-        class="btn btn-default me-3"
+        class="btn btn-outline me-3"
         [disabled]="addForm.invalid || adding"
       >
         Add
