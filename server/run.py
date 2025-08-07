@@ -312,6 +312,64 @@ if __name__ == '__main__':
         db.session.commit()
         return jsonify({'id': user.id, 'username': user.username, 'admin': user.admin}), 201
 
+    @app.route('/api/users/<int:user_id>', methods=['GET'])
+    def get_user(user_id):
+        user = db.session.query(Users).filter(Users.id == user_id).first()
+        if user:
+            return jsonify({
+                'id': user.id,
+                'username': user.username,
+                'admin': user.admin,
+                '_created': user._created.isoformat() if user._created else None,
+                '_updated': user._updated.isoformat() if user._updated else None,
+                '_etag': user._etag
+            })
+        else:
+            return jsonify({'error': 'User not found'}), 404
+
+    @app.route('/api/users/<int:user_id>', methods=['PATCH'])
+    def update_user(user_id):
+        user = db.session.query(Users).filter(Users.id == user_id).first()
+        if not user:
+            return jsonify({'error': 'User not found'}), 404
+        
+        data = request.get_json()
+        
+        # Check if username already exists (excluding current user)
+        if 'username' in data:
+            existing_user = db.session.query(Users).filter(
+                Users.username == data['username'],
+                Users.id != user_id
+            ).first()
+            if existing_user:
+                return jsonify({'error': 'Username already exists'}), 409
+        
+        # Update fields
+        if 'username' in data:
+            user.username = data['username']
+        if 'admin' in data:
+            user.admin = data['admin']
+        if 'password' in data:
+            user.password = bcrypt.hashpw(data['password'].encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+        
+        db.session.commit()
+        return jsonify({
+            'id': user.id,
+            'username': user.username,
+            'admin': user.admin,
+            '_etag': user._etag
+        })
+
+    @app.route('/api/users/<int:user_id>', methods=['DELETE'])
+    def delete_user(user_id):
+        user = db.session.query(Users).filter(Users.id == user_id).first()
+        if not user:
+            return jsonify({'error': 'User not found'}), 404
+        
+        db.session.delete(user)
+        db.session.commit()
+        return '', 204
+
     @app.route('/api/resources', methods=['GET'])
     def get_resources():
         resources = db.session.query(Resources).all()
