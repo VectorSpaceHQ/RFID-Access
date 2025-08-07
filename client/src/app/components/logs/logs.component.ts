@@ -55,7 +55,7 @@ import { AuthService } from '../../services/auth.service';
         </tr>
         <tr *ngFor="let log of logs" [ngClass]="{ warning: !log.granted }">
           <td>{{ log._created | date : 'short' }}</td>
-          <td>{{ log.uuid_bin.substring(5) }}</td>
+          <td>{{ log.uuid }}</td>
           <td>{{ log.member }}</td>
           <td>{{ log.resource }}</td>
           <td>{{ log.granted ? 'Success' : log.reason }}</td>
