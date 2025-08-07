@@ -26,6 +26,10 @@ def create_hash():
     hash_obj.update(datetime.now().isoformat().encode())
     return hash_obj.hexdigest()
 
+def get_current_time():
+    """Get current datetime for _created and _updated fields"""
+    return datetime.now()
+
 def seed_users():
     """Seed users table with test data"""
     print("Seeding users...")
@@ -92,6 +96,8 @@ def seed_users():
                 username=user_data['username'],
                 password=hashed_password.decode('utf-8'),
                 admin=user_data['admin'],
+                _created=get_current_time(),
+                _updated=get_current_time(),
                 _etag=create_hash()
             )
             db.session.add(user)
@@ -117,6 +123,8 @@ def seed_resources():
         if not existing_resource:
             resource = Resources(
                 name=resource_data['name'],
+                _created=get_current_time(),
+                _updated=get_current_time(),
                 _etag=create_hash()
             )
             db.session.add(resource)
@@ -202,6 +210,8 @@ def seed_cards():
                 uuid_bin=card_data['uuid_bin'],
                 member=card_data['member'],
                 resources=card_data['resources'],
+                _created=get_current_time(),
+                _updated=get_current_time(),
                 _etag=create_hash()
             )
             db.session.add(card)
@@ -314,6 +324,8 @@ def seed_logs():
             resource=log_data['resource'],
             granted=log_data['granted'],
             reason=log_data['reason'],
+            _created=get_current_time(),
+            _updated=get_current_time(),
             _etag=create_hash()
         )
         db.session.add(log)
@@ -458,6 +470,8 @@ def seed_keycodes():
                 resource=keycode_data['resource'],
                 granted=keycode_data['granted'],
                 reason=keycode_data['reason'],
+                _created=get_current_time(),
+                _updated=get_current_time(),
                 _etag=create_hash()
             )
             db.session.add(keycode)
