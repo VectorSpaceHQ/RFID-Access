@@ -46,20 +46,24 @@ import { AuthService } from '../../services/auth.service';
 
     <div *ngIf="logs.length && !loading && !clearing && !errorLoading">
       <table class="table">
-        <tr>
-          <th>Date</th>
-          <th>UUID</th>
-          <th>Member</th>
-          <th>Resource</th>
-          <th>Status</th>
-        </tr>
-        <tr *ngFor="let log of logs" [ngClass]="{ warning: !log.granted }">
-          <td>{{ log._created | date : 'short' }}</td>
-          <td>{{ log.uuid }}</td>
-          <td>{{ log.member }}</td>
-          <td>{{ log.resource }}</td>
-          <td>{{ log.granted ? 'Success' : log.reason }}</td>
-        </tr>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>UUID</th>
+            <th>Member</th>
+            <th>Resource</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let log of logs" [ngClass]="{ warning: !log.granted }">
+            <td>{{ log._created | date : 'short' }}</td>
+            <td>{{ log.uuid }}</td>
+            <td>{{ log.member }}</td>
+            <td>{{ log.resource }}</td>
+            <td>{{ log.granted ? 'Success' : log.reason }}</td>
+          </tr>
+        </tbody>
       </table>
       <nav>
         <ul class="pagination">

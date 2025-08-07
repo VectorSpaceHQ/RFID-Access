@@ -38,31 +38,35 @@ import { AuthService } from '../../services/auth.service';
 
     <div *ngIf="users.length && !loading && !errorLoading">
       <table class="table">
-        <tr>
-          <th>Username</th>
-          <th>Admin</th>
-          <th *ngIf="isAdmin()"></th>
-          <th *ngIf="isAdmin()"></th>
-          <th *ngIf="isAdmin()"></th>
-        </tr>
-        <tr
-          *ngFor="let user of users"
-          [ngClass]="{ 'removing danger': user.removing }"
-        >
-          <td>{{ user.username }}</td>
-          <td>{{ user.admin ? 'Yes' : 'No' }}</td>
-          <td *ngIf="isAdmin()">
-            <a [routerLink]="['/changeuserpassword', user.id]">
-              🔒 Change Password
-            </a>
-          </td>
-          <td *ngIf="isAdmin()">
-            <a [routerLink]="['/edituser', user.id]"> ✏️ Edit </a>
-          </td>
-          <td *ngIf="isAdmin()">
-            <a href="" (click)="removeUser(user)"> ❌ Remove </a>
-          </td>
-        </tr>
+        <thead>
+          <tr>
+            <th>Username</th>
+            <th>Admin</th>
+            <th *ngIf="isAdmin()"></th>
+            <th *ngIf="isAdmin()"></th>
+            <th *ngIf="isAdmin()"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            *ngFor="let user of users"
+            [ngClass]="{ 'removing danger': user.removing }"
+          >
+            <td>{{ user.username }}</td>
+            <td>{{ user.admin ? 'Yes' : 'No' }}</td>
+            <td *ngIf="isAdmin()">
+              <a [routerLink]="['/changeuserpassword', user.id]">
+                🔒 Change Password
+              </a>
+            </td>
+            <td *ngIf="isAdmin()">
+              <a [routerLink]="['/edituser', user.id]"> ✏️ Edit </a>
+            </td>
+            <td *ngIf="isAdmin()">
+              <a href="" (click)="removeUser(user)"> ❌ Remove </a>
+            </td>
+          </tr>
+        </tbody>
       </table>
       <nav *ngIf="!(page == 1 && lastPage)">
         <ul class="pagination">

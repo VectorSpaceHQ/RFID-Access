@@ -38,25 +38,29 @@ import { AuthService } from '../../services/auth.service';
 
     <div *ngIf="resources.length && !loading && !errorLoading">
       <table class="table">
-        <tr>
-          <th>Name</th>
-          <th>Description</th>
-          <th *ngIf="isAdmin()"></th>
-          <th *ngIf="isAdmin()"></th>
-        </tr>
-        <tr
-          *ngFor="let resource of resources"
-          [ngClass]="{ 'removing danger': resource.removing }"
-        >
-          <td>{{ resource.name }}</td>
-          <td>{{ resource.description }}</td>
-          <td *ngIf="isAdmin()">
-            <a [routerLink]="['/editresource', resource.id]"> ✏️ Edit </a>
-          </td>
-          <td *ngIf="isAdmin()">
-            <a href="" (click)="removeResource(resource)"> ❌ Remove </a>
-          </td>
-        </tr>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Description</th>
+            <th *ngIf="isAdmin()"></th>
+            <th *ngIf="isAdmin()"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            *ngFor="let resource of resources"
+            [ngClass]="{ 'removing danger': resource.removing }"
+          >
+            <td>{{ resource.name }}</td>
+            <td>{{ resource.description }}</td>
+            <td *ngIf="isAdmin()">
+              <a [routerLink]="['/editresource', resource.id]"> ✏️ Edit </a>
+            </td>
+            <td *ngIf="isAdmin()">
+              <a href="" (click)="removeResource(resource)"> ❌ Remove </a>
+            </td>
+          </tr>
+        </tbody>
       </table>
       <nav *ngIf="!(page == 1 && lastPage)">
         <ul class="pagination">

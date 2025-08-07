@@ -35,31 +35,35 @@ import { AuthService } from '../../services/auth.service';
 
     <div *ngIf="cards.length && !loading && !errorLoading">
       <table class="table">
-        <tr>
-          <th>UUID</th>
-          <th>Member</th>
-          <th>Resources</th>
-          <th *ngIf="isAdmin()"></th>
-          <th *ngIf="isAdmin()"></th>
-        </tr>
-        <tr
-          *ngFor="let card of cards"
-          [ngClass]="{ 'removing danger': card.removing }"
-        >
-          <td>{{ card.uuid }}</td>
-          <td>{{ card.member }}</td>
-          <td>
-            <div *ngFor="let resource of card.resources">
-              {{ resourceNames[resource] }}
-            </div>
-          </td>
-          <td *ngIf="isAdmin()">
-            <a [routerLink]="['/editcard', card.id]"> ✏️ Edit </a>
-          </td>
-          <td *ngIf="isAdmin()">
-            <a href="" (click)="removeCard(card)"> ❌ Remove </a>
-          </td>
-        </tr>
+        <thead>
+          <tr>
+            <th>UUID</th>
+            <th>Member</th>
+            <th>Resources</th>
+            <th *ngIf="isAdmin()"></th>
+            <th *ngIf="isAdmin()"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            *ngFor="let card of cards"
+            [ngClass]="{ 'removing danger': card.removing }"
+          >
+            <td>{{ card.uuid }}</td>
+            <td>{{ card.member }}</td>
+            <td>
+              <div *ngFor="let resource of card.resources">
+                {{ resourceNames[resource] }}
+              </div>
+            </td>
+            <td *ngIf="isAdmin()">
+              <a [routerLink]="['/editcard', card.id]"> ✏️ Edit </a>
+            </td>
+            <td *ngIf="isAdmin()">
+              <a href="" (click)="removeCard(card)"> ❌ Remove </a>
+            </td>
+          </tr>
+        </tbody>
       </table>
       <nav *ngIf="!(page == 1 && lastPage)">
         <ul class="pagination">
