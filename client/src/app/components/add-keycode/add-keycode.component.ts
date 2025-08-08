@@ -57,6 +57,8 @@ import { ResourceService, Resource } from '../../services/resource.service';
           id="start_date"
           formControlName="start_date"
           class="form-control"
+          (click)="openPicker($event)"
+          (focus)="openPicker($event)"
         />
       </div>
 
@@ -68,6 +70,8 @@ import { ResourceService, Resource } from '../../services/resource.service';
           id="end_date"
           formControlName="end_date"
           class="form-control"
+          (click)="openPicker($event)"
+          (focus)="openPicker($event)"
         />
       </div>
 
@@ -79,6 +83,8 @@ import { ResourceService, Resource } from '../../services/resource.service';
           id="daily_start_time"
           formControlName="daily_start_time"
           class="form-control"
+          (click)="openPicker($event)"
+          (focus)="openPicker($event)"
         />
       </div>
 
@@ -90,6 +96,8 @@ import { ResourceService, Resource } from '../../services/resource.service';
           id="daily_end_time"
           formControlName="daily_end_time"
           class="form-control"
+          (click)="openPicker($event)"
+          (focus)="openPicker($event)"
         />
       </div>
 
@@ -201,5 +209,13 @@ export class AddKeycodeComponent implements OnInit {
         });
       },
     });
+  }
+
+  openPicker(event: Event) {
+    const input = event.target as HTMLInputElement;
+    const anyInput = input as any;
+    if (anyInput && typeof anyInput.showPicker === 'function') {
+      anyInput.showPicker();
+    }
   }
 }
