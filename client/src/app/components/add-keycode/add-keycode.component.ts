@@ -1,4 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  HostListener,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -38,15 +44,125 @@ import { ResourceService, Resource } from '../../services/resource.service';
         />
       </div>
 
-      <div class="form-group">
+      <div class="form-group code-input-wrapper" #codeWrapper>
         <label for="code">Code</label>
         <input
+          #codeInput
+          type="text"
+          inputmode="numeric"
+          pattern="\\d*"
+          maxlength="4"
+          autocomplete="one-time-code"
           name="code"
           id="code"
           formControlName="code"
           class="form-control"
           required
+          (focus)="showKeypad = true"
+          (click)="showKeypad = true"
+          (input)="enforceCodeMask($event)"
         />
+
+        <div
+          *ngIf="showKeypad"
+          #keypad
+          class="keypad-container shadow"
+          role="dialog"
+          aria-label="Number keypad"
+        >
+          <div class="keypad-row">
+            <button
+              type="button"
+              class="btn btn-light"
+              (click)="onDigitPress('1')"
+            >
+              1
+            </button>
+            <button
+              type="button"
+              class="btn btn-light"
+              (click)="onDigitPress('2')"
+            >
+              2
+            </button>
+            <button
+              type="button"
+              class="btn btn-light"
+              (click)="onDigitPress('3')"
+            >
+              3
+            </button>
+          </div>
+          <div class="keypad-row">
+            <button
+              type="button"
+              class="btn btn-light"
+              (click)="onDigitPress('4')"
+            >
+              4
+            </button>
+            <button
+              type="button"
+              class="btn btn-light"
+              (click)="onDigitPress('5')"
+            >
+              5
+            </button>
+            <button
+              type="button"
+              class="btn btn-light"
+              (click)="onDigitPress('6')"
+            >
+              6
+            </button>
+          </div>
+          <div class="keypad-row">
+            <button
+              type="button"
+              class="btn btn-light"
+              (click)="onDigitPress('7')"
+            >
+              7
+            </button>
+            <button
+              type="button"
+              class="btn btn-light"
+              (click)="onDigitPress('8')"
+            >
+              8
+            </button>
+            <button
+              type="button"
+              class="btn btn-light"
+              (click)="onDigitPress('9')"
+            >
+              9
+            </button>
+          </div>
+          <div class="keypad-row">
+            <button
+              type="button"
+              class="btn btn-outline-secondary"
+              (click)="onClear()"
+            >
+              Clear
+            </button>
+            <button
+              type="button"
+              class="btn btn-light"
+              (click)="onDigitPress('0')"
+            >
+              0
+            </button>
+            <button
+              type="button"
+              class="btn btn-outline-secondary"
+              (click)="onBackspace()"
+            >
+              ⌫
+            </button>
+          </div>
+        </div>
       </div>
 
       <div class="form-group">
@@ -136,6 +252,32 @@ import { ResourceService, Resource } from '../../services/resource.service';
         width: 100%;
         padding: 0.5rem;
       }
+      .code-input-wrapper {
+        position: relative;
+        display: inline-block;
+      }
+      .keypad-container {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        margin-top: 0.25rem;
+        background: #fff;
+        border: 1px solid rgba(0, 0, 0, 0.125);
+        border-radius: 0.5rem;
+        padding: 0.5rem;
+        z-index: 1055;
+      }
+      .keypad-row {
+        display: flex;
+        gap: 0.5rem;
+        margin-bottom: 0.5rem;
+      }
+      .keypad-row:last-child {
+        margin-bottom: 0;
+      }
+      .keypad-container .btn {
+        min-width: 3rem;
+      }
     `,
   ],
 })
@@ -144,6 +286,11 @@ export class AddKeycodeComponent implements OnInit {
   adding = false;
   resources: Resource[] = [];
   selectedResourceIds: Set<number> = new Set<number>();
+  showKeypad = false;
+
+  @ViewChild('keypad') keypadRef?: ElementRef<HTMLDivElement>;
+  @ViewChild('codeWrapper') wrapperRef?: ElementRef<HTMLDivElement>;
+  @ViewChild('codeInput') codeInputRef?: ElementRef<HTMLInputElement>;
 
   constructor(
     private fb: FormBuilder,
@@ -152,13 +299,17 @@ export class AddKeycodeComponent implements OnInit {
     private router: Router,
     private snackBar: MatSnackBar
   ) {
+    const today = new Date();
+    const todayStr = today.toISOString().slice(0, 10); // YYYY-MM-DD
+    const midnight = '00:00';
+
     this.addForm = this.fb.group({
       name: ['', Validators.required],
-      code: ['', Validators.required],
-      start_date: [''],
+      code: ['', [Validators.required, Validators.pattern(/^\d{4}$/)]],
+      start_date: [todayStr],
       end_date: [''],
-      daily_start_time: [''],
-      daily_end_time: [''],
+      daily_start_time: [midnight],
+      daily_end_time: [midnight],
     });
   }
 
@@ -216,6 +367,52 @@ export class AddKeycodeComponent implements OnInit {
     const anyInput = input as any;
     if (anyInput && typeof anyInput.showPicker === 'function') {
       anyInput.showPicker();
+    }
+  }
+
+  enforceCodeMask(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (!input) return;
+    const digitsOnly = (input.value || '').replace(/\D+/g, '').slice(0, 4);
+    if (digitsOnly !== input.value) {
+      input.value = digitsOnly;
+    }
+    this.addForm.get('code')?.setValue(digitsOnly, { emitEvent: false });
+  }
+
+  onDigitPress(d: string) {
+    const current = (this.addForm.get('code')?.value as string) || '';
+    if (current.length >= 4) return;
+    const next = (current + d).replace(/\D+/g, '').slice(0, 4);
+    this.addForm.get('code')?.setValue(next, { emitEvent: false });
+    // Keep focus on input for accessibility
+    this.codeInputRef?.nativeElement.focus();
+  }
+
+  onBackspace() {
+    const current = (this.addForm.get('code')?.value as string) || '';
+    const next = current.slice(0, -1);
+    this.addForm.get('code')?.setValue(next, { emitEvent: false });
+    this.codeInputRef?.nativeElement.focus();
+  }
+
+  onClear() {
+    this.addForm.get('code')?.setValue('', { emitEvent: false });
+    this.codeInputRef?.nativeElement.focus();
+  }
+
+  @HostListener('document:click', ['$event'])
+  handleDocumentClick(ev: MouseEvent) {
+    if (!this.showKeypad) return;
+    const target = ev.target as Node;
+    const wrapperEl = this.wrapperRef?.nativeElement;
+    const keypadEl = this.keypadRef?.nativeElement;
+    if (wrapperEl && keypadEl) {
+      if (!wrapperEl.contains(target)) {
+        this.showKeypad = false;
+      }
+    } else {
+      this.showKeypad = false;
     }
   }
 }
