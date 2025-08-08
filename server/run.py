@@ -391,10 +391,77 @@ if __name__ == '__main__':
     @app.route('/api/resources', methods=['POST'])
     def create_resource():
         data = request.get_json()
-        resource = Resources(name=data['name'])
+        resource = Resources(name=data['name'], description=data.get('description', ''))
         db.session.add(resource)
         db.session.commit()
-        return jsonify({'id': resource.id, 'name': resource.name}), 201
+        return jsonify({'id': resource.id, 'name': resource.name, 'description': resource.description}), 201
+
+    @app.route('/api/resources/<int:resource_id>', methods=['GET'])
+    def get_resource(resource_id):
+        resource = db.session.get(Resources, resource_id)
+        if not resource:
+            return jsonify({'_error': 'Resource not found'}), 404
+        return jsonify({
+            'id': resource.id,
+            'name': resource.name,
+            'description': resource.description,
+            '_created': resource._created.isoformat() if resource._created else None,
+            '_updated': resource._updated.isoformat() if resource._updated else None,
+            '_etag': resource._etag
+        })
+
+    @app.route('/api/resources/<int:resource_id>', methods=['PATCH'])
+    def update_resource(resource_id):
+        resource = db.session.get(Resources, resource_id)
+        if not resource:
+            return jsonify({'_error': 'Resource not found'}), 404
+        
+        # Check ETag for concurrency control
+        if_match = request.headers.get('If-Match')
+        if if_match and if_match.strip('"') != resource._etag:
+            return jsonify({'_error': 'Resource has been modified'}), 412
+        
+        data = request.get_json()
+        
+        # Check for duplicate name
+        if 'name' in data and data['name'] != resource.name:
+            existing = db.session.query(Resources).filter_by(name=data['name']).first()
+            if existing:
+                return jsonify({'_error': 'Resource name already exists'}), 409
+        
+        # Update fields
+        if 'name' in data:
+            resource.name = data['name']
+        if 'description' in data:
+            resource.description = data['description']
+        
+        resource._updated = get_current_time()
+        resource._etag = str(uuid.uuid4())
+        
+        db.session.commit()
+        return jsonify({
+            'id': resource.id,
+            'name': resource.name,
+            'description': resource.description,
+            '_created': resource._created.isoformat() if resource._created else None,
+            '_updated': resource._updated.isoformat() if resource._updated else None,
+            '_etag': resource._etag
+        })
+
+    @app.route('/api/resources/<int:resource_id>', methods=['DELETE'])
+    def delete_resource(resource_id):
+        resource = db.session.get(Resources, resource_id)
+        if not resource:
+            return jsonify({'_error': 'Resource not found'}), 404
+        
+        # Check ETag for concurrency control
+        if_match = request.headers.get('If-Match')
+        if if_match and if_match.strip('"') != resource._etag:
+            return jsonify({'_error': 'Resource has been modified'}), 412
+        
+        db.session.delete(resource)
+        db.session.commit()
+        return '', 204
 
     @app.route('/api/cards', methods=['GET'])
     def get_cards():
@@ -415,6 +482,73 @@ if __name__ == '__main__':
                 'total': len(cards)
             }
         })
+
+    @app.route('/api/cards/<int:card_id>', methods=['GET'])
+    def get_card(card_id):
+        card = db.session.get(Cards, card_id)
+        if not card:
+            return jsonify({'_error': 'Card not found'}), 404
+        return jsonify({
+            'id': card.id,
+            'uuid': card.uuid,
+            'uuid_bin': card.uuid_bin,
+            'member': card.member,
+            'resources': card.resources,
+            '_created': card._created.isoformat() if card._created else None,
+            '_updated': card._updated.isoformat() if card._updated else None,
+            '_etag': card._etag
+        })
+
+    @app.route('/api/cards/<int:card_id>', methods=['PATCH'])
+    def update_card(card_id):
+        card = db.session.get(Cards, card_id)
+        if not card:
+            return jsonify({'_error': 'Card not found'}), 404
+        
+        # Check ETag for concurrency control
+        if_match = request.headers.get('If-Match')
+        if if_match and if_match.strip('"') != card._etag:
+            return jsonify({'_error': 'Card has been modified'}), 412
+        
+        data = request.get_json()
+        
+        # Update fields
+        if 'member' in data:
+            card.member = data['member']
+        if 'resources' in data:
+            card.resources = data['resources']
+        if 'uuid' in data:
+            card.uuid = data['uuid']
+        
+        card._updated = get_current_time()
+        card._etag = str(uuid.uuid4())
+        
+        db.session.commit()
+        return jsonify({
+            'id': card.id,
+            'uuid': card.uuid,
+            'uuid_bin': card.uuid_bin,
+            'member': card.member,
+            'resources': card.resources,
+            '_created': card._created.isoformat() if card._created else None,
+            '_updated': card._updated.isoformat() if card._updated else None,
+            '_etag': card._etag
+        })
+
+    @app.route('/api/cards/<int:card_id>', methods=['DELETE'])
+    def delete_card(card_id):
+        card = db.session.get(Cards, card_id)
+        if not card:
+            return jsonify({'_error': 'Card not found'}), 404
+        
+        # Check ETag for concurrency control
+        if_match = request.headers.get('If-Match')
+        if if_match and if_match.strip('"') != card._etag:
+            return jsonify({'_error': 'Card has been modified'}), 412
+        
+        db.session.delete(card)
+        db.session.commit()
+        return '', 204
 
     @app.route('/api/logs', methods=['GET'])
     def get_logs():

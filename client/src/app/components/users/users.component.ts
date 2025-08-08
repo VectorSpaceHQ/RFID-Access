@@ -5,6 +5,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { UserService, User } from '../../services/user.service';
 import { AuthService } from '../../services/auth.service';
 import { RefreshButtonComponent } from '../refresh-button/refresh-button.component';
+import { ConfirmationModalComponent } from '../confirmation-modal/confirmation-modal.component';
 
 @Component({
   selector: 'app-users',
@@ -14,6 +15,7 @@ import { RefreshButtonComponent } from '../refresh-button/refresh-button.compone
     RouterLink,
     MatSnackBarModule,
     RefreshButtonComponent,
+    ConfirmationModalComponent,
   ],
   template: `
     <ul class="breadcrumb">
@@ -69,7 +71,12 @@ import { RefreshButtonComponent } from '../refresh-button/refresh-button.compone
               <a [routerLink]="['/edituser', user.id]"> ✏️ Edit </a>
             </td>
             <td *ngIf="isAdmin()">
-              <a href="" (click)="removeUser(user)"> ❌ Remove </a>
+              <button
+                class="btn btn-link p-0"
+                (click)="showRemoveConfirmation(user)"
+              >
+                ❌ Remove
+              </button>
             </td>
           </tr>
         </tbody>
@@ -89,6 +96,13 @@ import { RefreshButtonComponent } from '../refresh-button/refresh-button.compone
         </ul>
       </nav>
     </div>
+
+    <app-confirmation-modal
+      modalId="removeUserModal"
+      title="Remove User"
+      message="Are you sure you want to remove this user? This action cannot be undone."
+      (confirmed)="removeUser()"
+    ></app-confirmation-modal>
   `,
   styles: [
     `
@@ -100,6 +114,7 @@ import { RefreshButtonComponent } from '../refresh-button/refresh-button.compone
 })
 export class UsersComponent implements OnInit {
   users: User[] = [];
+  selectedUser: User | null = null;
   page = 1;
   lastPage = false;
   loading = false;
@@ -153,11 +168,32 @@ export class UsersComponent implements OnInit {
     }
   }
 
-  removeUser(user: User) {
-    if (!user.removing) {
-      user.removing = true;
+  showRemoveConfirmation(user: User) {
+    this.selectedUser = user;
+    const modalElement = document.getElementById('removeUserModal');
+    if (modalElement) {
+      // Show the modal manually
+      modalElement.classList.add('show');
+      modalElement.style.display = 'block';
+      // Add backdrop
+      const backdrop = document.createElement('div');
+      backdrop.className = 'modal-backdrop fade show';
+      document.body.appendChild(backdrop);
+      // Add modal-open class to body
+      document.body.classList.add('modal-open');
+    }
+  }
 
-      this.userService.removeUser(user.id, user._etag).subscribe({
+  removeUser() {
+    if (!this.selectedUser || this.selectedUser.removing) {
+      return;
+    }
+
+    this.selectedUser.removing = true;
+
+    this.userService
+      .removeUser(this.selectedUser.id, this.selectedUser._etag)
+      .subscribe({
         next: () => {
           this.snackBar.open('User successfully removed!', '', {
             duration: 2000,
@@ -168,7 +204,9 @@ export class UsersComponent implements OnInit {
           this.loadUsers();
         },
         error: (error) => {
-          user.removing = false;
+          if (this.selectedUser) {
+            this.selectedUser.removing = false;
+          }
           let message = 'Unable to remove user at this time.';
 
           if (error.status === 404) {
@@ -183,7 +221,6 @@ export class UsersComponent implements OnInit {
           this.loadUsers();
         },
       });
-    }
   }
 
   isAdmin(): boolean {

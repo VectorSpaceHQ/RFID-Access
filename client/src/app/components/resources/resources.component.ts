@@ -5,6 +5,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { ResourceService, Resource } from '../../services/resource.service';
 import { AuthService } from '../../services/auth.service';
 import { RefreshButtonComponent } from '../refresh-button/refresh-button.component';
+import { ConfirmationModalComponent } from '../confirmation-modal/confirmation-modal.component';
 
 @Component({
   selector: 'app-resources',
@@ -14,6 +15,7 @@ import { RefreshButtonComponent } from '../refresh-button/refresh-button.compone
     RouterLink,
     MatSnackBarModule,
     RefreshButtonComponent,
+    ConfirmationModalComponent,
   ],
   template: `
     <ul class="breadcrumb">
@@ -63,7 +65,12 @@ import { RefreshButtonComponent } from '../refresh-button/refresh-button.compone
               <a [routerLink]="['/editresource', resource.id]"> ✏️ Edit </a>
             </td>
             <td *ngIf="isAdmin()">
-              <a href="" (click)="removeResource(resource)"> ❌ Remove </a>
+              <button
+                class="btn btn-link p-0"
+                (click)="showRemoveConfirmation(resource)"
+              >
+                ❌ Remove
+              </button>
             </td>
           </tr>
         </tbody>
@@ -83,6 +90,13 @@ import { RefreshButtonComponent } from '../refresh-button/refresh-button.compone
         </ul>
       </nav>
     </div>
+
+    <app-confirmation-modal
+      modalId="removeResourceModal"
+      title="Remove Resource"
+      message="Are you sure you want to remove this resource? This action cannot be undone."
+      (confirmed)="removeResource()"
+    ></app-confirmation-modal>
   `,
   styles: [
     `
@@ -94,6 +108,7 @@ import { RefreshButtonComponent } from '../refresh-button/refresh-button.compone
 })
 export class ResourcesComponent implements OnInit {
   resources: Resource[] = [];
+  selectedResource: Resource | null = null;
   page = 1;
   lastPage = false;
   loading = false;
@@ -147,39 +162,59 @@ export class ResourcesComponent implements OnInit {
     }
   }
 
-  removeResource(resource: Resource) {
-    if (!resource.removing) {
-      resource.removing = true;
-
-      this.resourceService
-        .removeResource(resource.id, resource._etag)
-        .subscribe({
-          next: () => {
-            this.snackBar.open('Resource successfully removed!', '', {
-              duration: 2000,
-            });
-            if (this.resources.length === 1 && this.page > 1) {
-              this.page--;
-            }
-            this.loadResources();
-          },
-          error: (error) => {
-            resource.removing = false;
-            let message = 'Unable to remove resource at this time.';
-
-            if (error.status === 404) {
-              message = 'This resource no longer exists.';
-            } else if (error.status === 412) {
-              message = 'This resource has changed since it was loaded.';
-            }
-
-            this.snackBar.open(message, 'Error Removing Resource', {
-              duration: 3000,
-            });
-            this.loadResources();
-          },
-        });
+  showRemoveConfirmation(resource: Resource) {
+    this.selectedResource = resource;
+    const modalElement = document.getElementById('removeResourceModal');
+    if (modalElement) {
+      // Show the modal manually
+      modalElement.classList.add('show');
+      modalElement.style.display = 'block';
+      // Add backdrop
+      const backdrop = document.createElement('div');
+      backdrop.className = 'modal-backdrop fade show';
+      document.body.appendChild(backdrop);
+      // Add modal-open class to body
+      document.body.classList.add('modal-open');
     }
+  }
+
+  removeResource() {
+    if (!this.selectedResource || this.selectedResource.removing) {
+      return;
+    }
+
+    this.selectedResource.removing = true;
+
+    this.resourceService
+      .removeResource(this.selectedResource.id, this.selectedResource._etag)
+      .subscribe({
+        next: () => {
+          this.snackBar.open('Resource successfully removed!', '', {
+            duration: 2000,
+          });
+          if (this.resources.length === 1 && this.page > 1) {
+            this.page--;
+          }
+          this.loadResources();
+        },
+        error: (error) => {
+          if (this.selectedResource) {
+            this.selectedResource.removing = false;
+          }
+          let message = 'Unable to remove resource at this time.';
+
+          if (error.status === 404) {
+            message = 'This resource no longer exists.';
+          } else if (error.status === 412) {
+            message = 'This resource has changed since it was loaded.';
+          }
+
+          this.snackBar.open(message, 'Error Removing Resource', {
+            duration: 3000,
+          });
+          this.loadResources();
+        },
+      });
   }
 
   isAdmin(): boolean {

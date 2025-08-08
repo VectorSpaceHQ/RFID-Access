@@ -6,6 +6,7 @@ import { CardService, Card } from '../../services/card.service';
 import { ResourceService } from '../../services/resource.service';
 import { AuthService } from '../../services/auth.service';
 import { RefreshButtonComponent } from '../refresh-button/refresh-button.component';
+import { ConfirmationModalComponent } from '../confirmation-modal/confirmation-modal.component';
 
 @Component({
   selector: 'app-cards',
@@ -15,6 +16,7 @@ import { RefreshButtonComponent } from '../refresh-button/refresh-button.compone
     RouterLink,
     MatSnackBarModule,
     RefreshButtonComponent,
+    ConfirmationModalComponent,
   ],
   template: `
     <ul class="breadcrumb">
@@ -66,7 +68,12 @@ import { RefreshButtonComponent } from '../refresh-button/refresh-button.compone
               <a [routerLink]="['/editcard', card.id]"> ✏️ Edit </a>
             </td>
             <td *ngIf="isAdmin()">
-              <a href="" (click)="removeCard(card)"> ❌ Remove </a>
+              <button
+                class="btn btn-link p-0"
+                (click)="showRemoveConfirmation(card)"
+              >
+                ❌ Remove
+              </button>
             </td>
           </tr>
         </tbody>
@@ -86,6 +93,13 @@ import { RefreshButtonComponent } from '../refresh-button/refresh-button.compone
         </ul>
       </nav>
     </div>
+
+    <app-confirmation-modal
+      modalId="removeCardModal"
+      title="Remove Card"
+      message="Are you sure you want to remove this card? This action cannot be undone."
+      (confirmed)="removeCard()"
+    ></app-confirmation-modal>
   `,
   styles: [
     `
@@ -97,6 +111,7 @@ import { RefreshButtonComponent } from '../refresh-button/refresh-button.compone
 })
 export class CardsComponent implements OnInit {
   cards: any[] = [];
+  selectedCard: any = null;
   resourceNames: { [key: string]: string } = {};
   page = 1;
   lastPage = false;
@@ -163,11 +178,32 @@ export class CardsComponent implements OnInit {
     }
   }
 
-  removeCard(card: any) {
-    if (!card.removing) {
-      card.removing = true;
+  showRemoveConfirmation(card: any) {
+    this.selectedCard = card;
+    const modalElement = document.getElementById('removeCardModal');
+    if (modalElement) {
+      // Show the modal manually
+      modalElement.classList.add('show');
+      modalElement.style.display = 'block';
+      // Add backdrop
+      const backdrop = document.createElement('div');
+      backdrop.className = 'modal-backdrop fade show';
+      document.body.appendChild(backdrop);
+      // Add modal-open class to body
+      document.body.classList.add('modal-open');
+    }
+  }
 
-      this.cardService.removeCard(card.id, card._etag).subscribe({
+  removeCard() {
+    if (!this.selectedCard || this.selectedCard.removing) {
+      return;
+    }
+
+    this.selectedCard.removing = true;
+
+    this.cardService
+      .removeCard(this.selectedCard.id, this.selectedCard._etag)
+      .subscribe({
         next: () => {
           this.snackBar.open('Card successfully removed!', '', {
             duration: 2000,
@@ -178,7 +214,9 @@ export class CardsComponent implements OnInit {
           this.loadCards();
         },
         error: (error) => {
-          card.removing = false;
+          if (this.selectedCard) {
+            this.selectedCard.removing = false;
+          }
           let message = 'Unable to remove card at this time.';
 
           if (error.status === 404) {
@@ -193,7 +231,6 @@ export class CardsComponent implements OnInit {
           this.loadCards();
         },
       });
-    }
   }
 
   getResourceArray(resources: string): string[] {
