@@ -554,6 +554,131 @@ if __name__ == '__main__':
         db.session.commit()
         return '', 204
 
+    # Keycodes endpoints
+    @app.route('/api/keycodes', methods=['GET'])
+    def get_keycodes():
+        keycodes = db.session.query(KeyCodes).all()
+        return jsonify({
+            '_items': [{
+                'id': kc.id,
+                'name': kc.name,
+                'code': kc.code,
+                'start_date': kc.start_date.isoformat() if kc.start_date else None,
+                'end_date': kc.end_date.isoformat() if kc.end_date else None,
+                'daily_start_time': kc.daily_start_time.isoformat() if kc.daily_start_time else None,
+                'daily_end_time': kc.daily_end_time.isoformat() if kc.daily_end_time else None,
+                'resource': kc.resource,
+                'granted': kc.granted,
+                'reason': kc.reason,
+                '_created': kc._created.isoformat() if kc._created else None,
+                '_updated': kc._updated.isoformat() if kc._updated else None,
+                '_etag': kc._etag
+            } for kc in keycodes],
+            '_meta': {
+                'max_results': len(keycodes),
+                'total': len(keycodes)
+            }
+        })
+
+    @app.route('/api/keycodes/<int:keycode_id>', methods=['GET'])
+    def get_keycode(keycode_id):
+        kc = db.session.get(KeyCodes, keycode_id)
+        if not kc:
+            return jsonify({'_error': 'Keycode not found'}), 404
+        return jsonify({
+            'id': kc.id,
+            'name': kc.name,
+            'code': kc.code,
+            'start_date': kc.start_date.isoformat() if kc.start_date else None,
+            'end_date': kc.end_date.isoformat() if kc.end_date else None,
+            'daily_start_time': kc.daily_start_time.isoformat() if kc.daily_start_time else None,
+            'daily_end_time': kc.daily_end_time.isoformat() if kc.daily_end_time else None,
+            'resource': kc.resource,
+            'granted': kc.granted,
+            'reason': kc.reason,
+            '_created': kc._created.isoformat() if kc._created else None,
+            '_updated': kc._updated.isoformat() if kc._updated else None,
+            '_etag': kc._etag
+        })
+
+    @app.route('/api/keycodes/<int:keycode_id>', methods=['PATCH'])
+    def update_keycode(keycode_id):
+        kc = db.session.get(KeyCodes, keycode_id)
+        if not kc:
+            return jsonify({'_error': 'Keycode not found'}), 404
+
+        # Check ETag for concurrency control
+        if_match = request.headers.get('If-Match')
+        if if_match and if_match.strip('"') != kc._etag:
+            return jsonify({'_error': 'Keycode has been modified'}), 412
+
+        data = request.get_json() or {}
+
+        # Update allowed fields
+        if 'name' in data:
+            kc.name = data['name']
+        if 'code' in data:
+            kc.code = data['code']
+        if 'start_date' in data:
+            try:
+                kc.start_date = datetime.date.fromisoformat(data['start_date']) if data['start_date'] else None
+            except Exception:
+                pass
+        if 'end_date' in data:
+            try:
+                kc.end_date = datetime.date.fromisoformat(data['end_date']) if data['end_date'] else None
+            except Exception:
+                pass
+        if 'daily_start_time' in data:
+            try:
+                kc.daily_start_time = datetime.time.fromisoformat(data['daily_start_time']) if data['daily_start_time'] else None
+            except Exception:
+                pass
+        if 'daily_end_time' in data:
+            try:
+                kc.daily_end_time = datetime.time.fromisoformat(data['daily_end_time']) if data['daily_end_time'] else None
+            except Exception:
+                pass
+        if 'resource' in data:
+            kc.resource = data['resource']
+        if 'granted' in data:
+            kc.granted = data['granted']
+        if 'reason' in data:
+            kc.reason = data['reason']
+
+        kc._updated = get_current_time()
+        kc._etag = str(uuid.uuid4())
+
+        db.session.commit()
+        return jsonify({
+            'id': kc.id,
+            'name': kc.name,
+            'code': kc.code,
+            'start_date': kc.start_date.isoformat() if kc.start_date else None,
+            'end_date': kc.end_date.isoformat() if kc.end_date else None,
+            'daily_start_time': kc.daily_start_time.isoformat() if kc.daily_start_time else None,
+            'daily_end_time': kc.daily_end_time.isoformat() if kc.daily_end_time else None,
+            'resource': kc.resource,
+            'granted': kc.granted,
+            'reason': kc.reason,
+            '_etag': kc._etag
+        })
+
+    @app.route('/api/keycodes/<int:keycode_id>', methods=['DELETE'])
+    def delete_keycode(keycode_id):
+        kc = db.session.get(KeyCodes, keycode_id)
+        if not kc:
+            return jsonify({'_error': 'Keycode not found'}), 404
+
+        # Check ETag for concurrency control
+        if_match = request.headers.get('If-Match')
+        if if_match and if_match.strip('"') != kc._etag:
+            return jsonify({'_error': 'Keycode has been modified'}), 412
+
+        db.session.delete(kc)
+        db.session.commit()
+        return '', 204
+
     @app.route('/api/logs', methods=['GET'])
     def get_logs():
         logs = db.session.query(Logs).all()
