@@ -43,18 +43,19 @@ import { ResourceService } from '../../services/resource.service';
         />
       </div>
       <div class="form-group">
-        <label for="resources">Resources</label>
-        <select
-          name="resources"
-          id="resources"
-          formControlName="resources"
-          class="form-control"
-          multiple
-        >
-          <option *ngFor="let resource of resources" [value]="resource.id">
+        <label>Resources</label>
+        <div class="form-check" *ngFor="let resource of resources">
+          <input
+            class="form-check-input"
+            type="checkbox"
+            [id]="'res-' + resource.id"
+            [checked]="selectedResourceIds.has(resource.id)"
+            (change)="onResourceToggle(resource.id, $event.target.checked)"
+          />
+          <label class="form-check-label" [for]="'res-' + resource.id">
             {{ resource.name }}
-          </option>
-        </select>
+          </label>
+        </div>
       </div>
       <button
         type="submit"
@@ -83,7 +84,9 @@ export class EditCardComponent implements OnInit {
   loading = false;
   saving = false;
   cardId = '';
+  cardEtag = '';
   resources: any[] = [];
+  selectedResourceIds: Set<number> = new Set<number>();
 
   constructor(
     private fb: FormBuilder,
@@ -110,9 +113,17 @@ export class EditCardComponent implements OnInit {
     this.cardService.getCard(Number(this.cardId)).subscribe({
       next: (card) => {
         this.loading = false;
+        this.cardEtag = (card as any)._etag || '';
+        const resourceIds = (card.resources || '')
+          .split(',')
+          .map((r) => r.trim())
+          .filter((r) => r.length > 0)
+          .map((r) => Number(r))
+          .filter((n) => !Number.isNaN(n));
+        this.selectedResourceIds = new Set<number>(resourceIds);
         this.editForm.patchValue({
           member: card.member,
-          resources: card.resources || [],
+          resources: resourceIds,
         });
       },
       error: () => {
@@ -135,28 +146,46 @@ export class EditCardComponent implements OnInit {
     if (this.editForm.valid) {
       this.saving = true;
       const updates = this.editForm.value;
+      const selectedIds = Array.from(this.selectedResourceIds).sort(
+        (a, b) => a - b
+      );
+      const updatesToSend = {
+        member: updates.member,
+        resources: selectedIds.join(','),
+      } as any;
 
-      this.cardService.saveCard(Number(this.cardId), '', updates).subscribe({
-        next: () => {
-          this.saving = false;
-          this.snackBar.open('Card successfully updated!', '', {
-            duration: 2000,
-          });
-          this.router.navigate(['/cards']);
-        },
-        error: (error) => {
-          this.saving = false;
-          let message = 'Unable to update card at this time.';
+      this.cardService
+        .saveCard(Number(this.cardId), this.cardEtag, updatesToSend)
+        .subscribe({
+          next: (updated) => {
+            this.cardEtag = (updated as any)?._etag || this.cardEtag;
+            this.saving = false;
+            this.snackBar.open('Card successfully updated!', '', {
+              duration: 2000,
+            });
+            this.router.navigate(['/cards']);
+          },
+          error: (error) => {
+            this.saving = false;
+            let message = 'Unable to update card at this time.';
 
-          if (error.status === 404) {
-            message = 'Card not found.';
-          }
+            if (error.status === 404) {
+              message = 'Card not found.';
+            }
 
-          this.snackBar.open(message, 'Error Updating Card', {
-            duration: 3000,
-          });
-        },
-      });
+            this.snackBar.open(message, 'Error Updating Card', {
+              duration: 3000,
+            });
+          },
+        });
+    }
+  }
+
+  onResourceToggle(resourceId: number, checked: boolean) {
+    if (checked) {
+      this.selectedResourceIds.add(resourceId);
+    } else {
+      this.selectedResourceIds.delete(resourceId);
     }
   }
 }

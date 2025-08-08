@@ -6,6 +6,7 @@ import hashlib
 import datetime
 import time
 import json
+import uuid
 import string
 import random
 
@@ -59,6 +60,9 @@ def remove_password(request, payload):
 
 def generate_password(size = 10, chars = '!@#$%&*' + string.digits + string.ascii_uppercase + string.ascii_lowercase):
     return ''.join(random.choice(chars) for _ in range(size))
+
+def get_current_time():
+    return datetime.datetime.now()
 
 def prune_database():
     """
