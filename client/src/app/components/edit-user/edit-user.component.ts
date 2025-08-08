@@ -42,14 +42,14 @@ import { UserService } from '../../services/user.service';
         />
       </div>
       <div class="form-group">
-        <div class="checkbox">
-          <label>
-            <input
-              id="admin"
-              type="checkbox"
-              formControlName="admin"
-            />Administrator
-          </label>
+        <div class="form-check">
+          <input
+            class="form-check-input"
+            type="checkbox"
+            id="admin"
+            formControlName="admin"
+          />
+          <label class="form-check-label" for="admin">Administrator</label>
         </div>
       </div>
       <button
@@ -88,7 +88,10 @@ export class EditUserComponent implements OnInit {
     private snackBar: MatSnackBar
   ) {
     this.editForm = this.fb.group({
-      username: ['', [Validators.required, Validators.pattern(/^[\w ]+$/)]],
+      username: [
+        '',
+        [Validators.required, Validators.pattern(/^[A-Za-z0-9_.\- ]+$/)],
+      ],
       admin: [false],
     });
   }
