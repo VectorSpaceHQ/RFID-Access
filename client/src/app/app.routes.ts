@@ -89,6 +89,14 @@ export const routes: Routes = [
     canActivate: [authGuard],
   },
   {
+    path: 'addkeycode',
+    loadComponent: () =>
+      import('./components/add-keycode/add-keycode.component').then(
+        (m) => m.AddKeycodeComponent
+      ),
+    canActivate: [authGuard],
+  },
+  {
     path: 'editkeycode/:keycodeId',
     loadComponent: () =>
       import('./components/keycodes/keycodes.component').then(

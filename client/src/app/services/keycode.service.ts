@@ -46,6 +46,13 @@ export class KeycodeService {
     );
   }
 
+  addKeycode(newKeycode: Partial<Keycode>): Observable<Keycode> {
+    return this.http.post<Keycode>(
+      this.configService.getApiUrl('keycodes'),
+      newKeycode
+    );
+  }
+
   removeKeycode(id: number, etag: string): Observable<void> {
     return this.http.delete<void>(
       `${this.configService.getApiUrl('keycodes')}/${id}`,

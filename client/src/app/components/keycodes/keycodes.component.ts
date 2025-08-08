@@ -4,6 +4,7 @@ import { RouterLink } from '@angular/router';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { KeycodeService, Keycode } from '../../services/keycode.service';
 import { AuthService } from '../../services/auth.service';
+import { ResourceService } from '../../services/resource.service';
 import { RefreshButtonComponent } from '../refresh-button/refresh-button.component';
 import { ConfirmationModalComponent } from '../confirmation-modal/confirmation-modal.component';
 
@@ -70,7 +71,11 @@ import { ConfirmationModalComponent } from '../confirmation-modal/confirmation-m
             <td>{{ kc.end_date }}</td>
             <td>{{ kc.daily_start_time }}</td>
             <td>{{ kc.daily_end_time }}</td>
-            <td>{{ kc.resource }}</td>
+            <td>
+              <div *ngFor="let res of getResourceArray(kc.resource)">
+                {{ resourceNames[res] || res }}
+              </div>
+            </td>
             <td *ngIf="isAdmin()">
               <a [routerLink]="['/editkeycode', kc.id]"> ✏️ Edit </a>
             </td>
@@ -123,15 +128,18 @@ export class KeycodesComponent implements OnInit {
   lastPage = false;
   loading = false;
   errorLoading = false;
+  resourceNames: { [key: string]: string } = {};
 
   constructor(
     private keycodeService: KeycodeService,
+    private resourceService: ResourceService,
     private authService: AuthService,
     private snackBar: MatSnackBar
   ) {}
 
   ngOnInit() {
     this.loadKeycodes();
+    this.loadResourceNames();
   }
 
   loadKeycodes() {
@@ -149,6 +157,16 @@ export class KeycodesComponent implements OnInit {
       error: () => {
         this.loading = false;
         this.errorLoading = true;
+      },
+    });
+  }
+
+  loadResourceNames() {
+    this.resourceService.getResources(1).subscribe({
+      next: (response) => {
+        response._items.forEach((resource) => {
+          this.resourceNames[String(resource.id)] = resource.name;
+        });
       },
     });
   }
@@ -226,5 +244,13 @@ export class KeycodesComponent implements OnInit {
 
   isAdmin(): boolean {
     return this.authService.isAdmin();
+  }
+
+  getResourceArray(resources: string | null | undefined): string[] {
+    if (!resources) return [];
+    return resources
+      .split(',')
+      .map((r) => r.trim())
+      .filter((r) => r.length > 0);
   }
 }
