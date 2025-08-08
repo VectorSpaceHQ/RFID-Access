@@ -5,7 +5,7 @@ import {
   Validators,
   ReactiveFormsModule,
 } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { CommonModule } from '@angular/common';
 import { CardService } from '../../services/card.service';
@@ -14,7 +14,7 @@ import { ResourceService } from '../../services/resource.service';
 @Component({
   selector: 'app-edit-card',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, MatSnackBarModule],
+  imports: [CommonModule, ReactiveFormsModule, MatSnackBarModule, RouterLink],
   template: `
     <ul class="breadcrumb">
       <li><a routerLink="/home">Home</a></li>
@@ -59,7 +59,7 @@ import { ResourceService } from '../../services/resource.service';
       </div>
       <button
         type="submit"
-        class="btn btn-default"
+        class="btn btn-outline me-3"
         [disabled]="editForm.invalid || saving"
       >
         Save
