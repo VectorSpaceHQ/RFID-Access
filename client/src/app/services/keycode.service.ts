@@ -53,6 +53,20 @@ export class KeycodeService {
     );
   }
 
+  saveKeycode(
+    id: number,
+    etag: string,
+    updates: Partial<Keycode>
+  ): Observable<Keycode> {
+    return this.http.patch<Keycode>(
+      `${this.configService.getApiUrl('keycodes')}/${id}`,
+      updates,
+      {
+        headers: { 'If-Match': etag },
+      }
+    );
+  }
+
   removeKeycode(id: number, etag: string): Observable<void> {
     return this.http.delete<void>(
       `${this.configService.getApiUrl('keycodes')}/${id}`,

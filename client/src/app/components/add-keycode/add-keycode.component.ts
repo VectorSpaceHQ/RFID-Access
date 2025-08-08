@@ -11,24 +11,24 @@ import {
   Validators,
   ReactiveFormsModule,
 } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { CommonModule } from '@angular/common';
 import { KeycodeService } from '../../services/keycode.service';
 import { ResourceService, Resource } from '../../services/resource.service';
 
 @Component({
-  selector: 'app-add-keycode',
+  selector: 'app-save-keycode',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, MatSnackBarModule, RouterLink],
   template: `
     <ul class="breadcrumb">
       <li><a routerLink="/home">Home</a></li>
       <li><a routerLink="/keycodes">Keycodes</a></li>
-      <li>Add Keycode</li>
+      <li>{{ isEditMode ? 'Edit Keycode' : 'Add Keycode' }}</li>
     </ul>
 
-    <h3>Add Keycode</h3>
+    <h3>{{ isEditMode ? 'Edit Keycode' : 'Add Keycode' }}</h3>
 
     <h4 *ngIf="adding">Saving...</h4>
 
@@ -40,8 +40,12 @@ import { ResourceService, Resource } from '../../services/resource.service';
           id="name"
           formControlName="name"
           class="form-control"
+          [class.is-invalid]="controlInvalid('name')"
           required
         />
+        <div class="invalid-feedback" *ngIf="controlInvalid('name')">
+          Name is required.
+        </div>
       </div>
 
       <div class="form-group code-input-wrapper" #codeWrapper>
@@ -57,11 +61,15 @@ import { ResourceService, Resource } from '../../services/resource.service';
           id="code"
           formControlName="code"
           class="form-control"
+          [class.is-invalid]="controlInvalid('code')"
           required
           (focus)="showKeypad = true"
           (click)="showKeypad = true"
           (input)="enforceCodeMask($event)"
         />
+        <div class="invalid-feedback" *ngIf="controlInvalid('code')">
+          Code must be exactly 4 digits.
+        </div>
 
         <div
           *ngIf="showKeypad"
@@ -173,9 +181,13 @@ import { ResourceService, Resource } from '../../services/resource.service';
           id="start_date"
           formControlName="start_date"
           class="form-control"
+          [class.is-invalid]="controlInvalid('start_date')"
           (click)="openPicker($event)"
           (focus)="openPicker($event)"
         />
+        <div class="invalid-feedback" *ngIf="controlInvalid('start_date')">
+          Start date is required.
+        </div>
       </div>
 
       <div class="form-group">
@@ -186,9 +198,13 @@ import { ResourceService, Resource } from '../../services/resource.service';
           id="end_date"
           formControlName="end_date"
           class="form-control"
+          [class.is-invalid]="controlInvalid('end_date')"
           (click)="openPicker($event)"
           (focus)="openPicker($event)"
         />
+        <div class="invalid-feedback" *ngIf="controlInvalid('end_date')">
+          End date is required.
+        </div>
       </div>
 
       <div class="form-group">
@@ -199,9 +215,16 @@ import { ResourceService, Resource } from '../../services/resource.service';
           id="daily_start_time"
           formControlName="daily_start_time"
           class="form-control"
+          [class.is-invalid]="controlInvalid('daily_start_time')"
           (click)="openPicker($event)"
           (focus)="openPicker($event)"
         />
+        <div
+          class="invalid-feedback"
+          *ngIf="controlInvalid('daily_start_time')"
+        >
+          Daily start time is required.
+        </div>
       </div>
 
       <div class="form-group">
@@ -212,9 +235,13 @@ import { ResourceService, Resource } from '../../services/resource.service';
           id="daily_end_time"
           formControlName="daily_end_time"
           class="form-control"
+          [class.is-invalid]="controlInvalid('daily_end_time')"
           (click)="openPicker($event)"
           (focus)="openPicker($event)"
         />
+        <div class="invalid-feedback" *ngIf="controlInvalid('daily_end_time')">
+          Daily end time is required.
+        </div>
       </div>
 
       <div class="form-group">
@@ -231,12 +258,15 @@ import { ResourceService, Resource } from '../../services/resource.service';
             {{ resource.name }}
           </label>
         </div>
+        <div class="invalid-feedback d-block" *ngIf="showResourceError()">
+          Please select at least one resource.
+        </div>
       </div>
 
       <button
         type="submit"
         class="btn btn-outline me-3"
-        [disabled]="addForm.invalid || adding"
+        [disabled]="!canSubmit()"
       >
         Save
       </button>
@@ -287,6 +317,9 @@ export class AddKeycodeComponent implements OnInit {
   resources: Resource[] = [];
   selectedResourceIds: Set<number> = new Set<number>();
   showKeypad = false;
+  isEditMode = false;
+  editingId: number | null = null;
+  editingEtag: string | null = null;
 
   @ViewChild('keypad') keypadRef?: ElementRef<HTMLDivElement>;
   @ViewChild('codeWrapper') wrapperRef?: ElementRef<HTMLDivElement>;
@@ -296,6 +329,7 @@ export class AddKeycodeComponent implements OnInit {
     private fb: FormBuilder,
     private keycodeService: KeycodeService,
     private resourceService: ResourceService,
+    private route: ActivatedRoute,
     private router: Router,
     private snackBar: MatSnackBar
   ) {
@@ -306,15 +340,55 @@ export class AddKeycodeComponent implements OnInit {
     this.addForm = this.fb.group({
       name: ['', Validators.required],
       code: ['', [Validators.required, Validators.pattern(/^\d{4}$/)]],
-      start_date: [todayStr],
-      end_date: [''],
-      daily_start_time: [midnight],
-      daily_end_time: [midnight],
+      start_date: [todayStr, Validators.required],
+      end_date: ['', Validators.required],
+      daily_start_time: [midnight, Validators.required],
+      daily_end_time: [midnight, Validators.required],
     });
   }
 
   ngOnInit() {
     this.loadResources();
+    const idParam = this.route.snapshot.paramMap.get('keycodeId');
+    if (idParam) {
+      this.isEditMode = true;
+      this.editingId = Number(idParam);
+      this.loadKeycode(this.editingId);
+    }
+  }
+
+  loadKeycode(id: number) {
+    this.adding = true;
+    this.keycodeService.getKeycode(id).subscribe({
+      next: (kc) => {
+        this.adding = false;
+        this.editingEtag = (kc as any)._etag || null;
+        // Parse resources into selected set
+        const resourceIds = (kc.resource || '')
+          .split(',')
+          .map((r) => r.trim())
+          .filter((r) => r.length > 0)
+          .map((r) => Number(r))
+          .filter((n) => !Number.isNaN(n));
+        this.selectedResourceIds = new Set<number>(resourceIds);
+
+        this.addForm.patchValue({
+          name: kc.name || '',
+          code: kc.code || '',
+          start_date: kc.start_date || '',
+          end_date: kc.end_date || '',
+          daily_start_time: kc.daily_start_time?.slice(0, 5) || '00:00',
+          daily_end_time: kc.daily_end_time?.slice(0, 5) || '00:00',
+        });
+      },
+      error: () => {
+        this.adding = false;
+        this.snackBar.open('Unable to load keycode.', 'Error', {
+          duration: 3000,
+        });
+        this.router.navigate(['/keycodes']);
+      },
+    });
   }
 
   loadResources() {
@@ -334,7 +408,7 @@ export class AddKeycodeComponent implements OnInit {
   }
 
   save() {
-    if (this.addForm.invalid) return;
+    if (!this.canSubmit()) return;
     this.adding = true;
 
     const payload = {
@@ -346,16 +420,31 @@ export class AddKeycodeComponent implements OnInit {
         .join(','),
     } as any;
 
-    this.keycodeService.addKeycode(payload).subscribe({
+    const request$ =
+      this.isEditMode && this.editingId && this.editingEtag
+        ? this.keycodeService.saveKeycode(
+            this.editingId,
+            this.editingEtag,
+            payload
+          )
+        : this.keycodeService.addKeycode(payload);
+
+    request$.subscribe({
       next: () => {
-        this.snackBar.open('Keycode successfully added!', '', {
-          duration: 2000,
-        });
+        this.snackBar.open(
+          this.isEditMode
+            ? 'Keycode successfully updated!'
+            : 'Keycode successfully added!',
+          '',
+          {
+            duration: 2000,
+          }
+        );
         this.router.navigate(['/keycodes']);
       },
       error: () => {
         this.adding = false;
-        this.snackBar.open('Unable to add keycode at this time.', 'Error', {
+        this.snackBar.open('Unable to save keycode at this time.', 'Error', {
           duration: 3000,
         });
       },
@@ -378,6 +467,23 @@ export class AddKeycodeComponent implements OnInit {
       input.value = digitsOnly;
     }
     this.addForm.get('code')?.setValue(digitsOnly, { emitEvent: false });
+  }
+
+  controlInvalid(controlName: string): boolean {
+    const control = this.addForm.get(controlName);
+    return !!control && control.invalid && (control.dirty || control.touched);
+  }
+
+  showResourceError(): boolean {
+    return (
+      this.selectedResourceIds.size === 0 &&
+      (this.addForm.dirty || this.addForm.touched)
+    );
+  }
+
+  canSubmit(): boolean {
+    const hasResource = this.selectedResourceIds.size > 0;
+    return hasResource && !this.addForm.invalid && !this.adding;
   }
 
   onDigitPress(d: string) {
