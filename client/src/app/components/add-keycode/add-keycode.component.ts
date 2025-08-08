@@ -36,10 +36,12 @@ import { ResourceService, Resource } from '../../services/resource.service';
       <div class="form-group">
         <label for="name">Name</label>
         <input
+          #nameInput
           name="name"
           id="name"
           formControlName="name"
           class="form-control"
+          placeholder="Event"
           [class.is-invalid]="controlInvalid('name')"
           required
         />
@@ -57,6 +59,7 @@ import { ResourceService, Resource } from '../../services/resource.service';
           pattern="\\d*"
           maxlength="4"
           autocomplete="one-time-code"
+          placeholder="1234"
           name="code"
           id="code"
           formControlName="code"
@@ -282,6 +285,10 @@ import { ResourceService, Resource } from '../../services/resource.service';
         width: 100%;
         padding: 0.5rem;
       }
+      .form-control::placeholder {
+        color: #9aa0a6; /* faint gray */
+        opacity: 0.5; /* keep color as-is */
+      }
       .code-input-wrapper {
         position: relative;
         display: inline-block;
@@ -320,10 +327,16 @@ export class AddKeycodeComponent implements OnInit {
   isEditMode = false;
   editingId: number | null = null;
   editingEtag: string | null = null;
+  attemptedSubmit = false;
 
   @ViewChild('keypad') keypadRef?: ElementRef<HTMLDivElement>;
   @ViewChild('codeWrapper') wrapperRef?: ElementRef<HTMLDivElement>;
   @ViewChild('codeInput') codeInputRef?: ElementRef<HTMLInputElement>;
+  @ViewChild('nameInput') nameInputRef?: ElementRef<HTMLInputElement>;
+  @ViewChild('startInput') startInputRef?: ElementRef<HTMLInputElement>;
+  @ViewChild('endInput') endInputRef?: ElementRef<HTMLInputElement>;
+  @ViewChild('startTimeInput') startTimeInputRef?: ElementRef<HTMLInputElement>;
+  @ViewChild('endTimeInput') endTimeInputRef?: ElementRef<HTMLInputElement>;
 
   constructor(
     private fb: FormBuilder,
@@ -408,7 +421,23 @@ export class AddKeycodeComponent implements OnInit {
   }
 
   save() {
-    if (!this.canSubmit()) return;
+    this.attemptedSubmit = true;
+    // mark all controls as touched to trigger validation UI
+    Object.values(this.addForm.controls).forEach((c) => c.markAsTouched());
+
+    if (!this.canSubmit()) {
+      // focus first invalid control for better UX
+      if (this.addForm.get('name')?.invalid) {
+        this.nameInputRef?.nativeElement.focus();
+      } else if (this.addForm.get('code')?.invalid) {
+        this.codeInputRef?.nativeElement.focus();
+      } else if (this.addForm.get('start_date')?.invalid) {
+        (document.getElementById('start_date') as HTMLInputElement)?.focus();
+      } else if (this.addForm.get('end_date')?.invalid) {
+        (document.getElementById('end_date') as HTMLInputElement)?.focus();
+      }
+      return;
+    }
     this.adding = true;
 
     const payload = {
@@ -471,14 +500,15 @@ export class AddKeycodeComponent implements OnInit {
 
   controlInvalid(controlName: string): boolean {
     const control = this.addForm.get(controlName);
-    return !!control && control.invalid && (control.dirty || control.touched);
+    if (!control) return false;
+    const interacted = control.dirty || control.touched || this.attemptedSubmit;
+    return control.invalid && interacted;
   }
 
   showResourceError(): boolean {
-    return (
-      this.selectedResourceIds.size === 0 &&
-      (this.addForm.dirty || this.addForm.touched)
-    );
+    const interacted =
+      this.addForm.dirty || this.addForm.touched || this.attemptedSubmit;
+    return this.selectedResourceIds.size === 0 && interacted;
   }
 
   canSubmit(): boolean {
