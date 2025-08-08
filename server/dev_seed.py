@@ -316,12 +316,29 @@ def seed_logs():
             'reason': 'Valid access'
         }
     ]
+
+    # Add keypad-based logs (mix of entries)
+    keycodes = db.session.query(KeyCodes).all()
+    if keycodes:
+        for i, kc in enumerate(keycodes[:len(logs_data)]):
+            logs_data.insert(i * 2 + 1, {
+                'uuid': '',
+                'uuid_bin': '',
+                'member': '',
+                'code': kc.code,
+                'name': kc.name,
+                'resource': kc.resource,
+                'granted': True,
+                'reason': 'Keycode access'
+            })
     
     for log_data in logs_data:
         log = Logs(
             uuid=log_data['uuid'],
             uuid_bin=log_data['uuid_bin'],
-            member=log_data['member'],
+            member=log_data.get('member',''),
+            code=log_data.get('code',''),
+            name=log_data.get('name',''),
             resource=log_data['resource'],
             granted=log_data['granted'],
             reason=log_data['reason'],
@@ -330,7 +347,8 @@ def seed_logs():
             _etag=create_hash()
         )
         db.session.add(log)
-        print(f"  Added log entry for {log_data['member']} at {log_data['resource']}")
+        who = log_data.get('member') or log_data.get('name') or 'Unknown'
+        print(f"  Added log entry for {who} at {log_data['resource']}")
     
     db.session.commit()
 
@@ -498,11 +516,13 @@ def main():
             
             seed_cards()
             print()
-            
-            seed_logs()
-            print()
-            
+
+            # Seed keycodes before logs so we can include keypad log entries
             seed_keycodes()
+            print()
+
+            # Now seed logs as a balanced mix of card and keypad entries
+            seed_logs()
             print()
             
             print("=" * 50)

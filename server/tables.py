@@ -55,6 +55,8 @@ class Logs(CommonColumns):
     uuid_bin    = Column(String(256))
     # uuid_wiegand= Column(String(128))
     member      = Column(String(256))
+    code        = Column(String(256))
+    name        = Column(String(256))
     resource    = Column(String(256))
     granted     = Column(Boolean)
     reason      = Column(String(256))

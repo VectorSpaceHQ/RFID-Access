@@ -1,5 +1,6 @@
 /* You can add global styles to this file, and also import other style files */
 @import 'styles/main.css';
+@import '../node_modules/bootstrap-icons/font/bootstrap-icons.css';
 
 .right-arrow {
   font-size: 2.5em;

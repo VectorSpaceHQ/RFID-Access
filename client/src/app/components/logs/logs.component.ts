@@ -44,8 +44,8 @@ import { RefreshButtonComponent } from '../refresh-button/refresh-button.compone
         <thead>
           <tr>
             <th>Date</th>
-            <th>UUID</th>
-            <th>Member</th>
+            <th>UUID / Code</th>
+            <th>Member / Name</th>
             <th>Resource</th>
             <th>Status</th>
           </tr>
@@ -53,10 +53,28 @@ import { RefreshButtonComponent } from '../refresh-button/refresh-button.compone
         <tbody>
           <tr *ngFor="let log of logs" [ngClass]="{ warning: !log.granted }">
             <td>{{ log._created | date : 'short' }}</td>
-            <td>{{ log.uuid }}</td>
-            <td>{{ log.member }}</td>
+            <td>
+              <span *ngIf="!log.code">{{ log.uuid }}</span>
+              <span *ngIf="log.code">{{ log.code }}</span>
+            </td>
+            <td>
+              <span *ngIf="!log.code">{{ log.member }}</span>
+              <span *ngIf="log.code">{{ log.name }}</span>
+            </td>
             <td>{{ log.resource }}</td>
-            <td>{{ log.granted ? 'Success' : log.reason }}</td>
+            <td>
+              <span
+                *ngIf="log.code"
+                class="bi bi-calculator"
+                aria-label="Keypad"
+              ></span>
+              <span
+                *ngIf="!log.code"
+                class="bi bi-tag"
+                aria-label="Card"
+              ></span>
+              &nbsp;{{ log.granted ? 'Success' : log.reason }}
+            </td>
           </tr>
         </tbody>
       </table>
@@ -80,6 +98,9 @@ import { RefreshButtonComponent } from '../refresh-button/refresh-button.compone
     `
       .warning {
         background-color: #fcf8e3;
+      }
+      .bi {
+        vertical-align: -0.125em;
       }
     `,
   ],

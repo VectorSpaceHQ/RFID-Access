@@ -8,6 +8,8 @@ export interface Log {
   uuid: string;
   uuid_bin: string;
   member: string;
+  code?: string;
+  name?: string;
   resource: string;
   granted: boolean;
   reason?: string;

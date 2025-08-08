@@ -91,6 +91,19 @@ with app.app_context():
     # Create all tables
     Base.metadata.create_all(db.engine)
 
+    # Lightweight migration: ensure new columns exist on 'logs' table
+    try:
+        with db.engine.connect() as conn:
+            # Check existing columns
+            result = conn.execute(db.text("PRAGMA table_info('logs')"))
+            existing_cols = {row[1] for row in result}
+            if 'code' not in existing_cols:
+                conn.execute(db.text("ALTER TABLE logs ADD COLUMN code VARCHAR(256)"))
+            if 'name' not in existing_cols:
+                conn.execute(db.text("ALTER TABLE logs ADD COLUMN name VARCHAR(256)"))
+    except Exception as e:
+        print(f"Warning: could not verify/migrate logs table columns: {e}")
+
     if not db.session.query(Users).count():
         hash = hashlib.sha1()
         hash.update(datetime.datetime.now().isoformat().encode('utf-8'))
@@ -741,13 +754,15 @@ if __name__ == '__main__':
 
     @app.route('/api/logs', methods=['GET'])
     def get_logs():
-        logs = db.session.query(Logs).all()
+        logs = db.session.query(Logs).order_by(Logs._created.desc(), Logs.id.desc()).all()
         return jsonify({
             '_items': [{
                 'id': log.id,
                 'uuid': log.uuid,
                 'uuid_bin': log.uuid_bin,
                 'member': log.member,
+                'code': getattr(log, 'code', None),
+                'name': getattr(log, 'name', None),
                 'resource': log.resource,
                 'granted': log.granted,
                 'reason': log.reason,
