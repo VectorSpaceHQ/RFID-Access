@@ -78,6 +78,7 @@ export class EditResourceComponent implements OnInit {
   loading = false;
   saving = false;
   resourceId = '';
+  resourceEtag = '';
 
   constructor(
     private fb: FormBuilder,
@@ -102,6 +103,7 @@ export class EditResourceComponent implements OnInit {
     this.resourceService.getResource(this.resourceId).subscribe({
       next: (resource) => {
         this.loading = false;
+        this.resourceEtag = (resource as any)._etag || '';
         this.editForm.patchValue({
           name: resource.name,
           description: resource.description,
@@ -123,9 +125,10 @@ export class EditResourceComponent implements OnInit {
       const updates = this.editForm.value;
 
       this.resourceService
-        .saveResource(this.resourceId, '', updates)
+        .saveResource(this.resourceId, this.resourceEtag, updates)
         .subscribe({
-          next: () => {
+          next: (updated) => {
+            this.resourceEtag = (updated as any)?._etag || this.resourceEtag;
             this.saving = false;
             this.snackBar.open('Resource successfully updated!', '', {
               duration: 2000,

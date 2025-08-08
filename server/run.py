@@ -408,7 +408,8 @@ if __name__ == '__main__':
         return jsonify({
             'id': resource.id,
             'name': resource.name,
-            'description': resource.description,
+            # description field is not present in the DB schema; keep API compatible
+            'description': '',
             '_created': resource._created.isoformat() if resource._created else None,
             '_updated': resource._updated.isoformat() if resource._updated else None,
             '_etag': resource._etag
@@ -436,8 +437,7 @@ if __name__ == '__main__':
         # Update fields
         if 'name' in data:
             resource.name = data['name']
-        if 'description' in data:
-            resource.description = data['description']
+        # description is not stored; ignore if provided
         
         resource._updated = get_current_time()
         resource._etag = str(uuid.uuid4())
