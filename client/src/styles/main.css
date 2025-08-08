@@ -109,14 +109,14 @@
   padding: 0.5rem 0.75rem;
   margin-left: -1px;
   line-height: 1.25;
-  color: #007bff;
+  color: #1e88e5;
   background-color: #fff;
   border: 1px solid #dee2e6;
   text-decoration: none;
 }
 
 .pager li a:hover {
-  color: #0056b3;
+  color: #1565c0;
   text-decoration: none;
   background-color: #e9ecef;
   border-color: #dee2e6;
@@ -159,4 +159,32 @@
 
 .modal.show {
   display: block !important;
+}
+
+/* Global link color overrides (more pleasing blue) */
+a:not(.btn):not(.list-group-item) {
+  color: #1e88e5;
+  text-decoration: none;
+}
+
+a:not(.btn):not(.list-group-item):hover,
+a:not(.btn):not(.list-group-item):focus {
+  color: #1565c0;
+  text-decoration: underline;
+}
+
+a:not(.btn):not(.list-group-item):active {
+  color: #0d47a1;
+}
+
+/* Keep Home list items (list-group) text black */
+a.list-group-item,
+a.list-group-item .list-group-item-heading {
+  color: #212529 !important;
+}
+
+a.list-group-item:hover,
+a.list-group-item:focus {
+  color: #212529 !important;
+  text-decoration: none;
 }

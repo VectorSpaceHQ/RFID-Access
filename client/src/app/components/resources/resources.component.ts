@@ -65,12 +65,14 @@ import { ConfirmationModalComponent } from '../confirmation-modal/confirmation-m
               <a [routerLink]="['/editresource', resource.id]"> ✏️ Edit </a>
             </td>
             <td *ngIf="isAdmin()">
-              <button
-                class="btn btn-link p-0"
-                (click)="showRemoveConfirmation(resource)"
+              <a
+                href=""
+                (click)="
+                  showRemoveConfirmation(resource); $event.preventDefault()
+                "
               >
                 ❌ Remove
-              </button>
+              </a>
             </td>
           </tr>
         </tbody>
