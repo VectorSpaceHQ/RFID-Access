@@ -1,0 +1,20 @@
+<ul class="breadcrumb">
+    <li><a href="#/">Home</a></li>
+    <li><a href="#/resources">Resources</a></li>
+    <li>Edit Resource</li>
+</ul>
+
+<h3>Edit Resource</h3>
+
+<h4 ng-hide="vm.id">Loading...</h4>
+<h4 ng-show="vm.saving">Saving...</h4>
+
+<form name="editForm" ng-submit="vm.saveResource()" ng-show="vm.id && !vm.saving">
+    <div class="form-group">
+        <label for="name">Name</label>
+        <input name="name" id="name" ng-model="vm.name" class="form-control" ng-pattern="/^[\w ]+$/" required>
+        <div ng-show="editForm.name.$invalid" class="alert-danger">Invalid resource name</div>
+    </div>
+    <button type="submit" class="btn btn-default" ng-disabled="editForm.$invalid || vm.saving || vm.oldName == vm.name">Save</button>
+    <a href="#/resources">Cancel</a>
+</form>

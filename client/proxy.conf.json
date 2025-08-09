@@ -1,0 +1,23 @@
+{
+  "/api": {
+    "target": "http://localhost:8443",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug",
+    "pathRewrite": {
+      "^/api": "/api"
+    }
+  },
+  "/auth": {
+    "target": "http://localhost:8443",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug"
+  },
+  "/unlock": {
+    "target": "http://localhost:8443",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug"
+  }
+}

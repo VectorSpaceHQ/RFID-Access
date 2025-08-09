@@ -8,7 +8,8 @@ from sqlalchemy import (
     Boolean,
     Date,
     DateTime,
-    Time)
+    Time,
+    CheckConstraint)
 
 Base = declarative_base()
 
@@ -36,6 +37,10 @@ class Resources(CommonColumns):
 
     id          = Column(Integer, primary_key=True, autoincrement=True)
     name        = Column(String(256), unique=True)
+    type        = Column(String(16), default='Reader')
+    __table_args__ = (
+        CheckConstraint("type IN ('Keypad','Reader')", name='ck_resources_type'),
+    )
 
 class Cards(CommonColumns):
     __tablename__ = 'cards'
@@ -55,6 +60,8 @@ class Logs(CommonColumns):
     uuid_bin    = Column(String(256))
     # uuid_wiegand= Column(String(128))
     member      = Column(String(256))
+    code        = Column(String(256))
+    name        = Column(String(256))
     resource    = Column(String(256))
     granted     = Column(Boolean)
     reason      = Column(String(256))

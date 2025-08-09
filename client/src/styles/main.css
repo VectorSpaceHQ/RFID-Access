@@ -1,16 +1,199 @@
 .right-arrow {
-    font-size: 2.5em;
-    float: right;
+  font-size: 2.5em;
+  float: right;
 }
 
 #login-button {
-    float: right;
+  float: right;
 }
 
-[ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
-    display: none !important;
+[ng\:cloak],
+[ng-cloak],
+[data-ng-cloak],
+[x-ng-cloak],
+.ng-cloak,
+.x-ng-cloak {
+  display: none !important;
 }
 
 .removing {
-    text-decoration: line-through;
+  text-decoration: line-through;
+}
+
+/* Restore Bootstrap 3-style table borders and styling */
+.table {
+  border-collapse: collapse;
+  width: 100%;
+  margin-bottom: 1rem;
+  background-color: transparent;
+}
+
+.table th,
+.table td {
+  padding: 0.75rem;
+  vertical-align: top;
+  border-top: 1px solid #dee2e6;
+}
+
+.table thead th {
+  vertical-align: bottom;
+  border-bottom: 2px solid #dee2e6;
+  background-color: #f8f9fa;
+  font-weight: 600;
+}
+
+.table tbody + tbody {
+  border-top: 2px solid #dee2e6;
+}
+
+/* Breadcrumb styling */
+.breadcrumb {
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+  background-color: #e9ecef;
+  border-radius: 0.25rem;
+  border: 1px solid #dee2e6;
+}
+
+.breadcrumb li {
+  display: inline-block;
+}
+
+.breadcrumb li + li::before {
+  content: '>';
+  padding: 0 0.5rem;
+  color: #6c757d;
+}
+
+/* Alert styling */
+.alert {
+  padding: 0.75rem 1.25rem;
+  margin-bottom: 1rem;
+  border: 1px solid transparent;
+  border-radius: 0.25rem;
+}
+
+.alert-danger {
+  color: #721c24;
+  background-color: #f8d7da;
+  border-color: #f5c6cb;
+}
+
+.alert-info {
+  color: #0c5460;
+  background-color: #d1ecf1;
+  border-color: #bee5eb;
+}
+
+/* Warning row styling */
+.warning {
+  background-color: #fcf8e3 !important;
+}
+
+/* Pager/pagination styling */
+.pager {
+  display: flex;
+  padding-left: 0;
+  list-style: none;
+  border-radius: 0.25rem;
+  justify-content: space-between;
+}
+
+.pager li {
+  display: inline;
+}
+
+.pager li a {
+  position: relative;
+  display: block;
+  padding: 0.5rem 0.75rem;
+  margin-left: -1px;
+  line-height: 1.25;
+  color: #1e88e5;
+  background-color: #fff;
+  border: 1px solid #dee2e6;
+  text-decoration: none;
+}
+
+.pager li a:hover {
+  color: #1565c0;
+  text-decoration: none;
+  background-color: #e9ecef;
+  border-color: #dee2e6;
+}
+
+.pager li.disabled a {
+  color: #6c757d;
+  pointer-events: none;
+  background-color: #fff;
+  border-color: #dee2e6;
+}
+
+/* Simple outline button styling (shared across edit pages) */
+.btn-outline {
+  color: #495057;
+  background-color: transparent;
+  border-color: #6c757d;
+}
+
+.btn.btn-outline:hover,
+.btn.btn-outline:focus,
+.btn.btn-outline:focus-visible {
+  color: #fff;
+  background-color: #6c757d;
+  border-color: #6c757d;
+}
+
+.btn.btn-outline:disabled,
+.btn.btn-outline.disabled {
+  color: #6c757d;
+  background-color: transparent;
+  border-color: #6c757d;
+}
+
+/* Modal backdrop styles */
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1040;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-open {
+  overflow: hidden;
+}
+
+.modal.show {
+  display: block !important;
+}
+
+/* Global link color overrides (more pleasing blue) */
+a:not(.btn):not(.list-group-item) {
+  color: #1e88e5;
+  text-decoration: none;
+}
+
+a:not(.btn):not(.list-group-item):hover,
+a:not(.btn):not(.list-group-item):focus {
+  color: #1565c0;
+  text-decoration: underline;
+}
+
+a:not(.btn):not(.list-group-item):active {
+  color: #0d47a1;
+}
+
+/* Keep Home list items (list-group) text black */
+a.list-group-item,
+a.list-group-item .list-group-item-heading {
+  color: #212529 !important;
+}
+
+a.list-group-item:hover,
+a.list-group-item:focus {
+  color: #212529 !important;
+  text-decoration: none;
 }
