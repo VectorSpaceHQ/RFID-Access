@@ -7,7 +7,7 @@ import { ConfigService } from './config.service';
 export interface Resource {
   id: number;
   name: string;
-  description: string;
+  type?: 'Keypad' | 'Reader';
   _etag: string;
   _created?: string;
   _updated?: string;

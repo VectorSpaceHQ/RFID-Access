@@ -113,10 +113,10 @@ def seed_resources():
     print("Seeding resources...")
     
     resources_data = [
-        {'name': 'Main Entrance'},
-        {'name': 'Server Room'},
-        {'name': 'Lab A'},
-        {'name': 'Conference Room'}
+        {'name': 'Main Entrance', 'type': 'Reader'},
+        {'name': 'Server Room', 'type': 'Keypad'},
+        {'name': 'Lab A', 'type': 'Reader'},
+        {'name': 'Conference Room', 'type': 'Keypad'}
     ]
     
     for resource_data in resources_data:
@@ -124,6 +124,7 @@ def seed_resources():
         if not existing_resource:
             resource = Resources(
                 name=resource_data['name'],
+                type=resource_data.get('type', 'Reader'),
                 _created=get_current_time(),
                 _updated=get_current_time(),
                 _etag=create_hash()
@@ -131,6 +132,9 @@ def seed_resources():
             db.session.add(resource)
             print(f"  Added resource: {resource_data['name']}")
         else:
+            # Ensure type is set for existing rows too
+            existing_resource.type = resource_data.get('type', 'Reader')
+            db.session.commit()
             print(f"  Resource already exists: {resource_data['name']}")
     
     db.session.commit()

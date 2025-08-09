@@ -101,6 +101,11 @@ with app.app_context():
                 conn.execute(db.text("ALTER TABLE logs ADD COLUMN code VARCHAR(256)"))
             if 'name' not in existing_cols:
                 conn.execute(db.text("ALTER TABLE logs ADD COLUMN name VARCHAR(256)"))
+            # Migrate resources.type
+            result = conn.execute(db.text("PRAGMA table_info('resources')"))
+            res_cols = {row[1] for row in result}
+            if 'type' not in res_cols:
+                conn.execute(db.text("ALTER TABLE resources ADD COLUMN type VARCHAR(16) DEFAULT 'Reader'"))
     except Exception as e:
         print(f"Warning: could not verify/migrate logs table columns: {e}")
 
@@ -394,7 +399,8 @@ if __name__ == '__main__':
             '_items': [{
                 'id': resource.id,
                 'name': resource.name,
-                'description': '',  # Add description field for compatibility
+                'description': '',  # kept for compatibility
+                'type': getattr(resource, 'type', 'Reader'),
                 '_created': resource._created.isoformat() if resource._created else None,
                 '_updated': resource._updated.isoformat() if resource._updated else None,
                 '_etag': resource._etag
@@ -408,10 +414,13 @@ if __name__ == '__main__':
     @app.route('/api/resources', methods=['POST'])
     def create_resource():
         data = request.get_json()
-        resource = Resources(name=data['name'], description=data.get('description', ''))
+        resource = Resources(
+            name=data['name'],
+            type=data.get('type', 'Reader')
+        )
         db.session.add(resource)
         db.session.commit()
-        return jsonify({'id': resource.id, 'name': resource.name, 'description': resource.description}), 201
+        return jsonify({'id': resource.id, 'name': resource.name, 'description': '', 'type': resource.type}), 201
 
     @app.route('/api/resources/<int:resource_id>', methods=['GET'])
     def get_resource(resource_id):
@@ -423,6 +432,7 @@ if __name__ == '__main__':
             'name': resource.name,
             # description field is not present in the DB schema; keep API compatible
             'description': '',
+            'type': getattr(resource, 'type', 'Reader'),
             '_created': resource._created.isoformat() if resource._created else None,
             '_updated': resource._updated.isoformat() if resource._updated else None,
             '_etag': resource._etag
@@ -451,6 +461,8 @@ if __name__ == '__main__':
         if 'name' in data:
             resource.name = data['name']
         # description is not stored; ignore if provided
+        if 'type' in data and data['type'] in ['Keypad','Reader']:
+            resource.type = data['type']
         
         resource._updated = get_current_time()
         resource._etag = str(uuid.uuid4())
@@ -459,7 +471,8 @@ if __name__ == '__main__':
         return jsonify({
             'id': resource.id,
             'name': resource.name,
-            'description': resource.description,
+            'description': '',
+            'type': getattr(resource, 'type', 'Reader'),
             '_created': resource._created.isoformat() if resource._created else None,
             '_updated': resource._updated.isoformat() if resource._updated else None,
             '_etag': resource._etag

@@ -49,7 +49,7 @@ import { ConfirmationModalComponent } from '../confirmation-modal/confirmation-m
         <thead>
           <tr>
             <th>Name</th>
-            <th>Description</th>
+            <th>Type</th>
             <th *ngIf="isAdmin()"></th>
             <th *ngIf="isAdmin()"></th>
           </tr>
@@ -60,7 +60,7 @@ import { ConfirmationModalComponent } from '../confirmation-modal/confirmation-m
             [ngClass]="{ 'removing danger': resource.removing }"
           >
             <td>{{ resource.name }}</td>
-            <td>{{ resource.description }}</td>
+            <td>{{ resource.type || 'Reader' }}</td>
             <td *ngIf="isAdmin()">
               <a [routerLink]="['/editresource', resource.id]"> ✏️ Edit </a>
             </td>

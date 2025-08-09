@@ -33,18 +33,53 @@ import { ResourceService } from '../../services/resource.service';
           id="name"
           formControlName="name"
           class="form-control"
+          [class.is-invalid]="
+            addForm.get('name')?.touched && addForm.get('name')?.invalid
+          "
           required
         />
+        <div
+          class="invalid-feedback"
+          *ngIf="
+            addForm.get('name')?.touched &&
+            addForm.get('name')?.hasError('required')
+          "
+        >
+          Name is required.
+        </div>
+        <div
+          class="invalid-feedback"
+          *ngIf="
+            addForm.get('name')?.touched &&
+            addForm.get('name')?.hasError('pattern')
+          "
+        >
+          Only letters, numbers, underscores, and spaces are allowed.
+        </div>
       </div>
+
       <div class="form-group">
-        <label for="description">Description</label>
-        <input
-          name="description"
-          id="description"
-          formControlName="description"
-          class="form-control"
-          required
-        />
+        <label>Type</label>
+        <div class="form-check">
+          <input
+            class="form-check-input"
+            type="radio"
+            id="type-reader"
+            value="Reader"
+            formControlName="type"
+          />
+          <label class="form-check-label" for="type-reader">Reader</label>
+        </div>
+        <div class="form-check">
+          <input
+            class="form-check-input"
+            type="radio"
+            id="type-keypad"
+            value="Keypad"
+            formControlName="type"
+          />
+          <label class="form-check-label" for="type-keypad">Keypad</label>
+        </div>
       </div>
       <button
         type="submit"
@@ -79,8 +114,8 @@ export class AddResourceComponent {
     private snackBar: MatSnackBar
   ) {
     this.addForm = this.fb.group({
-      name: ['', Validators.required],
-      description: ['', Validators.required],
+      name: ['', [Validators.required, Validators.pattern(/^[\w ]+$/)]],
+      type: ['Reader', Validators.required],
     });
   }
 
