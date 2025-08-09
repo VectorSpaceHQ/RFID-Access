@@ -51,7 +51,10 @@ import { RefreshButtonComponent } from '../refresh-button/refresh-button.compone
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let log of logs" [ngClass]="{ warning: !log.granted }">
+          <tr
+            *ngFor="let log of logs"
+            [ngClass]="{ warning: !log.granted, 'table-warning': !log.granted }"
+          >
             <td>{{ log._created | date : 'short' }}</td>
             <td>
               <span *ngIf="!log.code">{{ log.uuid }}</span>
@@ -81,12 +84,18 @@ import { RefreshButtonComponent } from '../refresh-button/refresh-button.compone
       <nav>
         <ul class="pagination">
           <li class="page-item" [ngClass]="{ disabled: page == 1 }">
-            <a class="page-link" href="" (click)="newer()"
+            <a
+              class="page-link"
+              href=""
+              (click)="newer(); $event.preventDefault()"
               ><span aria-hidden="true">&larr;</span>Newer</a
             >
           </li>
           <li class="page-item" [ngClass]="{ disabled: lastPage }">
-            <a class="page-link" href="" (click)="older()"
+            <a
+              class="page-link"
+              href=""
+              (click)="older(); $event.preventDefault()"
               >Older<span aria-hidden="true">&rarr;</span></a
             >
           </li>
@@ -97,7 +106,12 @@ import { RefreshButtonComponent } from '../refresh-button/refresh-button.compone
   styles: [
     `
       .warning {
-        background-color: #fcf8e3;
+        background-color: #fff3cd !important; /* noticeable yellow for denied entries */
+      }
+      /* ensure background applies across all cells */
+      .table tr.warning > td,
+      .table tr.table-warning > td {
+        background-color: #fff3cd !important;
       }
       .bi {
         vertical-align: -0.125em;

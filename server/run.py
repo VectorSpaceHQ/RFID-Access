@@ -754,7 +754,17 @@ if __name__ == '__main__':
 
     @app.route('/api/logs', methods=['GET'])
     def get_logs():
-        logs = db.session.query(Logs).order_by(Logs._created.desc(), Logs.id.desc()).all()
+        page = 1
+        try:
+            page = int(request.args.get('page', 1))
+        except Exception:
+            page = 1
+        per_page = 50
+
+        base_query = db.session.query(Logs).order_by(Logs._created.desc(), Logs.id.desc())
+        total = base_query.count()
+        logs = base_query.offset((page - 1) * per_page).limit(per_page).all()
+
         return jsonify({
             '_items': [{
                 'id': log.id,
@@ -771,8 +781,8 @@ if __name__ == '__main__':
                 '_etag': log._etag
             } for log in logs],
             '_meta': {
-                'max_results': len(logs),
-                'total': len(logs)
+                'max_results': per_page,
+                'total': total
             }
         })
 

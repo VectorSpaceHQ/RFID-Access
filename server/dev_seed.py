@@ -332,23 +332,25 @@ def seed_logs():
                 'reason': 'Keycode access'
             })
     
-    for log_data in logs_data:
-        log = Logs(
-            uuid=log_data['uuid'],
-            uuid_bin=log_data['uuid_bin'],
-            member=log_data.get('member',''),
-            code=log_data.get('code',''),
-            name=log_data.get('name',''),
-            resource=log_data['resource'],
-            granted=log_data['granted'],
-            reason=log_data['reason'],
-            _created=get_current_time(),
-            _updated=get_current_time(),
-            _etag=create_hash()
-        )
-        db.session.add(log)
-        who = log_data.get('member') or log_data.get('name') or 'Unknown'
-        print(f"  Added log entry for {who} at {log_data['resource']}")
+    # Repeat the 20-entry pattern 10 times to reach ~200 entries
+    repeats = 10
+    for _ in range(repeats):
+        for log_data in logs_data:
+            log = Logs(
+                uuid=log_data['uuid'],
+                uuid_bin=log_data['uuid_bin'],
+                member=log_data.get('member',''),
+                code=log_data.get('code',''),
+                name=log_data.get('name',''),
+                resource=log_data['resource'],
+                granted=log_data['granted'],
+                reason=log_data['reason'],
+                _created=get_current_time(),
+                _updated=get_current_time(),
+                _etag=create_hash()
+            )
+            db.session.add(log)
+    print(f"  Added {len(logs_data) * repeats} log entries")
     
     db.session.commit()
 
