@@ -12,6 +12,7 @@ import bcrypt
 import hashlib
 import random
 import string
+import uuid
 from datetime import datetime, timedelta
 
 # Add the current directory to Python path
@@ -26,9 +27,12 @@ def create_hash():
     hash_obj.update(datetime.now().isoformat().encode())
     return hash_obj.hexdigest()
 
-def get_current_time():
-    """Get current datetime for _created and _updated fields"""
-    return datetime.now()
+def get_current_time(offset_minutes: int = 0):
+    """Get current datetime for _created and _updated fields.
+
+    If offset_minutes > 0, returns a time offset in the past by that many minutes.
+    """
+    return datetime.now() - timedelta(minutes=offset_minutes)
 
 def seed_users():
     """Seed users table with test data"""
@@ -223,7 +227,32 @@ def seed_cards():
             print(f"  Added card for: {card_data['member']}")
         else:
             print(f"  Card already exists for: {card_data['member']}")
-    
+
+    # Ensure we reach 100 cards by looping over the 10 base templates
+    target_total = 100
+    # Include any pending inserts in the count
+    db.session.flush()
+    existing_count = db.session.query(Cards).count()
+    if existing_count < target_total:
+        remaining = target_total - existing_count
+        for index in range(remaining):
+            base = cards_data[index % len(cards_data)]
+            # Generate unique UUID and corresponding binary string
+            new_uuid = str(uuid.uuid4())
+            new_uuid_bin = format(uuid.UUID(new_uuid).int, '0128b')
+            offset_minutes = existing_count + index
+            card = Cards(
+                uuid=new_uuid,
+                uuid_bin=new_uuid_bin,
+                member=base['member'],
+                resources=base['resources'],
+                _created=get_current_time(offset_minutes),
+                _updated=get_current_time(offset_minutes),
+                _etag=create_hash()
+            )
+            db.session.add(card)
+        print(f"  Added {remaining} additional cards to reach {target_total} total")
+
     db.session.commit()
 
 def seed_logs():
