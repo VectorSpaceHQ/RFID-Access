@@ -45,6 +45,7 @@ import { ConfirmationModalComponent } from '../confirmation-modal/confirmation-m
       <table class="table">
         <thead>
           <tr>
+            <th>Created</th>
             <th>UUID</th>
             <th>Member</th>
             <th>Resources</th>
@@ -57,6 +58,7 @@ import { ConfirmationModalComponent } from '../confirmation-modal/confirmation-m
             *ngFor="let card of cards"
             [ngClass]="{ 'removing danger': card.removing }"
           >
+            <td>{{ card._created | date : 'short' }}</td>
             <td>{{ card.uuid }}</td>
             <td>{{ card.member }}</td>
             <td>
