@@ -31,7 +31,7 @@ export class CardService {
 
   getCards(page: number): Observable<CardsResponse> {
     return this.http.get<CardsResponse>(
-      `${this.configService.getApiUrl('cards')}?page=${page}`
+      `${this.configService.getApiUrl('cards')}?sort=-_created&page=${page}`
     );
   }
 
