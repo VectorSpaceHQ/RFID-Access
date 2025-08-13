@@ -495,7 +495,17 @@ if __name__ == '__main__':
 
     @app.route('/api/cards', methods=['GET'])
     def get_cards():
-        cards = db.session.query(Cards).all()
+        page = 1
+        try:
+            page = int(request.args.get('page', 1))
+        except Exception:
+            page = 1
+        per_page = 50
+
+        base_query = db.session.query(Cards).order_by(Cards._created.desc(), Cards.id.desc())
+        total = base_query.count()
+        cards = base_query.offset((page - 1) * per_page).limit(per_page).all()
+
         return jsonify({
             '_items': [{
                 'id': card.id,
@@ -508,8 +518,8 @@ if __name__ == '__main__':
                 '_etag': card._etag
             } for card in cards],
             '_meta': {
-                'max_results': len(cards),
-                'total': len(cards)
+                'max_results': per_page,
+                'total': total
             }
         })
 

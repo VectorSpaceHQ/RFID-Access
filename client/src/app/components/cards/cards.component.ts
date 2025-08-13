@@ -80,16 +80,22 @@ import { ConfirmationModalComponent } from '../confirmation-modal/confirmation-m
           </tr>
         </tbody>
       </table>
-      <nav *ngIf="!(page == 1 && lastPage)">
+      <nav>
         <ul class="pagination">
           <li class="page-item" [ngClass]="{ disabled: page == 1 }">
-            <a class="page-link" href="" (click)="prev()"
-              ><span aria-hidden="true">&larr;</span>Prev</a
+            <a
+              class="page-link"
+              href=""
+              (click)="newer(); $event.preventDefault()"
+              ><span aria-hidden="true">&larr;</span>Newer</a
             >
           </li>
           <li class="page-item" [ngClass]="{ disabled: lastPage }">
-            <a class="page-link" href="" (click)="next()"
-              >Next<span aria-hidden="true">&rarr;</span></a
+            <a
+              class="page-link"
+              href=""
+              (click)="older(); $event.preventDefault()"
+              >Older<span aria-hidden="true">&rarr;</span></a
             >
           </li>
         </ul>
@@ -166,16 +172,16 @@ export class CardsComponent implements OnInit {
     this.loadCards();
   }
 
-  next() {
-    if (!this.lastPage) {
-      this.page++;
+  newer() {
+    if (this.page > 1) {
+      this.page--;
       this.loadCards();
     }
   }
 
-  prev() {
-    if (this.page > 1) {
-      this.page--;
+  older() {
+    if (!this.lastPage) {
+      this.page++;
       this.loadCards();
     }
   }
