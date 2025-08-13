@@ -211,7 +211,10 @@ def seed_cards():
         }
     ]
     
-    for card_data in cards_data:
+    # Use existing count at start so base 10 get distinct timestamps too
+    existing_count_at_start = db.session.query(Cards).count()
+
+    for i, card_data in enumerate(cards_data):
         existing_card = db.session.query(Cards).filter(Cards.uuid == card_data['uuid']).first()
         if not existing_card:
             card = Cards(
@@ -219,8 +222,8 @@ def seed_cards():
                 uuid_bin=card_data['uuid_bin'],
                 member=card_data['member'],
                 resources=card_data['resources'],
-                _created=get_current_time(),
-                _updated=get_current_time(),
+                _created=get_current_time(existing_count_at_start + i),
+                _updated=get_current_time(existing_count_at_start + i),
                 _etag=create_hash()
             )
             db.session.add(card)
@@ -365,10 +368,13 @@ def seed_logs():
                 'reason': 'Keycode access'
             })
     
-    # Repeat the 20-entry pattern 10 times to reach ~200 entries
+    # Repeat the pattern multiple times and assign descending timestamps
     repeats = 10
+    existing_count_at_start = db.session.query(Logs).count()
+    sequence_index = 0
     for _ in range(repeats):
         for log_data in logs_data:
+            offset_minutes = existing_count_at_start + sequence_index
             log = Logs(
                 uuid=log_data['uuid'],
                 uuid_bin=log_data['uuid_bin'],
@@ -378,11 +384,12 @@ def seed_logs():
                 resource=log_data['resource'],
                 granted=log_data['granted'],
                 reason=log_data['reason'],
-                _created=get_current_time(),
-                _updated=get_current_time(),
+                _created=get_current_time(offset_minutes),
+                _updated=get_current_time(offset_minutes),
                 _etag=create_hash()
             )
             db.session.add(log)
+            sequence_index += 1
     print(f"  Added {len(logs_data) * repeats} log entries")
     
     db.session.commit()
