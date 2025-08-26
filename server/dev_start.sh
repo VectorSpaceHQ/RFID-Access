@@ -6,7 +6,7 @@
 if [ -f /proc/cpuinfo ] && grep -q "Raspberry Pi" /proc/cpuinfo; then
     echo "Error: This script is for development machines only."
     echo "Detected Raspberry Pi - exiting for safety."
-    echo "Do not run development scripts on production hardware."
+    echo "Do not run development scripts in production environment to protect production data."
     exit 1
 fi
 
@@ -14,7 +14,7 @@ fi
 if command -v cat &> /dev/null && [ -f /sys/firmware/devicetree/base/model ] && grep -q "Raspberry Pi" /sys/firmware/devicetree/base/model 2>/dev/null; then
     echo "Error: This script is for development machines only."
     echo "Detected Raspberry Pi - exiting for safety."
-    echo "Do not run development scripts on production hardware."
+    echo "Do not run development scripts in production environment to protect production data."
     exit 1
 fi
 
