@@ -80,7 +80,10 @@ def prune_database():
 
     
 # Flask configuration
-app = Flask(__name__)
+script_dir = os.path.dirname(os.path.abspath(__file__))
+instance_folder_path = os.path.join(script_dir, 'instance')
+app = Flask(__name__, instance_path=instance_folder_path)
+
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///rfid.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
