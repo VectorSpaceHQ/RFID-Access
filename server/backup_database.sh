@@ -1,4 +1,4 @@
 #!/bin/bash
 d=`date +%m%d%Y`
-dest="/home/pi/RFID-Access/server/backups/rfid_${d}.db"
-cp /home/pi/RFID-Access/server/instance/rfid.db $dest
+dest="/home/vectorspace/RFID-Access/server/backups/rfid_${d}.db"
+cp /home/vectorspace/RFID-Access/server/instance/rfid.db $dest
