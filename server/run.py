@@ -147,6 +147,8 @@ def auth():
     if 'password' in data:
         password = data['password']
 
+    print(username, password)
+
     user = db.session.query(Users).filter(Users.username == username).first()
 
     if user and bcrypt.checkpw(password.encode('utf-8'), user.password.encode('utf-8')):
@@ -822,4 +824,8 @@ if __name__ == '__main__':
     else:
         # Production mode - without SSL for now (since SSL certs are missing)
         port = 443
-        app.run(host="0.0.0.0", port=port)
+        context = (
+            os.path.join(os.path.dirname(__file__), 'ssl', 'RFID.crt'),
+            os.path.join(os.path.dirname(__file__), 'ssl', 'RFID.key')
+            )
+        app.run(host="0.0.0.0", port=port, ssl_context=context)
