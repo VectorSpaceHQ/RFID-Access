@@ -39,7 +39,7 @@ This provides a seamless development experience with hot reload while maintainin
 
 ```bash
 cd client
-ng build
+npm run build
 ```
 
 Start the server, which serves the built Angular app on port 443

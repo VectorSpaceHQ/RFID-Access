@@ -1,5 +1,22 @@
 #!/bin/bash
 # Development Startup Script for RFID Access System on Linux/Bash
+# Only use on development machine. Running it on production machine will put seed data into production database.
+
+# Check if running on Raspberry Pi and exit if so
+if [ -f /proc/cpuinfo ] && grep -q "Raspberry Pi" /proc/cpuinfo; then
+    echo "Error: This script is for development machines only."
+    echo "Detected Raspberry Pi - exiting for safety."
+    echo "Do not run development scripts on production hardware."
+    exit 1
+fi
+
+# Alternative check for Raspberry Pi using system info
+if command -v cat &> /dev/null && [ -f /sys/firmware/devicetree/base/model ] && grep -q "Raspberry Pi" /sys/firmware/devicetree/base/model 2>/dev/null; then
+    echo "Error: This script is for development machines only."
+    echo "Detected Raspberry Pi - exiting for safety."
+    echo "Do not run development scripts on production hardware."
+    exit 1
+fi
 
 echo "Starting RFID Access Development Environment..."
 echo "============================================="

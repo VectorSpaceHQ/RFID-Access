@@ -80,10 +80,11 @@ def prune_database():
 
     
 # Flask configuration
+# Get the directory where this Python file is located, not the current working directory
 script_dir = os.path.dirname(os.path.abspath(__file__))
 instance_folder_path = os.path.join(script_dir, 'instance')
-app = Flask(__name__, instance_path=instance_folder_path)
 
+app = Flask(__name__, instance_path=instance_folder_path)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///rfid.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
@@ -505,7 +506,7 @@ if __name__ == '__main__':
             page = int(request.args.get('page', 1))
         except Exception:
             page = 1
-        per_page = 50
+        per_page = 300
 
         base_query = db.session.query(Cards).order_by(Cards._created.desc(), Cards.id.desc())
         total = base_query.count()
@@ -787,7 +788,7 @@ if __name__ == '__main__':
             page = int(request.args.get('page', 1))
         except Exception:
             page = 1
-        per_page = 50
+        per_page = 300
 
         base_query = db.session.query(Logs).order_by(Logs._created.desc(), Logs.id.desc())
         total = base_query.count()
