@@ -62,7 +62,18 @@ def generate_password(size = 10, chars = '!@#$%&*' + string.digits + string.asci
     return ''.join(random.choice(chars) for _ in range(size))
 
 def get_current_time():
-    return datetime.datetime.now()
+    # Return UTC time with timezone info to ensure proper ISO formatting
+    return datetime.datetime.now(datetime.timezone.utc)
+
+def format_utc_timestamp(dt):
+    """Format datetime as UTC ISO string with 'Z' suffix for proper timezone indication"""
+    if dt is None:
+        return None
+    # Ensure the datetime has timezone info, defaulting to UTC if none
+    if dt.tzinfo is None:
+        dt = dt.replace(tzinfo=datetime.timezone.utc)
+    # Format as ISO with 'Z' suffix to indicate UTC
+    return dt.isoformat().replace('+00:00', 'Z')
 
 def prune_database():
     """
@@ -316,8 +327,8 @@ if __name__ == '__main__':
                 'id': user.id,
                 'username': user.username,
                 'admin': user.admin,
-                '_created': user._created.isoformat() if user._created else None,
-                '_updated': user._updated.isoformat() if user._updated else None,
+                '_created': format_utc_timestamp(user._created),
+                '_updated': format_utc_timestamp(user._updated),
                 '_etag': user._etag
             } for user in users],
             '_meta': {
@@ -342,14 +353,14 @@ if __name__ == '__main__':
     def get_user(user_id):
         user = db.session.query(Users).filter(Users.id == user_id).first()
         if user:
-            return jsonify({
-                'id': user.id,
-                'username': user.username,
-                'admin': user.admin,
-                '_created': user._created.isoformat() if user._created else None,
-                '_updated': user._updated.isoformat() if user._updated else None,
-                '_etag': user._etag
-            })
+                    return jsonify({
+            'id': user.id,
+            'username': user.username,
+            'admin': user.admin,
+            '_created': format_utc_timestamp(user._created),
+            '_updated': format_utc_timestamp(user._updated),
+            '_etag': user._etag
+        })
         else:
             return jsonify({'error': 'User not found'}), 404
 
@@ -405,8 +416,8 @@ if __name__ == '__main__':
                 'name': resource.name,
                 'description': '',  # kept for compatibility
                 'type': getattr(resource, 'type', 'Reader'),
-                '_created': resource._created.isoformat() if resource._created else None,
-                '_updated': resource._updated.isoformat() if resource._updated else None,
+                '_created': format_utc_timestamp(resource._created),
+                '_updated': format_utc_timestamp(resource._updated),
                 '_etag': resource._etag
             } for resource in resources],
             '_meta': {
@@ -437,8 +448,8 @@ if __name__ == '__main__':
             # description field is not present in the DB schema; keep API compatible
             'description': '',
             'type': getattr(resource, 'type', 'Reader'),
-            '_created': resource._created.isoformat() if resource._created else None,
-            '_updated': resource._updated.isoformat() if resource._updated else None,
+            '_created': format_utc_timestamp(resource._created),
+            '_updated': format_utc_timestamp(resource._updated),
             '_etag': resource._etag
         })
 
@@ -477,8 +488,8 @@ if __name__ == '__main__':
             'name': resource.name,
             'description': '',
             'type': getattr(resource, 'type', 'Reader'),
-            '_created': resource._created.isoformat() if resource._created else None,
-            '_updated': resource._updated.isoformat() if resource._updated else None,
+            '_created': format_utc_timestamp(resource._created),
+            '_updated': format_utc_timestamp(resource._updated),
             '_etag': resource._etag
         })
 
@@ -517,8 +528,8 @@ if __name__ == '__main__':
                 'uuid_bin': card.uuid_bin,
                 'member': card.member,
                 'resources': card.resources,
-                '_created': card._created.isoformat() if card._created else None,
-                '_updated': card._updated.isoformat() if card._updated else None,
+                '_created': format_utc_timestamp(card._created),
+                '_updated': format_utc_timestamp(card._updated),
                 '_etag': card._etag
             } for card in cards],
             '_meta': {
@@ -538,8 +549,8 @@ if __name__ == '__main__':
             'uuid_bin': card.uuid_bin,
             'member': card.member,
             'resources': card.resources,
-            '_created': card._created.isoformat() if card._created else None,
-            '_updated': card._updated.isoformat() if card._updated else None,
+            '_created': format_utc_timestamp(card._created),
+            '_updated': format_utc_timestamp(card._updated),
             '_etag': card._etag
         })
 
@@ -574,8 +585,8 @@ if __name__ == '__main__':
             'uuid_bin': card.uuid_bin,
             'member': card.member,
             'resources': card.resources,
-            '_created': card._created.isoformat() if card._created else None,
-            '_updated': card._updated.isoformat() if card._updated else None,
+            '_created': format_utc_timestamp(card._created),
+            '_updated': format_utc_timestamp(card._updated),
             '_etag': card._etag
         })
 
@@ -648,8 +659,8 @@ if __name__ == '__main__':
                 'resource': kc.resource,
                 'granted': kc.granted,
                 'reason': kc.reason,
-                '_created': kc._created.isoformat() if kc._created else None,
-                '_updated': kc._updated.isoformat() if kc._updated else None,
+                '_created': format_utc_timestamp(kc._created),
+                '_updated': format_utc_timestamp(kc._updated),
                 '_etag': kc._etag
             }), 201
         else:
@@ -670,8 +681,8 @@ if __name__ == '__main__':
                     'resource': kc.resource,
                     'granted': kc.granted,
                     'reason': kc.reason,
-                    '_created': kc._created.isoformat() if kc._created else None,
-                    '_updated': kc._updated.isoformat() if kc._updated else None,
+                    '_created': format_utc_timestamp(kc._created),
+                    '_updated': format_utc_timestamp(kc._updated),
                     '_etag': kc._etag
                 } for kc in keycodes],
                 '_meta': {
@@ -696,8 +707,8 @@ if __name__ == '__main__':
             'resource': kc.resource,
             'granted': kc.granted,
             'reason': kc.reason,
-            '_created': kc._created.isoformat() if kc._created else None,
-            '_updated': kc._updated.isoformat() if kc._updated else None,
+            '_created': format_utc_timestamp(kc._created),
+            '_updated': format_utc_timestamp(kc._updated),
             '_etag': kc._etag
         })
 
@@ -803,8 +814,8 @@ if __name__ == '__main__':
                 'resource': log.resource,
                 'granted': log.granted,
                 'reason': log.reason,
-                '_created': log._created.isoformat() if log._created else None,
-                '_updated': log._updated.isoformat() if log._updated else None,
+                                 '_created': format_utc_timestamp(log._created),
+                 '_updated': format_utc_timestamp(log._updated),
                 '_etag': log._etag
             } for log in logs],
             '_meta': {
