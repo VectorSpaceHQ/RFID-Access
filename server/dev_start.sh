@@ -1,5 +1,6 @@
 #!/bin/bash
 # Development Startup Script for RFID Access System on Linux/Bash
+# Only use on development machine. Running it on production machine will put seed data into production database.
 
 echo "Starting RFID Access Development Environment..."
 echo "============================================="

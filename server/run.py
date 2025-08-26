@@ -500,7 +500,7 @@ if __name__ == '__main__':
             page = int(request.args.get('page', 1))
         except Exception:
             page = 1
-        per_page = 50
+        per_page = 300
 
         base_query = db.session.query(Cards).order_by(Cards._created.desc(), Cards.id.desc())
         total = base_query.count()
@@ -782,7 +782,7 @@ if __name__ == '__main__':
             page = int(request.args.get('page', 1))
         except Exception:
             page = 1
-        per_page = 50
+        per_page = 300
 
         base_query = db.session.query(Logs).order_by(Logs._created.desc(), Logs.id.desc())
         total = base_query.count()

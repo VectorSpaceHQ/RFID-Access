@@ -2,14 +2,14 @@
 
 A Angular application for managing RFID access control systems.
 
-## 🚀 Quick Start (Development)
+## 🚀 Quick Start (Development only)
 
 ```bash
 cd server
 ./dev_start.sh
 ```
 
-If the server is already running, you can start the client with
+If the server is already running, you can start the client (Development only) with
 
 ```bash
 npm start
@@ -29,8 +29,10 @@ The development server will start on `http://localhost:4200` with hot reload ena
 ```bash
 # Build for production
 npm run build
+```
+
+See server readme for running production Python server.
 
 ## 📄 License
 
 This project is part of the Vector Space RFID Access system.
-```
