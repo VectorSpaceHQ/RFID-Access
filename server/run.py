@@ -9,11 +9,14 @@ import json
 import uuid
 import string
 import random
+import logging
 
 from flask import Flask, redirect, make_response, request, jsonify
 from werkzeug.middleware.shared_data import SharedDataMiddleware
 from flask_sqlalchemy import SQLAlchemy
 from tables import Users, Resources, Cards, Logs, Tokens, KeyCodes, Base
+
+logging.basicConfig(filename='/var/log/door_access.log', level=logging.DEBUG)
 
 # Simple token authentication
 def check_auth(token, allowed_roles, resource, method):
@@ -197,7 +200,7 @@ def unlock():
     uuid_bin = request.args.get('uuid_bin') or '0'
     uuid_bin = uuid_bin
 
-    keycode = request.args.get('code') or '0'
+    keycode = request.args.get('uuid') or '0'
 
     allowed = False
 
@@ -214,12 +217,27 @@ def unlock():
     code = db.session.query(KeyCodes).filter(KeyCodes.code == keycode).first()
 
     if code:
-        print("keycode found in system")
+        logging.debug("keycode found in system")
+        logging.debug(code)
+        log.member = code.name
+        today = datetime.date.today()
+        if today >= code.start_date and today <= code.end_date:
+            logging.debug("keycode is active today!")
+            current_time = datetime.datetime.now().time()
+            if current_time > code.daily_start_time and current_time < code.daily_end_time:
+                logging.debug("keycode is active at this time!")
+                allowed = True
+            else:
+                logging.debug("keycode is NOT active at this time!")
+                log.reason = "Keycode is not active at this time."
+        else:
+            logging.debug("keycode is NOT active today!")
+            log.reason = "Keycode is not active on this day."
+    else:
+        logging.debug("keycode not in system")
+        logging.debug(keycode)        
 
-        # if not expired
-        # allowed = True
-
-    if card:
+    if card and resourceName != "Lobby":
         print("card found in system")
         print(card.member, uuid_bin, card.uuid_bin, log.uuid_bin, log.resource)
         log.member = card.member
@@ -238,7 +256,7 @@ def unlock():
         else:
             log.reason = 'Resource Not Found'
             print("RESOURCE NOT FIND TRY AGAIN")
-    else:
+    elif not card and resourceName != "Lobby":
         log.reason = 'Card Not Found'
 
         if uuid != 'uuid-0':
