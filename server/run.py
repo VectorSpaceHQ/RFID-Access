@@ -212,30 +212,31 @@ def unlock():
     log.member = ''
     log.reason = ''
 
-
     card = db.session.query(Cards).filter(Cards.uuid == uuid_bin).first()
     code = db.session.query(KeyCodes).filter(KeyCodes.code == keycode).first()
 
-    if code:
-        logging.debug("keycode found in system")
-        logging.debug(code)
-        log.member = code.name
-        today = datetime.date.today()
-        if today >= code.start_date and today <= code.end_date:
-            logging.debug("keycode is active today!")
-            current_time = datetime.datetime.now().time()
-            if current_time > code.daily_start_time and current_time < code.daily_end_time:
-                logging.debug("keycode is active at this time!")
-                allowed = True
+    if resourceName == "Lobby":
+        if code:
+            logging.debug("keycode found in system")
+            logging.debug(code)
+            log.member = code.name
+            today = datetime.date.today()
+            if today >= code.start_date and today <= code.end_date:
+                logging.debug("keycode is active today!")
+                current_time = datetime.datetime.now().time()
+                if current_time > code.daily_start_time and current_time < code.daily_end_time:
+                    logging.debug("keycode is active at this time!")
+                    allowed = True
+                else:
+                    logging.debug("keycode is NOT active at this time!")
+                    log.reason = "Keycode is not active at this time."
             else:
-                logging.debug("keycode is NOT active at this time!")
-                log.reason = "Keycode is not active at this time."
+                logging.debug("keycode is NOT active today!")
+                log.reason = "Keycode is not active on this day."
         else:
-            logging.debug("keycode is NOT active today!")
-            log.reason = "Keycode is not active on this day."
-    else:
-        logging.debug("keycode not in system")
-        logging.debug(keycode)        
+            logging.debug("keycode not in system")
+            logging.debug(keycode)
+            log.reason = "Keycode is not recognized."        
 
     if card and resourceName != "Lobby":
         print("card found in system")
@@ -262,7 +263,9 @@ def unlock():
         if uuid != 'uuid-0':
             print("adding key to cards list")
             hash = hashlib.sha1()
-            hash.update(datetime.datetime.now().isoformat())
+            timestamp_string = datetime.datetime.now().isoformat()
+            hash.update(timestamp_string.encode('utf-8'))
+#            hash.update(datetime.datetime.now().isoformat())
             etag = hash.hexdigest()
 
             print("logging uuid_bin, uuid, uuid_bin...")
