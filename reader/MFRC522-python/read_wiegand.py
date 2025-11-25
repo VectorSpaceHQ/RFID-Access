@@ -333,10 +333,10 @@ if __name__ == "__main__":
            # print("\nscan detected at loading dock: " + str(data))
            logging.debug("\n" + str(datetime.now()) + ": scan detected at loading dock: " + str(data))
 
-
-           if last_scantime + timedelta(seconds = 3) < datetime.now(): 
+           if last_scantime + timedelta(seconds = 5) < datetime.now():
                last_scantime = datetime.now()
            else:
+               logging.debug("WARNING: A second scan detected in rapid succession.")
                continue
 
            if unlock.isAllowed(session, "Loading Dock", data, data):
@@ -365,7 +365,7 @@ if __name__ == "__main__":
            w2.reset()
            time.sleep(0.1)
        elif bitLen2 > 24:
-           print(bitLen2)
+           print("front door bitlen:",bitLen2)
            data = "{:026b}".format(w2.read_data())
            logging.debug("\n" + str(datetime.now()) + ": scan detected at front door: " + str(data))
            if last_scantime + timedelta(seconds = 3) < datetime.now(): 
