@@ -394,10 +394,13 @@ if __name__ == "__main__":
 
                
        bitLen3 = w3.get_pending_bit_count()
-       if bitLen3 > 0 and bitLen3 <= 24: # changed 3/8/24 to help avoid spurious readings.
-           # data = "{:026b}".format(w2.read_data())
-           logging.debug("\n" + str(datetime.now()) + ": BAD scan detected at blacksmithing: " + str(bitLen3))
-           # w2.reset()
+       if bitLen3 > 0 and bitLen3 < 3:
+           # this reader constantly feeds an 0010 when not reading. Sometimes 1010
+           w3.reset()
+           logging.debug("junk data on the line")
+       if bitLen3 >= 3 and bitLen3 <= 24: # changed 3/8/24 to help avoid spurious readings.
+           data = "{:026b}".format(w3.read_data())
+           logging.debug("\n" + str(datetime.now()) + ": BAD scan detected at blacksmithing: " + str(data))
            time.sleep(0.1)
        elif bitLen3 > 24:
            data = "{:026b}".format(w3.read_data())
